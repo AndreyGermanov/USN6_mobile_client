@@ -1,0 +1,3 @@
+rootProject.name = 'USN6'
+
+include ':app'

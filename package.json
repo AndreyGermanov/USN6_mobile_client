@@ -1,0 +1,37 @@
+{
+  "name": "USN6",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@babel/core": "^7.0.0-beta",
+    "async": "^2.6.1",
+    "babel-core": "^7.0.0-beta",
+    "babel-preset-react-native": "5.0.2",
+    "base-64": "^0.1.0",
+    "moment-timezone": "^0.5.21",
+    "react": "16.4.1",
+    "react-native": "0.56.0",
+    "react-native-calendar-picker": "^5.20.0",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-elements": "^0.19.1",
+    "react-native-keyboard-aware-scroll-view": "^0.6.0",
+    "react-native-picker-select": "^4.1.0",
+    "react-native-vector-icons": "^5.0.0",
+    "react-navigation": "^2.9.3",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-jest": "23.4.2",
+    "babel-preset-react-native": "5.0.2",
+    "jest": "23.4.2",
+    "react-test-renderer": "16.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
