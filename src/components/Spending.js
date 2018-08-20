@@ -53,72 +53,13 @@ class Spending extends Document {
                 {this.renderStatusMessages()}
                 <ScrollView style={{backgroundColor:'white'}}>
                     <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                        <FormLabel>{t("Организация")}</FormLabel>
-                        <Picker items={this.props.companies_list}
-                                onValueChange={(value) => {this.props.changeItemField("company",value)}}
-                                value={item["company"]}
-                                style={styles.inputField}
-                        />
-                        {this.renderFieldErrorMessage("company")}
-                        <FormLabel>{t("Тип расхода")}</FormLabel>
-                        <Picker items={this.props.spending_types}
-                                onValueChange={(value) => {this.props.changeItemField("type",value)}}
-                                value={item["type"]}
-                                style={styles.inputField}
-                        />
-                        {this.renderFieldErrorMessage("type")}
-                        <FormLabel>{t("Номер документа")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["number"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("number",value)}
-                                       inputStyle={styles.inputField}
-                                       keyboardType="numeric"
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("number")}
-                        <FormLabel>{t("Дата документа")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <DatePicker
-                                date={moment(item["date"]*1000).format('YYYY-MM-DD HH:mm:ss')}
-                                mode="datetime"
-                                placeholder={t("Дата документа")}
-                                format="YYYY-MM-DD HH:mm:ss"
-                                confirmBtnText={t("ОК")}
-                                cancelBtnText={t("Отмена")}
-                                showIcon={false}
-                                onDateChange={(date) => this.props.changeItemField('date',date)}
-                                customStyles={{
-                                    dateInput: styles.inputField
-                                }}
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("date")}
-                        <FormLabel>{t("Период расхода")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["period"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("period",value)}
-                                       inputStyle={styles.inputField}
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("period")}
-                        <FormLabel>{t("Сумма расхода")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["amount"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("amount",value)}
-                                       inputStyle={styles.inputField}
-                                       keyboardType="decimal-pad"
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("amount")}
-                        <FormLabel>{t("Описание операции")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["description"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("description",value)}
-                                       inputStyle={styles.inputField}
-                                       mulitline={true}
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("description")}
+                        {this.renderInputField("company",item["company"],"Организация",this.props.companies_list)}
+                        {this.renderPickerField("type",item["type"],"Тип расхода",this.props.spending_types)}
+                        {this.renderInputField("number",item["number"],"Номер документа","numeric")}
+                        {this.renderDateField("date",item["date"],"Дата документа")}
+                        {this.renderInputField("period",item["period"],"Период расхода")}
+                        {this.renderInputField("amount",item["amount"],"Сумма расхода","decimal-pad")}
+                        {this.renderInputField("description",item["description"],"Описание операции","default",true)}
                         <FormLabel>{""}</FormLabel>
                     </View>
                 </ScrollView>

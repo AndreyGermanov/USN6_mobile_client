@@ -5,9 +5,13 @@ import Store from '../store/Store';
 import actions from '../actions/Actions';
 import Backend from '../backend/Backend';
 import {View,ScrollView,Text,FlatList,TouchableOpacity} from 'react-native'
-import {Button,FormValidationMessage,SearchBar} from 'react-native-elements'
+import {Button,FormValidationMessage,SearchBar,FormInput,FormLabel} from 'react-native-elements'
+import DatePicker from 'react-native-datepicker';
 import NavigationService from '../utils/NavigationService';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import moment from "moment-timezone";
+import styles from "../styles/Styles";
+import SelectInput from 'react-native-select-input-ios';
 
 /**
  * Base class used to represent data model either as list view or detail view
@@ -289,6 +293,82 @@ class Entity extends Component {
             <FormValidationMessage>{errors[field_name]}</FormValidationMessage> :
             null
     }
+
+    /**
+     * Method used to render standard text input field on form
+     * @param name - Name of field
+     * @param value - Current value of field
+     * @param label - Label of field
+     * @param keyboardType - Type of keyboard, used on this field
+     * @param multiline - Is text field multiline
+     * @returns Rendered element
+     */
+    renderInputField(name,value,label,keyboardType="default",multiline=false) {
+        if (!keyboardType) keyboardType="default";
+        if (!multiline) multiline = false;
+        return [
+            <FormLabel>{t(label)}</FormLabel>,
+            <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
+                <FormInput value={value} autoCaptialize="none" autoCorrect={false}
+                           onChangeText={(value) => this.props.changeItemField(name,value)}
+                           inputStyle={styles.inputField} keyboardType={keyboardType} multilne={multiline}/>
+            </View>,
+            this.renderFieldErrorMessage(name)
+        ]
+    }
+
+    /**
+     * Method used to render standard picker field on form
+     * @param name - Name of field
+     * @param value - Current value of field
+     * @param label - Label of field
+     * @param items - Array of items, which should be passed to list
+     * @returns Rendered element
+     */
+    renderPickerField(name,value,label,items) {
+        return [
+            <FormLabel>{t(label)}</FormLabel>,
+            <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
+                <SelectInput options={items} onSubmitEditing={(value) => this.props.changeItemField(name,value)}
+                        value={value} style={styles.inputField}
+                />
+            </View>,
+            this.renderFieldErrorMessage(name)
+        ]
+    }
+
+    /**
+     * Method used to render standard Date selection input field
+     * @param name - Name of field
+     * @param value - Current value of field
+     * @param label - Label of field
+     * @param mode - Mode of work ("date","datetime")
+     * @param format - Format of data display in field
+     * @returns Rendered element
+     */
+    renderDateField(name,value,label,mode="datetime",format="YYYY-MM-DD HH:mm:ss") {
+        if (!mode) mode="datetime";
+        if (!format) format = "YYYY-MM-DD HH:mm:ss";
+        return [
+            <FormLabel>{t(label)}</FormLabel>,
+            <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
+                <DatePicker
+                    date={moment(value*1000).format(format)}
+                    mode={mode}
+                    placeholder={t(label)}
+                    format={format}
+                    confirmBtnText={t("ОК")}
+                    cancelBtnText={t("Отмена")}
+                    showIcon={false}
+                    onDateChange={(date) => this.props.changeItemField(name,date)}
+                    customStyles={{
+                        dateInput: styles.inputField
+                    }}
+                />
+            </View>,
+            this.renderFieldErrorMessage(name)
+        ]
+    };
 }
 
 export default Entity;

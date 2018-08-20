@@ -36,11 +36,13 @@ class Login extends Component {
             <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
                 <FormValidationMessage>{this.props.errors["general"]}</FormValidationMessage>
                 <FormLabel>{t("Имя")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={this.props.item["login"]} autoCapitalize="none" autoCorrect={false}
+                <FormInput inputStyle={Style.inputField} value={this.props.item["login"]}
+                           autoCapitalize="none" autoCorrect={false}
                            onChangeText={(value) => this.props.changeItemField("login",value)}/>
                 <FormValidationMessage>{this.props.errors["login"]}</FormValidationMessage>
                 <FormLabel>{t("Пароль")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={this.props.item["password"]} autoCapitalize="none" autoCorrect={false}
+                <FormInput inputStyle={Style.inputField} value={this.props.item["password"]}
+                           autoCapitalize="none" autoCorrect={false}
                            onChangeText={(value) => this.props.changeItemField("password",value)}
                            secureTextEntry={true}/>
                 <FormValidationMessage>{this.props.errors["password"]}</FormValidationMessage>

@@ -46,48 +46,11 @@ class Account extends Entity {
                 {this.renderStatusMessages()}
                 <ScrollView style={{backgroundColor:'white'}}>
                     <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                        <FormLabel>{t("Организация")}</FormLabel>
-                        <Picker items={this.props.companies_list}
-                                onValueChange={(value) => {this.props.changeItemField("company",value)}}
-                                value={item["company"]}
-                                style={styles.inputField}
-                        />
-                        {this.renderFieldErrorMessage("company")}
-                        <FormLabel>{t("Банк")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["bank_name"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("bank_name",value)}
-                                       inputStyle={styles.inputField}
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("bank_name")}
-                        <FormLabel>{t("БИК")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["bik"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("bik",value)}
-                                       inputStyle={styles.inputField}
-                                       keyboardType="numeric"
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("bik")}
-                        <FormLabel>{t("Номер счета")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["number"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("number",value)}
-                                       inputStyle={styles.inputField}
-                                       keyboardType="numeric"
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("number")}
-                        <FormLabel>{t("Корр.счет")}</FormLabel>
-                        <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                            <FormInput value={item["ks"]} autoCapitalize="none" autoCorrect={false}
-                                       onChangeText={(value) => this.props.changeItemField("ks",value)}
-                                       inputStyle={styles.inputField}
-                                       keyboardType="numeric"
-                            />
-                        </View>
-                        {this.renderFieldErrorMessage("ks")}
+                        {this.renderPickerField("company",item["company"],"Организация",self.props.companies_list)}
+                        {this.renderInputField("bank_name",item["bank_name"],"Банк")}
+                        {this.renderInputField("bik",item["bik"],"БИК","numeric")}
+                        {this.renderInputField("number",item["number"],"Номер счета","numeric")}
+                        {this.renderInputField("ks",item["ks"],"Корр. счет","numeric")}
                         <FormLabel>{""}</FormLabel>
                     </View>
                 </ScrollView>

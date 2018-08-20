@@ -5,7 +5,7 @@ test("Should set, get and remove values from storage correctly", (done) => {
     async.series([
         function(callback) {
             Cookie.set("token","12345", function(err) {
-                callbacK()
+                callback()
             })
         },
         function(callback) {

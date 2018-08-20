@@ -6,36 +6,36 @@ import { AsyncStorage } from "react-native"
 class Cookie {
     /**
      * Method returns value of cookie
-     * @param name: Name of cookie
+     * @param cookieName: Name of cookie
      * @param callback: Function called after at the end of execution. Returns either value or error
      */
-    get(name,callback) {
-        AsyncStorage.getItem(name).then((value) => {
-            if (typeof(callback) === "function") callback(value);
-        }, (err) => {
-            if (typeof(callback) === "function") callback(err);
+    get(cookieName,callback) {
+        AsyncStorage.getItem(cookieName).then((cookieValue) => {
+            if (typeof(callback) === "function") callback(cookieValue);
+        }, (error) => {
+            if (typeof(callback) === "function") callback(error);
         });
     }
 
     /**
      * Method to set cookie
-     * @param name: Name of cookie
-     * @param value: Value of cookie
+     * @param cookieName: Name of cookie
+     * @param cookieValue: Value of cookie
      * @param callback: Function called after at the end of execution. Returns either error or nothing
      */
-    set(name,value,callback) {
-        AsyncStorage.setItem(name,value,(err) => {
-            if (typeof(callback) === "function") callback(err);
+    set(cookieName,cookieValue,callback) {
+        AsyncStorage.setItem(cookieName,cookieValue,(error) => {
+            if (typeof(callback) === "function") callback(error);
         });
     }
 
     /**
      * Method to delete cookie
-     * @param name: Name of cookie
+     * @param cookieName: Name of cookie
      * @param callback: Function called after at the end of execution. Returns either error or nothing
      */
-    delete(name,callback) {
-        AsyncStorage.removeItem(name,(err) => {
+    delete(cookieName,callback) {
+        AsyncStorage.removeItem(cookieName,(err) => {
             if (typeof(callback) === "function") callback(err);
         });
     }

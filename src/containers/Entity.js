@@ -164,13 +164,49 @@ class EntityContainer {
      * @param callback: Callback called after operation finished
      */
     updateList(options={},callback) {
-        var self = this;
-        const props = self.getProps();
-        const state = self.getState();
+        if (!callback) callback = () => null;
+        const self = this;
+        this.prepareListRequest(options, function(stateNumberOfItems,options) {
+            Backend.getList(self.model,options, function(err,result) {
+                if (err) {
+                    result = [];
+                }
+                const state = self.getState();
+                const list = _.cloneDeep(state.list);
+                if (!_.isEqual(list[self.model],result)) {
+                    if (options["append"] === true) {
+                        for (var i in result) {
+                            list[self.model].push(result[i])
+                        }
+                    } else {
+                        list[self.model] = result;
+                    }
+                    Store.store.dispatch(actions.changeProperties({
+                        'list': list,
+                        'numberOfItems': stateNumberOfItems
+                    }));
+                }
+                Store.store.dispatch(actions.changeProperty('isUpdating', false));
+                callback();
+            });
+        });
+    }
+
+    /**
+     * Method used to prepare data for "updateList" method request. It gets input request options
+     * retrieves number of list items in database, populates input options with data, based on received
+     * number of items and returns populated parameters in backend
+     * @param options - Input request options
+     * @param callback - Function called in return with params: stateNumberOfItems - copy of "numberOfItems" array
+     * of applicaiton state in which numberOfItems of current entity populated by newest value from DB, options -
+     * changed input options array
+     */
+    prepareListRequest(options,callback) {
+        if (!callback) callback = () => null;
+        const props = this.getProps();
+        const state = this.getState();
         var pageNumber = props.pageNumber;
-        if (options["append"] !== true) {
-            pageNumber = 1;
-        }
+        if (options["append"] !== true) pageNumber = 1;
         if (props.listFilter && props.listFilter.length) {
             options["filter_value"] = props.listFilter;
             options["filter_fields"] = Object.keys(props.listColumns);
@@ -182,38 +218,17 @@ class EntityContainer {
             if (err) {
                 result = 0;
             }
-            var stateNumberOfiItems = _.cloneDeep(state.numberOfItems);
-            stateNumberOfiItems[self.model] = result;
-            var skip = (pageNumber-1)*props.itemsPerPage;
-            options["skip"] = skip>=0 ? skip : 0;
+            var stateNumberOfItems = _.cloneDeep(state.numberOfItems);
+            stateNumberOfItems[self.model] = result;
+            var skip = (pageNumber - 1) * props.itemsPerPage;
+            options["skip"] = skip >= 0 ? skip : 0;
             options["limit"] = props.itemsPerPage;
-            options["order"] = props.sortOrder.field+" "+props.sortOrder.direction;
+            options["order"] = props.sortOrder.field + " " + props.sortOrder.direction;
             if (props.listFilter && props.listFilter.length) {
                 options["filter_value"] = props.listFilter;
                 options["filter_fields"] = Object.keys(props.listColumns).join(",");
             }
-            Backend.getList(self.model,options, function(err,result) {
-                if (err) {
-                    result = [];
-                }
-                var state = self.getState();
-                var list = _.cloneDeep(state.list);
-                if (!_.isEqual(list[self.model],result)) {
-                    if (options["append"] === true) {
-                        for (var i in result) {
-                            list[self.model].push(result[i])
-                        }
-                    } else {
-                        list[self.model] = result;
-                    }
-                    Store.store.dispatch(actions.changeProperties({
-                        'list': list,
-                        'numberOfItems': stateNumberOfiItems
-                    }));
-                }
-                Store.store.dispatch(actions.changeProperty('isUpdating', false));
-                if (callback) callback();
-            });
+            callback(stateNumberOfItems,options);
         });
     }
 
@@ -222,9 +237,7 @@ class EntityContainer {
      * @param uid: ID of item to check/uncheck
      */
     selectItem(uid) {
-        if (!uid) {
-            return;
-        }
+        if (!uid) return;
         const state = this.getState();
         var selectedItems = _.cloneDeep(state.selectedItems[this.model] ? state.selectedItems[this.model]: []);
         if (selectedItems.indexOf(uid) === -1) {
@@ -509,6 +522,30 @@ class EntityContainer {
                 }
             }
         ])
+    }
+
+    /**
+     * Method used to fetch list of companies from backend and populate appropriate property in state
+     * which then used to display list of companies in dropdowns
+     * @param callback
+     */
+    getCompaniesList(callback) {
+        Backend.getList('company',{}, function(err, response) {
+            var companies_list = [];
+            if (err || typeof(response) !== "object") {
+                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
+                if (callback) {
+                    callback();
+                }
+                return;
+            }
+            companies_list = response.map(function (item) {
+                return {value: item['uid'], label: item["name"]};
+            });
+            if (callback) {
+                callback(companies_list);
+            }
+        });
     }
 
     /**

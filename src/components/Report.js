@@ -28,7 +28,7 @@ class Report extends Entity {
      * @returns Initialized item
      */
     initItem() {
-        var item = this.props.item;
+        const item = this.props.item;
         if (!item.company) item.company = '';
         if (!item.date) item.date = moment().unix();
         if (!item.period) item.period = moment().unix();
@@ -38,67 +38,36 @@ class Report extends Entity {
     }
 
     /**
-     * Method used to render detail view
+     * Method returns list of periods for "Период отчета" dropdown
+     * @returns {Array}
      */
-    renderItem() {
-        if (!this.props.item) return null;
-        var item = this.initItem();
+    getReportPeriods() {
         var years = [];
         var startYear = (new Date()).getFullYear()-1;
         for (var i=0;i<11;i++) {
             startYear += 1;
             years.push({value:moment(startYear+"-01-01").unix(),label:startYear+" "+t("г.")})
         }
+        return years;
+    }
+
+    /**
+     * Method used to render detail view
+     */
+    renderItem() {
+        if (!this.props.item) return null;
+        const item = this.initItem();
+        const years = this.getReportPeriods();
         return (
         <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
             {this.renderStatusMessages()}
             <ScrollView style={{backgroundColor:'white'}}>
                 <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                    <FormLabel>{t("Организация")}</FormLabel>
-                    <Picker items={this.props.companies_list}
-                     onValueChange={(value) => {this.props.changeItemField("company",value)}}
-                            value={item["company"]}
-                            style={styles.inputField}
-                    />
-                    {this.renderFieldErrorMessage("company")}
-                    <FormLabel>{t("Тип отчета")}</FormLabel>
-                    <Picker items={this.props.report_types}
-                            onValueChange={(value) => this.props.changeItemField("type",value)}
-                            value={item["type"]}
-                            style={styles.inputField}
-                    />
-                    {this.renderFieldErrorMessage("type")}
-                    <FormLabel>{t("Дата")}</FormLabel>
-                    <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                        <DatePicker
-                            date={moment(item["date"]*1000).format('YYYY-MM-DD HH:mm:ss')}
-                            mode="datetime"
-                            placeholder={t("Дата отчета")}
-                            format="YYYY-MM-DD HH:mm:ss"
-                            confirmBtnText={t("ОК")}
-                            cancelBtnText={t("Отмена")}
-                            showIcon={false}
-                            onDateChange={(date) => this.props.changeItemField('date',date)}
-                            customStyles={{
-                                dateInput: styles.inputField
-                            }}
-                        />
-                    </View>
-                    {this.renderFieldErrorMessage("date")}
-                    <FormLabel>{t("Период отчета")}</FormLabel>
-                    <Picker items={years}
-                            onValueChange={(value) => this.props.changeItemField("period",value)}
-                            value={item["period"]}/>
-                    {this.renderFieldErrorMessage("period")}
-                    <FormLabel>{t("Email")}</FormLabel>
-                    <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                        <FormInput value={item["email"]} autoCapitalize="none" autoCorrect={false}
-                                   onChangeText={(value) => this.props.changeItemField("email",value)}
-                                   inputStyle={styles.inputField}
-                                   keyboardType="email-address"
-                        />
-                    </View>
-                    {this.renderFieldErrorMessage("email")}
+                    {this.renderPickerField("company",item["company"],"Организация",this.props.companies_list)}
+                    {this.renderPickerField("type",item["type"],"Тип отчета",this.props.report_types)}
+                    {this.renderDateField("date",item["date"],"Дата")}
+                    {this.renderPickerField("period",item["period"],"Период отчета",years)}
+                    {this.renderInputField("email",item["email"],"Email","email-address")}
                     <FormLabel>{""}</FormLabel>
                     <Button
                         raised
@@ -113,7 +82,6 @@ class Report extends Entity {
         </View>
         )
     }
-
 }
 
 export default Report;

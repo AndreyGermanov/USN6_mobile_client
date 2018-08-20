@@ -129,7 +129,7 @@ class ReportContainer extends DocumentContainer {
 
     /**
      * Method used to update "Report types" list in application state
-     * @param callback: Function which called after opertation finished
+     * @param callback: Function which called after operation finished
      */
     loadReportTypes(callback) {
         Backend.request("/report/types",{},"GET",{},null, function(err,response) {
@@ -160,18 +160,9 @@ class ReportContainer extends DocumentContainer {
      * Method called after standard "updateItem" action
      */
     updateItem(uid,callback) {
-        var self = this;
+        const self = this;
         super.updateItem(uid,function() {
-            Backend.getList('company',{}, function(err, response) {
-                var companies_list = [];
-                if (err || typeof(response) !== "object") {
-                    Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                    if (callback) callback();
-                    return;
-                }
-                companies_list = response.map(function(item) {
-                    return {value:item['uid'],label:item["name"]};
-                });
+            self.getCompaniesList((companies_list) => {
                 self.loadReportTypes(function(report_types) {
                     Store.store.dispatch(actions.changeProperties(
                         {
@@ -191,57 +182,76 @@ class ReportContainer extends DocumentContainer {
      */
     sendByEmail(callback) {
         const self = this;
-        Store.store.dispatch(actions.changeProperty("errors",{}));
-        var errors = {};
-        errors = this.validate();
-        if (errors !== null) {
-            Store.store.dispatch(actions.changeProperty("errors",errors));
-            if (callback) callback();
-            return;
-        }
-        errors = {}
-        Store.store.dispatch(actions.changeProperty("errors",{}));
+        if (!callback) callback = () => null;
+        if (!this.isValidForEmail()) {callback();return;};
         const props = this.getProps();
-        const state = this.getState();
         const item = props.item;
-        var email = item["email"];
-        if (!email || !email.trim()) {
-            Store.store.dispatch(actions.changeProperty("errors",{email:t("Укажите адрес email")}));
-            if (callback) callback();
-            return
-        }
         Store.store.dispatch(actions.changeProperty('isUpdating',true));
         var url = "http://"+backendConfig.host+":"+backendConfig.port+
-            "/report/generate/"+item["company"].replace(/\#/,"").replace(/\:/g,"_")+"/"+
+            "/report/generate/"+item["company"].replace(/#/,"").replace(/:/g,"_")+"/"+
             item["type"]+"/"+item["period"]+"/email";
         Backend.getAuthToken(null,null, function(token) {
             if (token) url += '?token='+token;
-            url += "&email="+email;
+            url += "&email="+item["email"].trim();
+            console.log(url);
             Backend.request(url,{},'GET',{},null, function(err,response) {
-                Store.store.dispatch(actions.changeProperty('isUpdating',false));
-                if (err) {
-                    Store.store.dispatch(actions.changeProperty('errors',{'general': t("Системная ошибка")}));
-                    return;
-                }
-                response.text().then(function(text) {
-                    if (text && text.length) {
-                        Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
-                        if (callback) callback();
-                        return;
-                    } else {
-                        Store.store.dispatch(
-                            actions.changeProperty("itemSaveSuccessText", t("Операция успешно завершена"))
-                        );
-                        setTimeout(function () {
-                            Store.store.dispatch(actions.changeProperty("itemSaveSuccessText", ""));
-                        }, 3000);
-                        if (callback) callback();
-                    }
-                }).catch(function() {
-                    if (callback) callback();
-                })
+                self.processSendByEmailResponse(err,response,callback)
             })
         });
+    }
+
+    /**
+     * Utility method used to make form validation when user presses "Send by email" button
+     * @returns Boolean - True if form is valid and false otherwise
+     */
+    isValidForEmail() {
+        Store.store.dispatch(actions.changeProperty("errors",{}));
+        const errors = this.validate();
+        if (errors !== null) {
+            Store.store.dispatch(actions.changeProperty("errors",errors));
+            return false;
+        }
+        const props = this.getProps();
+        const item = props.item;
+        const email = item["email"];
+        if (!email || !email.trim()) {
+            Store.store.dispatch(actions.changeProperty("errors",{email:t("Укажите адрес email")}));
+            return false
+        }
+        return true;
+    }
+
+    /**
+     * Utility method used to handle response from server after user presses "Send by email" button
+     * @param err - Error object
+     * @param response - Server response object
+     * @param callback - Function called after method executed
+     */
+    processSendByEmailResponse(err,response,callback) {
+        const self = this;
+        if (!callback) callback = () => null;
+        Store.store.dispatch(actions.changeProperty('isUpdating',false));
+        if (err) {
+            Store.store.dispatch(actions.changeProperty('errors',{'general': t("Системная ошибка")}));
+            callback();
+            return;
+        }
+        response.text().then(function(text) {
+            if (text && text.length) {
+                Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
+                callback();
+            } else {
+                Store.store.dispatch(
+                    actions.changeProperty("itemSaveSuccessText", t("Операция успешно завершена"))
+                );
+                setTimeout(function () {
+                    Store.store.dispatch(actions.changeProperty("itemSaveSuccessText", ""));
+                }, 3000);
+                callback();
+            }
+        }).catch(function() {
+            callback();
+        })
     }
 
     /**

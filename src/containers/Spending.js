@@ -101,17 +101,9 @@ class SpendingContainer extends DocumentContainer {
      * Method called after standard "updateItem" action
      */
     updateItem(uid,callback) {
+        const self = this;
         super.updateItem(uid, function() {
-            Backend.getList('company',{}, function(err, response) {
-                var companies_list = [];
-                if (err || typeof(response) !== "object") {
-                    Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                    if (callback) callback();
-                    return;
-                }
-                companies_list = response.map(function(item) {
-                    return {value:item['uid'],label:item["name"]};
-                });
+            self.getCompaniesList((companies_list) => {
                 Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
                 Backend.request("/spending/types",{},"GET",{},null, function(err,response) {
                     if (!err && response) {

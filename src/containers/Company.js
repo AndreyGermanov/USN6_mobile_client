@@ -105,8 +105,6 @@ class CompanyContainer extends EntityContainer {
         };
         return result;
     }
-
-
 }
 
 var company = new CompanyContainer();

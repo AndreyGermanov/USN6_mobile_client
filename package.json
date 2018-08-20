@@ -20,6 +20,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-keyboard-aware-scroll-view": "^0.6.0",
     "react-native-picker-select": "^4.1.0",
+    "react-native-select-input-ios": "^1.2.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.9.3",
     "react-redux": "^5.0.7",
@@ -32,6 +33,19 @@
     "react-test-renderer": "16.4.1"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "modulePaths": [
+      "<rootDir>"
+    ]
   }
 }

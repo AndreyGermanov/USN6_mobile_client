@@ -36,6 +36,16 @@ class Company extends Entity {
     }
 
     /**
+     * Method returns list of options for "Тип" dropdown
+     */
+    getTypesList() {
+        return [
+            {label:t("Индивидуальный предприниматель"),value:1},
+            {label:t("Общество с ограниченной ответственностью"),value:2}
+        ]
+    }
+
+    /**
      * Method used to render detail view
      */
     renderItem() {
@@ -45,47 +55,15 @@ class Company extends Entity {
                 {this.renderStatusMessages()}
                 <ScrollView style={{backgroundColor:'white'}}>
                     <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                        <FormLabel>{t("Имя")}</FormLabel>
-                        <FormInput value={item["name"]} autoCapitalize="none" autoCorrect={false}
-                                   inputStyle={styles.inputField}
-                                   onChangeText={(value) => this.props.changeItemField("name",value)}/>
-                        {this.renderFieldErrorMessage("name")}
-                        <FormLabel>{t("Тип")}</FormLabel>
-                        <Picker items={
-                            [
-                                {label:t("Индивидуальный предприниматель"),value:1},
-                                {label:t("Общество с ограниченной ответственностью"),value:2}
-                            ]
-                        } onValueChange={(value,index) => this.props.changeItemField("type",parseInt(index))}
-                                value={parseInt(item["type"])}
-                                style={styles.inputField}
-                        />
-                        {this.renderFieldErrorMessage("type")}
-                        <FormLabel>{t("ИНН")}</FormLabel>
-                        <FormInput value={item["inn"]} autoCapitalize="none" autoCorrect={false}
-                                   onChangeText={(value) => this.props.changeItemField("inn",value)}
-                                   inputStyle={styles.inputField}
-                                   keyboardType="numeric"
-                        />
-                        {this.renderFieldErrorMessage("inn")}
+                        {this.renderInputField("name",item["name"],"Имя")}
+                        {this.renderPickerField("type",item["type"],"Тип",this.getTypesList())}
+                        {this.renderInputField("inn",item["inn"],"ИНН","numeric")}
                         {item["type"] === 2 ?
                             <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                                <FormLabel>{t("КПП")}</FormLabel>
-                                <FormInput value={item["kpp"]} autoCapitalize="none" autoCorrect={false}
-                                    onChangeText={(value) => this.props.changeItemField("kpp",value)}
-                                    inputStyle={styles.inputField}
-                                    keyboardType="numeric"
-                                />
-                                {this.renderFieldErrorMessage("kpp")}
+                                {this.renderInputField("kpp",item["kpp"],"КПП","numeric")}
                             </View>
                         : null}
-                        <FormLabel>{t("Адрес")}</FormLabel>
-                        <FormInput value={item["address"]} autoCapitalize="none" autoCorrect={false}
-                                   onChangeText={(value) => this.props.changeItemField("address",value)}
-                                   inputStyle={styles.inputField}
-                                   mulitline={true}
-                        />
-                        {this.renderFieldErrorMessage("address")}
+                        {this.renderInputField("address",item["address"],"Адрес","default",true)}
                     </View>
                 </ScrollView>
             </View>

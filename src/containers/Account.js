@@ -82,24 +82,11 @@ class AccountContainer extends EntityContainer {
      */
 
     updateItem(uid,callback) {
+        const self = this;
         super.updateItem(uid, function() {
-            Backend.getList('company',{}, function(err, response) {
-                var companies_list = [];
-                if (err || typeof(response) !== "object") {
-                    Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                    if (callback) {
-                        callback();
-                    }
-                    return;
-                }
-                companies_list = response.map(function(item) {
-                    return {value:item['uid'],label:item["name"]};
-                });
-                Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                if (callback) {
-                    callback();
-                }
-            })
+            self.getCompaniesList((companies_list) => {
+                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
+            });
         })
     }
 
