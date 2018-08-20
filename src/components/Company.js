@@ -1,10 +1,7 @@
 import Entity from './Entity'
 import React from "react";
 import t from '../utils/translate/translate';
-import {View,ScrollView} from 'react-native';
-import {FormInput,FormLabel} from 'react-native-elements';
-import Picker from 'react-native-picker-select';
-import styles from '../styles/Styles';
+import {View} from 'react-native';
 
 /**
  * Component used to manage "Companies" page (both list and item views)
@@ -46,28 +43,22 @@ class Company extends Entity {
     }
 
     /**
-     * Method used to render detail view
+     * Method used to render contents of form in detail view
+     * @param item: Entity to display in the form
+     * @returns array of rendered components
      */
-    renderItem() {
-        const item = this.initItem();
-        return (
-            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                {this.renderStatusMessages()}
-                <ScrollView style={{backgroundColor:'white'}}>
-                    <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                        {this.renderInputField("name",item["name"],"Имя")}
-                        {this.renderPickerField("type",item["type"],"Тип",this.getTypesList())}
-                        {this.renderInputField("inn",item["inn"],"ИНН","numeric")}
-                        {item["type"] === 2 ?
-                            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                                {this.renderInputField("kpp",item["kpp"],"КПП","numeric")}
-                            </View>
-                        : null}
-                        {this.renderInputField("address",item["address"],"Адрес","default",true)}
-                    </View>
-                </ScrollView>
-            </View>
-        )
+    renderForm(item) {
+        return [
+            this.renderInputField("name",item["name"],"Имя"),
+            this.renderPickerField("type",item["type"],"Тип",this.getTypesList()),
+            this.renderInputField("inn",item["inn"],"ИНН","numeric"),
+            item["type"] === 2 ?
+                <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
+                    {this.renderInputField("kpp",item["kpp"],"КПП","numeric")}
+                </View>
+            : null,
+            this.renderInputField("address",item["address"],"Адрес","default",true)
+        ]
     }
 }
 

@@ -3,11 +3,6 @@ import Document from './Document';
 import t from '../utils/translate/translate';
 import moment from 'moment-timezone'
 import Entity from "./Entity";
-import styles from "../styles/Styles";
-import {ScrollView,View} from 'react-native';
-import {FormLabel,FormInput} from 'react-native-elements';
-import DatePicker from 'react-native-datepicker';
-import Picker from 'react-native-picker-select';
 
 /**
  * Component used to manage "Spendings" page (both list and item views)
@@ -41,30 +36,20 @@ class Spending extends Document {
     }
 
     /**
-     * Method used to render detail view
+     * Method used to render contents of form in detail view
+     * @param item: Entity to display in the form
+     * @returns array of rendered components
      */
-    renderItem() {
-        if (!this.props.item) return null;
-        var item = this.initItem();
-        console.log(this.props.spending_types);
-        console.log(item);
-        return (
-            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                {this.renderStatusMessages()}
-                <ScrollView style={{backgroundColor:'white'}}>
-                    <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                        {this.renderInputField("company",item["company"],"Организация",this.props.companies_list)}
-                        {this.renderPickerField("type",item["type"],"Тип расхода",this.props.spending_types)}
-                        {this.renderInputField("number",item["number"],"Номер документа","numeric")}
-                        {this.renderDateField("date",item["date"],"Дата документа")}
-                        {this.renderInputField("period",item["period"],"Период расхода")}
-                        {this.renderInputField("amount",item["amount"],"Сумма расхода","decimal-pad")}
-                        {this.renderInputField("description",item["description"],"Описание операции","default",true)}
-                        <FormLabel>{""}</FormLabel>
-                    </View>
-                </ScrollView>
-            </View>
-        )
+    renderForm(item) {
+        return [
+            this.renderPickerField("company",item["company"],"Организация",this.props.companies_list),
+            this.renderPickerField("type",item["type"],"Тип расхода",this.props.spending_types),
+            this.renderInputField("number",item["number"],"Номер документа","numeric"),
+            this.renderDateField("date",item["date"],"Дата документа"),
+            this.renderInputField("period",item["period"],"Период расхода"),
+            this.renderInputField("amount",item["amount"],"Сумма расхода","decimal-pad"),
+            this.renderInputField("description",item["description"],"Описание операции","default",true)
+        ]
     }
 }
 

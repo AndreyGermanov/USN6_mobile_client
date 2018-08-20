@@ -31,17 +31,17 @@ class Login extends Component {
      * Method used to render view
      */
     render() {
-        this.initItem();
+        const item = this.initItem();
         return (
             <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
                 <FormValidationMessage>{this.props.errors["general"]}</FormValidationMessage>
                 <FormLabel>{t("Имя")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={this.props.item["login"]}
+                <FormInput inputStyle={Style.inputField} value={item["login"]}
                            autoCapitalize="none" autoCorrect={false}
                            onChangeText={(value) => this.props.changeItemField("login",value)}/>
                 <FormValidationMessage>{this.props.errors["login"]}</FormValidationMessage>
                 <FormLabel>{t("Пароль")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={this.props.item["password"]}
+                <FormInput inputStyle={Style.inputField} value={item["password"]}
                            autoCapitalize="none" autoCorrect={false}
                            onChangeText={(value) => this.props.changeItemField("password",value)}
                            secureTextEntry={true}/>

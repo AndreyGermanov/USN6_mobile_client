@@ -2,11 +2,7 @@ import React from 'react';
 import Entity from './Entity';
 import moment from "moment-timezone";
 import t from "../utils/translate/translate";
-import styles from "../styles/Styles";
-import Picker from 'react-native-picker-select';
-import {View,ScrollView,Text} from 'react-native';
-import {FormInput,FormLabel,Button} from 'react-native-elements';
-import DatePicker from 'react-native-datepicker';
+import {FormLabel,Button} from 'react-native-elements';
 
 /**
  * Component used to manage "Reports" page (both list and item views)
@@ -52,35 +48,24 @@ class Report extends Entity {
     }
 
     /**
-     * Method used to render detail view
+     * Method used to render contents of form in detail view
+     * @param item: Entity to display in the form
+     * @returns array of rendered components
      */
-    renderItem() {
-        if (!this.props.item) return null;
-        const item = this.initItem();
-        const years = this.getReportPeriods();
-        return (
-        <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-            {this.renderStatusMessages()}
-            <ScrollView style={{backgroundColor:'white'}}>
-                <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
-                    {this.renderPickerField("company",item["company"],"Организация",this.props.companies_list)}
-                    {this.renderPickerField("type",item["type"],"Тип отчета",this.props.report_types)}
-                    {this.renderDateField("date",item["date"],"Дата")}
-                    {this.renderPickerField("period",item["period"],"Период отчета",years)}
-                    {this.renderInputField("email",item["email"],"Email","email-address")}
-                    <FormLabel>{""}</FormLabel>
-                    <Button
-                        raised
-                        icon={{name: 'envelope', type:'font-awesome', color:"white"}}
-                        title={t('Отправить по email')}
-                        backgroundColor="#339CFF" color="white"
-                        onPress={()=>this.props.sendByEmail.bind(this)()}
-                    />
-                    <FormLabel>{""}</FormLabel>
-                </View>
-            </ScrollView>
-        </View>
-        )
+    renderForm(item) {
+        return [
+            this.renderPickerField("company",item["company"],"Организация",this.props.companies_list),
+            this.renderPickerField("type",item["type"],"Тип отчета",this.props.report_types),
+            this.renderDateField("date",item["date"],"Дата"),
+            this.renderPickerField("period",item["period"],"Период отчета",this.getReportPeriods()),
+            this.renderInputField("email",item["email"],"Email","email-address"),
+            <FormLabel>{""}</FormLabel>,
+            <Button raised icon={{name: 'envelope', type:'font-awesome', color:"white"}}
+                    title={t('Отправить по email')}
+                    backgroundColor="#339CFF" color="white"
+                    onPress={()=>this.props.sendByEmail.bind(this)()}
+            />
+        ]
     }
 }
 

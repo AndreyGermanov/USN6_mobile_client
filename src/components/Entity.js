@@ -254,7 +254,36 @@ class Entity extends Component {
      * @returns Rendered component
      */
     renderItem() {
-        return null
+        if (!this.props.item) return null;
+        var item = this.initItem();
+        return (
+            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
+                {this.renderStatusMessages()}
+                <ScrollView style={{backgroundColor:'white'}}>
+                    <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
+                        {this.renderForm(item)}
+                        <FormLabel>{""}</FormLabel>
+                    </View>
+                </ScrollView>
+            </View>
+        )
+    }
+
+    /**
+     * Method initializes all properties of item
+     * @returns Initialized item
+     */
+    initItem() {
+        return this.props.item;
+    }
+
+    /**
+     * Method used to render contents of form in detail view
+     * @param item: Entity to display in the form
+     * @returns array of rendered components
+     */
+    renderForm(item) {
+        return []
     }
 
     /**
@@ -344,11 +373,14 @@ class Entity extends Component {
      * @param label - Label of field
      * @param mode - Mode of work ("date","datetime")
      * @param format - Format of data display in field
+     * @param onChange - function, which handles onChange event of field. Takes two arguments:
+     * name - name of field, value - current value
      * @returns Rendered element
      */
-    renderDateField(name,value,label,mode="datetime",format="YYYY-MM-DD HH:mm:ss") {
+    renderDateField(name,value,label,mode="datetime",format="YYYY-MM-DD HH:mm:ss",onChange=this.props.changeItemField) {
         if (!mode) mode="datetime";
         if (!format) format = "YYYY-MM-DD HH:mm:ss";
+        if (!onChange) onChange = this.props.changeItemField;
         return [
             <FormLabel>{t(label)}</FormLabel>,
             <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
@@ -360,7 +392,7 @@ class Entity extends Component {
                     confirmBtnText={t("ОК")}
                     cancelBtnText={t("Отмена")}
                     showIcon={false}
-                    onDateChange={(date) => this.props.changeItemField(name,date)}
+                    onDateChange={(date) => onChange(name,date)}
                     customStyles={{
                         dateInput: styles.inputField
                     }}

@@ -25,38 +25,10 @@ class Document extends Entity {
                         backgroundColor:"#ffffff",borderWidth:1,borderColor:"#000000",flex:1,flexDirection:'column'
                     }
                 }>
-                    <FormLabel>{t("Дата начала")}</FormLabel>
-                    <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                        <DatePicker
-                            date={moment(this.props.periodStart*1000).format('YYYY-MM-DD')}
-                            mode="date"
-                            placeholder={t("Дата начала")}
-                            format="YYYY-MM-DD HH:mm:ss"
-                            confirmBtnText={t("ОК")}
-                            cancelBtnText={t("Отмена")}
-                            showIcon={false}
-                            onDateChange={(date) => this.props.changePeriodField('periodStart',date)}
-                            customStyles={{
-                                dateInput: styles.inputField
-                            }}
-                        />
-                    </View>
-                    <FormLabel>{t("Дата окончания")}</FormLabel>
-                    <View style={[styles.inputField,{marginLeft:10,marginRight:10}]}>
-                        <DatePicker
-                            date={moment(this.props.periodEnd*1000).format('YYYY-MM-DD')}
-                            mode="date"
-                            placeholder={t("Дата конца")}
-                            format="YYYY-MM-DD HH:mm:ss"
-                            confirmBtnText={t("ОК")}
-                            cancelBtnText={t("Отмена")}
-                            showIcon={false}
-                            onDateChange={(date) => this.props.changePeriodField('periodEnd',date)}
-                            customStyles={{
-                                dateInput: styles.inputField
-                            }}
-                        />
-                    </View>
+                    {this.renderDateField("periodStart",this.props.periodStart,"Дата начала",
+                        null,null,this.props.changePeriodField)}
+                    {this.renderDateField("periodEnd",this.props.periodEnd,"Дата окончания",
+                        null,null,this.props.changePeriodField)}
                 </View>
             </ScrollView>
         )
