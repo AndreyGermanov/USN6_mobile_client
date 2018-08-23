@@ -1,7 +1,7 @@
 import Entity from './Entity';
 import React from "react";
-import t from '../utils/translate/translate';
-import {Input,Select} from './ui/Form';
+import t from '../../utils/translate/translate';
+import {Input,Select} from '../ui/Form';
 
 /**
  * Component used to manage "Account" detail view

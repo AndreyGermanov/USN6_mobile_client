@@ -453,8 +453,7 @@ class EntityContainer {
                 result = {};
             }
             item[self.model] = result;
-            Store.store.dispatch(actions.changeProperty('item',item));
-            Store.store.dispatch(actions.changeProperty('isUpdating',false));
+            Store.store.dispatch(actions.changeProperties({'item':item,'isUpdating':false}));
             callback()
         });
     }
@@ -488,7 +487,6 @@ class EntityContainer {
             if (!item["uid"]) {
                 stateItem[self.model] = result["result"];
                 Store.store.dispatch(actions.changeProperties({uid: result["uid"], item: stateItem}));
-                window.location.href = "#"+self.model+"/"+result["uid"];
             }
             self.displaySuccessText();
         })
@@ -551,9 +549,11 @@ class EntityContainer {
                 callback();
                 return;
             }
-            companies_list = response.map(function (item) {
-                return {value: item['uid'], label: item["name"]};
-            });
+            companies_list = [{value:0,label:""}].concat(
+                response.map(function (item) {
+                    return {value: item['uid'], label: item["name"]};
+                })
+            );
             callback(companies_list);
         });
     }

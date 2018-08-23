@@ -65,20 +65,20 @@ class SpendingContainer extends DocumentContainer {
             self.getCompaniesList((companies_list) => {
                 Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
                 Backend.request("/spending/types",{},"GET",{},null, function(err,response) {
-                    if (!err && response) {
-                        response.json().then(function(spending_types) {
-                            const spending_types_array = [];
-                            for (let key in spending_types) {
-                                if (!spending_types.hasOwnProperty(key))
-                                    continue;
-                                spending_types_array.push({value:parseInt(key),label:spending_types[key]});
-                            }
-                            Store.store.dispatch(actions.changeProperty('spending_types',spending_types_array));
-                            callback();
-                        });
-                    } else {
+                    if (err || !response) {
                         callback();
+                        return;
                     }
+                    response.json().then(function(spending_types) {
+                        const spending_types_array = [];
+                        for (let key in spending_types) {
+                            if (!spending_types.hasOwnProperty(key))
+                                continue;
+                            spending_types_array.push({value:parseInt(key),label:spending_types[key]});
+                        }
+                        Store.store.dispatch(actions.changeProperty('spending_types',spending_types_array));
+                        callback();
+                    });
                 })
             })
         })

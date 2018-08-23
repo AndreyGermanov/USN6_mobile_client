@@ -1,7 +1,7 @@
 import React,{Component} from "react";
 import {View,ScrollView} from 'react-native'
 import {Button,FormLabel} from 'react-native-elements'
-import {Form,StatusMessage} from './ui/Form';
+import {Form,StatusMessage} from '../ui/Form';
 
 /**
  * Base class used to render item of list

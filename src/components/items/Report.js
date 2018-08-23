@@ -1,9 +1,9 @@
 import React from 'react';
 import Entity from './Entity';
 import moment from "moment-timezone";
-import t from "../utils/translate/translate";
+import t from "../../utils/translate/translate";
 import {FormLabel,Button} from 'react-native-elements';
-import {Input,Select,DateTime} from './ui/Form';
+import {Input,Select,DateTime} from '../ui/Form';
 
 /**
  * Component used to manage "Report" detail view.

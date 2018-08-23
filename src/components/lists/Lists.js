@@ -4,11 +4,11 @@
 
 import EntityList from './EntityList';
 import DocumentList from './DocumentList';
-import AccountItem from "./Account";
-import CompanyItem from "./Company";
-import ReportItem from "./Report";
-import IncomeItem from "./Income";
-import SpendingItem from "./Spending";
+import AccountItem from "../items/Account";
+import CompanyItem from "../items/Company";
+import ReportItem from "../items/Report";
+import IncomeItem from "../items/Income";
+import SpendingItem from "../items/Spending";
 
 class AccountList extends EntityList {
     static navigationOptions = () => {

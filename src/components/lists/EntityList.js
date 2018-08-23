@@ -1,12 +1,12 @@
 import React,{Component} from 'react';
-import t from "../utils/translate/translate";
-import NavigationService from "../utils/NavigationService";
-import Entity from "./Entity";
-import Backend from "../backend/Backend";
+import t from "../../utils/translate/translate";
+import NavigationService from "../../utils/NavigationService";
+import Entity from "../items/Entity";
+import Backend from "../../backend/Backend";
 import {Text,View,TouchableOpacity,FlatList,ScrollView} from 'react-native';
 import {Button,SearchBar} from 'react-native-elements';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
-import Styles from '../styles/Styles';
+import Styles from '../../styles/Styles';
 
 /**
  * Base class which renders list of items

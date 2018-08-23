@@ -2,7 +2,7 @@ import React from 'react';
 import EntityList from './EntityList';
 import {View,ScrollView,TouchableOpacity} from 'react-native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
-import {DateTime} from './ui/Form';
+import {DateTime} from '../ui/Form';
 
 /**
  * Base component to manage lists of documents. All documents inherits from it

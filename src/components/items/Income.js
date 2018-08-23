@@ -1,9 +1,9 @@
 import React from 'react';
 import Document from './Document';
-import t from '../utils/translate/translate';
+import t from '../../utils/translate/translate';
 import moment from 'moment-timezone'
 import Entity from "./Entity";
-import {Input,Select,DateTime} from './ui/Form';
+import {Input,Select,DateTime} from '../ui/Form';
 
 /**
  * Component used to manage "Income" detail view

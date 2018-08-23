@@ -57,12 +57,9 @@ class ReportContainer extends DocumentContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        const self = this;
         const result = super.mapDispatchToProps(dispatch);
-        result["findReportById"] = (report_id) => {
-            return self.findReportById(report_id);
-        };
-        result["sendByEmail"] = () => self.sendByEmail();
+        result["findReportById"] = (report_id) => this.findReportById(report_id);
+        result["sendByEmail"] = () => this.sendByEmail();
         return result;
     }
 
@@ -99,19 +96,19 @@ class ReportContainer extends DocumentContainer {
     loadReportTypes(callback) {
         if (!callback) callback = () => null;
         Backend.request("/report/types",{},"GET",{},null, function(err,response) {
-            if (!err && response) {
-                response.json().then(function(report_types) {
-                    const report_types_array = [];
-                    for (let key in report_types) {
-                        if (!report_types.hasOwnProperty(key))
-                            continue;
-                        report_types_array.push({value:key,label:report_types[key]});
-                    }
-                    callback(report_types_array);
-                });
-            } else {
+            if (err || !response) {
                 callback([]);
+                return;
             }
+            response.json().then(function(report_types) {
+                const report_types_array = [];
+                for (let key in report_types) {
+                    if (!report_types.hasOwnProperty(key))
+                        continue;
+                    report_types_array.push({value:key,label:report_types[key]});
+                }
+                callback(report_types_array);
+            });
         })
     }
 
@@ -194,17 +191,13 @@ class ReportContainer extends DocumentContainer {
             callback();
             return;
         }
+        const self = this;
         response.text().then(function(text) {
             if (text && text.length) {
                 Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
                 callback();
             } else {
-                Store.store.dispatch(
-                    actions.changeProperty("itemSaveSuccessText", t("Операция успешно завершена"))
-                );
-                setTimeout(function () {
-                    Store.store.dispatch(actions.changeProperty("itemSaveSuccessText", ""));
-                }, 3000);
+                self.displaySuccessText();
                 callback();
             }
         }).catch(function() {

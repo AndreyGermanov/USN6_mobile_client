@@ -13,6 +13,31 @@ import NavigationService from '../utils/NavigationService';
 class LoginContainer {
 
     /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        return {
+            errors: state.errors,
+            item: state.item,
+        }
+    }
+
+    /**
+     * Function defines methods which will be available inside component, which this controller manages
+     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
+     * @returns object of methods, which are available in component
+     */
+    mapDispatchToProps(dispatch) {
+        const self = this;
+        return {
+            doLogin: () => self.doLogin(),
+            changeItemField: (field_name, field_value) => self.changeItemField(field_name, field_value)
+        }
+    }
+
+    /**
      * Method, called when user presses "Login" button
      */
     doLogin() {
@@ -49,30 +74,6 @@ class LoginContainer {
         Store.store.dispatch(actions.changeProperty('item',item));
     }
 
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @returns Array of properties
-     */
-    mapStateToProps(state) {
-        return {
-            errors: state.errors,
-            item: state.item,
-        }
-    }
-
-    /**
-     * Function defines methods which will be available inside component, which this controller manages
-     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
-     * @returns object of methods, which are available in component
-     */
-    mapDispatchToProps(dispatch) {
-        const self = this;
-        return {
-            doLogin: () => self.doLogin(),
-            changeItemField: (field_name,field_value) => self.changeItemField(field_name,field_value)
-        }
-    }
 }
 
 const login = new LoginContainer();
