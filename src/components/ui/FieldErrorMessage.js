@@ -26,18 +26,6 @@ class FieldErrorMessage extends ScreenComponent {
         return errors[this.props.fieldName] && errors[this.props.fieldName].length ?
             <FormValidationMessage>{errors[this.props.fieldName]}</FormValidationMessage> : null
     }
-
-    /**
-     * Method used to fill default values for "props" of component
-     * @returns this.props filled with default values
-     */
-    getProps() {
-        let result = super.getProps();
-        result.mulitline = result.mulitline ? result.multiline: false;
-        result.keyboard = result.keyboard ? result.keyboard : 'default';
-        result.password = result.password ? result.password : false;
-        return result;
-    }
 }
 
 FieldErrorMessage.propTypes = (new FieldErrorMessage()).propTypes;
