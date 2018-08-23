@@ -6,7 +6,7 @@ import Entity from "./Entity";
 import {Input,Select,DateTime} from './ui/Form';
 
 /**
- * Component used to manage "Spendings" page (both list and item views)
+ * Component used to manage "Spending" detail view
  */
 class Spending extends Document {
 

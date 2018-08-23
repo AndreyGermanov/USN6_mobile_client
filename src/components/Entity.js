@@ -30,7 +30,6 @@ class Entity extends Component {
         }
     };
 
-
     /**
      * Main method used to render this view
      * @returns Rendered component

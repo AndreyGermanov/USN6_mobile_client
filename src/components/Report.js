@@ -6,7 +6,7 @@ import {FormLabel,Button} from 'react-native-elements';
 import {Input,Select,DateTime} from './ui/Form';
 
 /**
- * Component used to manage "Reports" page (both list and item views)
+ * Component used to manage "Report" detail view.
  */
 class Report extends Entity {
 

@@ -4,7 +4,7 @@ import t from '../utils/translate/translate';
 import {Input,Select} from './ui/Form';
 
 /**
- * Component used to manage "Companies" page (both list and item views)
+ * Component used to manage "Company" detail view
  */
 class Company extends Entity {
 

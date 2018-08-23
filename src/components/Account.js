@@ -4,7 +4,7 @@ import t from '../utils/translate/translate';
 import {Input,Select} from './ui/Form';
 
 /**
- * Component used to manage "Accounts" page (both list and item views)
+ * Component used to manage "Account" detail view
  */
 class Account extends Entity {
 
