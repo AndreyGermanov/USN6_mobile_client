@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import CompanyComponent from '../components/Company';
+import {List,Item} from '../components/Components';
 import EntityContainer from './Entity';
 import t from '../utils/translate/translate';
 
@@ -14,6 +14,31 @@ class CompanyContainer extends EntityContainer {
     constructor() {
         super();
         this.model = "company";
+        this.collection = "companies";
+    }
+
+    /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        const result = super.mapStateToProps(state);
+        result["listColumns"] = {
+            "inn": {
+                title: t("ИНН")
+            },
+            "kpp": {
+                title: t("КПП")
+            },
+            "name": {
+                title: t("Наименование")
+            }
+        };
+        if (!result["sortOrder"] || !result["sortOrder"].field) {
+            result["sortOrder"] = {field:'name',direction:'ASC'}
+        }
+        return result;
     }
 
     /**********************************
@@ -32,17 +57,16 @@ class CompanyContainer extends EntityContainer {
     }
 
     validate_kpp(value) {
-        var props = this.getProps();
-        var item = props.item;
-        if (this.cleanField_type(item["type"]) !== 2) return "";
+        const props = this.getProps();
+        if (this.cleanField_type(props.item["type"]) !== 2) return "";
         if (!this.cleanStringField(value)) return t("Не указан КПП");
         if (this.cleanIntField(value)===null) return t("Указан некорректный КПП");
         return "";
     }
 
     validate_type(value) {
-        var value = this.cleanIntField(value);
-        if (value !== 1 && value !== 2) return t("Указан некорректный тип организации");
+        const intValue = this.cleanIntField(value);
+        if (intValue !== 1 && intValue !== 2) return t("Указан некорректный тип организации");
         return "";
     }
 
@@ -65,7 +89,7 @@ class CompanyContainer extends EntityContainer {
     }
 
     cleanField_type(value) {
-        var result = this.cleanIntField(value);
+        const result = this.cleanIntField(value);
         if (result !==1 && result !==2) return null;
         return result;
     }
@@ -80,35 +104,8 @@ class CompanyContainer extends EntityContainer {
     cleanField_address(value) {
         return this.cleanStringField(value);
     }
-
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
-     * @returns Array of properties
-     */
-    mapStateToProps(state,ownProps) {
-        var result = super.mapStateToProps(state,ownProps);
-        result["listColumns"] = {
-            "inn": {
-                title: t("ИНН")
-            },
-            "kpp": {
-                title: t("КПП")
-            },
-            "name": {
-                title: t("Наименование")
-            }
-        };
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'name',direction:'ASC'}
-        };
-        return result;
-    }
 }
 
-var company = new CompanyContainer();
-var Company = connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(CompanyComponent);
-var CompanyItem = connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(CompanyComponent);
-export {Company,CompanyItem};
-export default CompanyContainer;
+const company = new CompanyContainer();
+export const Company = connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(Item.Company);
+export const Companies = connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(List.Company);

@@ -3,7 +3,6 @@ import t from "../utils/translate/translate";
 import {View,Text} from 'react-native';
 import Backend from '../backend/Backend';
 import NavigationService from '../utils/NavigationService';
-import {ScreenModes} from '../reducers/RootReducer';
 
 class Loading extends Component {
 
@@ -14,7 +13,7 @@ class Loading extends Component {
     tryLogin() {
         Backend.login(null,null, function(err) {
             if (!err) {
-                NavigationService.navigate('income',{screen_mode: ScreenModes.LIST});
+                NavigationService.navigate('incomes');
             } else {
                 NavigationService.navigate('Login');
             }
@@ -25,7 +24,7 @@ class Loading extends Component {
      * Method runs when component first loaded. Used to start login process
      */
     componentDidMount() {
-        var self = this;
+        const self = this;
         setTimeout(() => {
             self.tryLogin();
         },5000);

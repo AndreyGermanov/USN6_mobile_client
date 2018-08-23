@@ -1,7 +1,6 @@
 import {connect} from "react-redux";
-import AccountComponent from '../components/Account';
+import {List,Item} from '../components/Components';
 import EntityContainer from './Entity';
-import Backend from '../backend/Backend';
 import t from '../utils/translate/translate';
 import Store from '../store/Store';
 import actions from '../actions/Actions';
@@ -17,6 +16,47 @@ class AccountContainer extends EntityContainer {
     constructor() {
         super();
         this.model = "account";
+        this.collection = "accounts";
+    }
+
+    /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        const result = super.mapStateToProps(state);
+        result["listColumns"] = {
+            "number": {
+                title: t("Номер")
+            },
+            "bik": {
+                title: t("БИК")
+            },
+            "bank_name": {
+                title: t("Банк")
+            },
+            "company": {
+                title: t("Организация")
+            }
+        };
+        if (!result["sortOrder"] || !result["sortOrder"].field) {
+            result["sortOrder"] = {field:'number',direction:'ASC'}
+        }
+        result["companies_list"] = state.companies_list ? state.companies_list : [];
+        return result;
+    }
+
+    /**
+     * Method called after standard "updateItem" action
+     */
+    updateItem(uid,callback) {
+        const self = this;
+        super.updateItem(uid, function() {
+            self.getCompaniesList((companies_list) => {
+                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
+            });
+        })
     }
 
     /**********************************
@@ -76,51 +116,8 @@ class AccountContainer extends EntityContainer {
     cleanField_ks(value) {
         return this.cleanStringField(value);
     }
-
-    /**
-     * Method called after standard "updateItem" action
-     */
-
-    updateItem(uid,callback) {
-        const self = this;
-        super.updateItem(uid, function() {
-            self.getCompaniesList((companies_list) => {
-                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
-            });
-        })
-    }
-
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
-     * @returns Array of properties
-     */
-    mapStateToProps(state,ownProps) {
-        var result = super.mapStateToProps(state,ownProps);
-        result["listColumns"] = {
-            "number": {
-                title: t("Номер")
-            },
-            "bik": {
-                title: t("БИК")
-            },
-            "bank_name": {
-                title: t("Банк")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        }
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'number',direction:'ASC'}
-        };
-        result["companies_list"] = state.companies_list ? state.companies_list : [];
-        return result;
-    }
 }
 
-var account = new AccountContainer();
-var Account = connect(account.mapStateToProps.bind(account),account.mapDispatchToProps.bind(account))(AccountComponent);
-export {Account};
-export default AccountContainer;
+const account = new AccountContainer();
+export const Account = connect(account.mapStateToProps.bind(account),account.mapDispatchToProps.bind(account))(Item.Account);
+export const Accounts = connect(account.mapStateToProps.bind(account),account.mapDispatchToProps.bind(account))(List.Account);

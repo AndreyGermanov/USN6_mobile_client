@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import ReportComponent from '../components/Report'
+import {Item,List} from '../components/Components';
 import DocumentContainer from './Document'
 import t from '../utils/translate/translate'
 import actions from "../actions/Actions";
@@ -19,6 +19,197 @@ class ReportContainer extends DocumentContainer {
     constructor() {
         super();
         this.model = "report";
+        this.collection = "reports";
+    }
+
+    /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        const result = super.mapStateToProps(state);
+        result["listColumns"] = {
+            "date": {
+                title: t("Дата создания")
+            },
+            "period": {
+                title: t("Период отчета")
+            },
+            "type": {
+                title: t("Тип отчета")
+            },
+            "company": {
+                title: t("Организация")
+            }
+        };
+        if (!result["sortOrder"] || !result["sortOrder"].field) {
+            result["sortOrder"] = {field:'date',direction:'ASC'}
+        }
+        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
+        result["report_types"] = state["report_types"] ? state["report_types"] : [];
+        return result;
+    }
+
+    /**
+     * Function defines methods which will be available inside component, which this controller manages
+     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
+     * @returns object of methods, which are available in component
+     */
+    mapDispatchToProps(dispatch) {
+        const self = this;
+        const result = super.mapDispatchToProps(dispatch);
+        result["findReportById"] = (report_id) => {
+            return self.findReportById(report_id);
+        };
+        result["sendByEmail"] = () => self.sendByEmail();
+        return result;
+    }
+
+    updateList(options={}) {
+        super.updateList(options);
+        this.loadReportTypes();
+    }
+
+    /**
+     * Method called after standard "updateItem" action
+     */
+    updateItem(uid,callback) {
+        const self = this;
+        if (!callback) callback = () => null;
+        super.updateItem(uid,function() {
+            self.getCompaniesList((companies_list) => {
+                self.loadReportTypes(function(report_types) {
+                    Store.store.dispatch(actions.changeProperties(
+                        {
+                            'report_types':report_types,
+                            'companies_list':companies_list
+                        })
+                    );
+                    callback();
+                });
+            })
+        })
+    }
+
+    /**
+     * Method used to update "Report types" list in application state
+     * @param callback: Function which called after operation finished
+     */
+    loadReportTypes(callback) {
+        if (!callback) callback = () => null;
+        Backend.request("/report/types",{},"GET",{},null, function(err,response) {
+            if (!err && response) {
+                response.json().then(function(report_types) {
+                    const report_types_array = [];
+                    for (let key in report_types) {
+                        if (!report_types.hasOwnProperty(key))
+                            continue;
+                        report_types_array.push({value:key,label:report_types[key]});
+                    }
+                    callback(report_types_array);
+                });
+            } else {
+                callback([]);
+            }
+        })
+    }
+
+    /**
+     * Method returns report type record (with id and name) by report_type ID
+     * @param report_id: ID of report type
+     * @returns {object} Record with information about report type
+     */
+    findReportById(report_id) {
+        const props = this.getProps();
+        const report_types = props.report_types;
+        for (let i in report_types) {
+            if (!report_types.hasOwnProperty(i))
+                continue;
+            if (report_types[i].value === report_id) {
+                return report_types[i]
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method used to send report in PDF format to specified email
+     * @param callback: Function called after process finished
+     */
+    sendByEmail(callback) {
+        const self = this;
+        if (!callback) callback = () => null;
+        if (!this.isValidForEmail()) {
+            callback();
+            return;
+        }
+        const props = this.getProps();
+        const item = props.item;
+        Store.store.dispatch(actions.changeProperty('isUpdating',true));
+        let url = "http://"+backendConfig.host+":"+backendConfig.port+
+            "/report/generate/"+item["company"].replace(/#/,"").replace(/:/g,"_")+"/"+
+            item["type"]+"/"+item["period"]+"/email";
+        Backend.getAuthToken(null,null, function(token) {
+            if (token) url += '?token='+token;
+            url += "&email="+item["email"].trim();
+            Backend.request(url,{},'GET',{},null, function(err,response) {
+                self.processSendByEmailResponse(err,response,callback)
+            })
+        });
+    }
+
+    /**
+     * Utility method used to make form validation when user presses "Send by email" button
+     * @returns Boolean - True if form is valid and false otherwise
+     */
+    isValidForEmail() {
+        Store.store.dispatch(actions.changeProperty("errors",{}));
+        const errors = this.validate();
+        if (errors !== null) {
+            Store.store.dispatch(actions.changeProperty("errors",errors));
+            return false;
+        }
+        const props = this.getProps();
+        const item = props.item;
+        const email = item["email"];
+        if (!email || !email.trim()) {
+            Store.store.dispatch(actions.changeProperty("errors",{email:t("Укажите адрес email")}));
+            return false
+        }
+        return true;
+    }
+
+    /**
+     * Utility method used to handle response from server after user presses "Send by email" button
+     * @param err - Error object
+     * @param response - Server response object
+     * @param callback - Function called after method executed
+     */
+    processSendByEmailResponse(err,response,callback) {
+        if (!callback) callback = () => null;
+        Store.store.dispatch(actions.changeProperty('isUpdating',false));
+        if (err) {
+            Store.store.dispatch(actions.changeProperty('errors',{'general': t("Системная ошибка")}));
+            callback();
+            return;
+        }
+        response.text().then(function(text) {
+            if (text && text.length) {
+                Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
+                callback();
+            } else {
+                Store.store.dispatch(
+                    actions.changeProperty("itemSaveSuccessText", t("Операция успешно завершена"))
+                );
+                setTimeout(function () {
+                    Store.store.dispatch(actions.changeProperty("itemSaveSuccessText", ""));
+                }, 3000);
+                callback();
+            }
+        }).catch(function() {
+            callback();
+        })
     }
 
     /********************************************************
@@ -106,201 +297,12 @@ class ReportContainer extends DocumentContainer {
     }
 
     renderListField_type(value) {
-        var report_type = this.findReportById(value);
+        const report_type = this.findReportById(value);
         if (report_type) return report_type.label;
         return "";
     }
-
-    /**
-     * Method returns report type record (with id and name) by report_type ID
-     * @param report_id: ID of report type
-     * @returns {object} Record with information about report type
-     */
-    findReportById(report_id) {
-        const props = this.getProps();
-        const report_types = props.report_types;
-        for (var i in report_types) {
-            if (report_types[i].value == report_id) {
-                return report_types[i]
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Method used to update "Report types" list in application state
-     * @param callback: Function which called after operation finished
-     */
-    loadReportTypes(callback) {
-        Backend.request("/report/types",{},"GET",{},null, function(err,response) {
-            if (!err && response) {
-                response.json().then(function(report_types) {
-                    var report_types_array = [];
-                    for (var key in report_types) {
-                        report_types_array.push({value:key,label:report_types[key]});
-                    }
-                    if (callback) {
-                        callback(report_types_array);
-                    }
-                });
-            } else {
-                if (callback) {
-                    callback([]);
-                }
-            }
-        })
-    }
-
-    updateList(options={}) {
-        super.updateList(options);
-        this.loadReportTypes();
-    }
-
-    /**
-     * Method called after standard "updateItem" action
-     */
-    updateItem(uid,callback) {
-        const self = this;
-        super.updateItem(uid,function() {
-            self.getCompaniesList((companies_list) => {
-                self.loadReportTypes(function(report_types) {
-                    Store.store.dispatch(actions.changeProperties(
-                        {
-                            'report_types':report_types,
-                            'companies_list':companies_list
-                        })
-                    );
-                    if (callback) callback();
-                });
-            })
-        })
-    }
-
-    /**
-     * Method used to send report in PDF format to specified email
-     * @param callback: Function called after process finished
-     */
-    sendByEmail(callback) {
-        const self = this;
-        if (!callback) callback = () => null;
-        if (!this.isValidForEmail()) {callback();return;};
-        const props = this.getProps();
-        const item = props.item;
-        Store.store.dispatch(actions.changeProperty('isUpdating',true));
-        var url = "http://"+backendConfig.host+":"+backendConfig.port+
-            "/report/generate/"+item["company"].replace(/#/,"").replace(/:/g,"_")+"/"+
-            item["type"]+"/"+item["period"]+"/email";
-        Backend.getAuthToken(null,null, function(token) {
-            if (token) url += '?token='+token;
-            url += "&email="+item["email"].trim();
-            console.log(url);
-            Backend.request(url,{},'GET',{},null, function(err,response) {
-                self.processSendByEmailResponse(err,response,callback)
-            })
-        });
-    }
-
-    /**
-     * Utility method used to make form validation when user presses "Send by email" button
-     * @returns Boolean - True if form is valid and false otherwise
-     */
-    isValidForEmail() {
-        Store.store.dispatch(actions.changeProperty("errors",{}));
-        const errors = this.validate();
-        if (errors !== null) {
-            Store.store.dispatch(actions.changeProperty("errors",errors));
-            return false;
-        }
-        const props = this.getProps();
-        const item = props.item;
-        const email = item["email"];
-        if (!email || !email.trim()) {
-            Store.store.dispatch(actions.changeProperty("errors",{email:t("Укажите адрес email")}));
-            return false
-        }
-        return true;
-    }
-
-    /**
-     * Utility method used to handle response from server after user presses "Send by email" button
-     * @param err - Error object
-     * @param response - Server response object
-     * @param callback - Function called after method executed
-     */
-    processSendByEmailResponse(err,response,callback) {
-        const self = this;
-        if (!callback) callback = () => null;
-        Store.store.dispatch(actions.changeProperty('isUpdating',false));
-        if (err) {
-            Store.store.dispatch(actions.changeProperty('errors',{'general': t("Системная ошибка")}));
-            callback();
-            return;
-        }
-        response.text().then(function(text) {
-            if (text && text.length) {
-                Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
-                callback();
-            } else {
-                Store.store.dispatch(
-                    actions.changeProperty("itemSaveSuccessText", t("Операция успешно завершена"))
-                );
-                setTimeout(function () {
-                    Store.store.dispatch(actions.changeProperty("itemSaveSuccessText", ""));
-                }, 3000);
-                callback();
-            }
-        }).catch(function() {
-            callback();
-        })
-    }
-
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
-     * @returns Array of properties
-     */
-    mapStateToProps(state,ownProps) {
-        var result = super.mapStateToProps(state,ownProps);
-        result["listColumns"] = {
-            "date": {
-                title: t("Дата создания")
-            },
-            "period": {
-                title: t("Период отчета")
-            },
-            "type": {
-                title: t("Тип отчета")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        }
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'date',direction:'ASC'}
-        }
-        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
-        result["report_types"] = state["report_types"] ? state["report_types"] : [];
-        return result;
-    }
-
-    /**
-     * Function defines methods which will be available inside component, which this controller manages
-     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
-     * @returns object of methods, which are available in component
-     */
-    mapDispatchToProps(dispatch,ownProps) {
-        var self = this;
-        var result = super.mapDispatchToProps(dispatch,ownProps);
-        result["findReportById"] = (report_id) => {
-            return self.findReportById(report_id);
-        }
-        result["sendByEmail"] = () => self.sendByEmail();
-        return result;
-    }
 }
 
-var report = new ReportContainer();
-var Report = connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(ReportComponent);
-export {Report};
-export default ReportContainer;
+const report = new ReportContainer();
+export const Report = connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(Item.Report);
+export const Reports = connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(List.Report);

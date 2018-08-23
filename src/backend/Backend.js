@@ -21,12 +21,12 @@ class Backend {
      */
     getAuthToken(login,password,callback) {
         if (login && password) {
-             callback(base64.encode(login + ":" + password));
-        } else {
-            Cookie.get("token", function(cookieValue) {
-                callback(cookieValue)
-            });
+            callback(base64.encode(login + ":" + password));
+            return;
         }
+        Cookie.get("token", function(cookieValue) {
+            callback(cookieValue)
+        });
     }
 
     /**
@@ -43,62 +43,80 @@ class Backend {
      */
     request(url,params={},method="GET",headers={},token=null,callback) {
         const self = this;
+        if (!callback) callback = () => null;
         async.series([
             function(callback) {
-                if (!token) {
-                    self.getAuthToken(null, null, function(value) {
-                        token = value;
-                        callback();
-                    });
-                } else {
+                if (token) {
                     callback();
+                    return
                 }
+                self.getAuthToken(null, null, function(value) {
+                    token = value;
+                    callback();
+                });
             }
         ], function() {
-            if (!headers) {
-                headers = {};
-            }
-            if (token) {
-                headers["Authorization"] = 'Basic '+token;
-            }
-            const fetchOptions = {
-                method: method,
-                headers: headers
-            };
-            if (method === 'POST' || method === 'PUT') {
-                fetchOptions['body'] = JSON.stringify(params)
-            } else if (method === 'GET') {
-                var query_params = [];
-                for (const name in params) {
-                    if (typeof(params[name])!=="function" && typeof(params[name])!=="object") {
-                        query_params.push(name + "=" + params[name])
-                    }
-                }
-                if (query_params.length) url += '/?'+query_params.join('&');
-            }
-            if (url.search("http://")===-1) {
-                url = "http://"+config.host+":"+config.port+"/api"+url;
-            }
-            fetch(url,fetchOptions).then(function(response) {
+            const request = self.prepareRequest(url,params,method,headers,token);
+            fetch(request.url,request.options).then(function(response) {
                 if (!response || response.status === 401) {
-                    Store.store.dispatch(actions.changeProperty('isLogin',false));
-                    Cookie.delete('token');
-                    if (callback) {
-                        callback('UNAUTHORIZED', false)
-                    }
-                } else {
-                    if (callback) {
-                        callback(null, response);
-                    }
+                    self.processErrorResponse("UNAUTHORIZED",callback);
+                    return;
                 }
+                callback(null, response);
             }).catch(function(except) {
-                if (callback) {
-                    Store.store.dispatch(actions.changeProperty('isLogin',false));
-                    Cookie.delete('token');
-                    callback(except)
-                }
+                self.processErrorResponse(except,callback)
             });
         })
+    }
+
+    /**
+     * Method used to prepare request to backend from input data
+     * @param url - Input URL
+     * @param params - Input params
+     * @param method - request Method
+     * @param headers - request headers
+     * @param token - Auth token
+     * @returns {{url: *, options: {}}} Array with two items: url - request URL, options - request options
+     */
+    prepareRequest(url,params,method,headers,token) {
+        if (!headers) {
+            headers = {};
+        }
+        if (token) {
+            headers["Authorization"] = 'Basic '+token;
+        }
+        const fetchOptions = {
+            method: method,
+            headers: headers
+        };
+        if (method === 'POST' || method === 'PUT') {
+            fetchOptions['body'] = JSON.stringify(params)
+        } else if (method === 'GET') {
+            let query_params = [];
+            for (const name in params) {
+                if (typeof(params[name])!=="function" && typeof(params[name])!=="object") {
+                    query_params.push(name + "=" + params[name])
+                }
+            }
+            if (query_params.length) url += '/?'+query_params.join('&');
+        }
+        if (url.search("http://")===-1) {
+            url = "http://"+config.host+":"+config.port+"/api"+url;
+        }
+        return {url:url,options:fetchOptions}
+    }
+
+    /**
+     * Method used to process error response from callback
+     * @param error - String with error description
+     * @param callback - Callback which called after function returns. Callback will return text of error in first
+     * parameter
+     */
+    processErrorResponse(error,callback) {
+        if (!callback) callback = () => null;
+        Store.store.dispatch(actions.changeProperty('isLogin',false));
+        Cookie.delete('token');
+        callback(error,null);
     }
 
     /**
@@ -111,22 +129,19 @@ class Backend {
      *                  parameters. Err if error and response if success, contains response object
      */
     login(login,password,callback) {
+        if (!callback) callback = () => null;
         Store.store.dispatch(actions.changeProperty('authenticating',true));
         const self = this;
         this.getAuthToken(login,password, function(token) {
             self.request('/',{},'GET',{},token, function(err,response) {
                 Store.store.dispatch(actions.changeProperty('authenticating',false));
-                if (!err) {
-                    Store.store.dispatch(actions.changeProperties({'isLogin':true,item:{}}));
-                    Cookie.set('token',token);
-                    if (callback) {
-                        callback(null, response);
-                    }
-                } else {
-                    if (callback) {
-                        callback(err);
-                    }
+                if (err) {
+                    callback(err);
+                    return;
                 }
+                Store.store.dispatch(actions.changeProperties({'isLogin':true,item:{}}));
+                Cookie.set('token',token);
+                callback(null, response);
             })
         });
     }
@@ -134,9 +149,7 @@ class Backend {
     logout(callback= ()=>null) {
         Cookie.delete('token', () => {
             Store.store.dispatch(actions.changeProperty('isLogin',false));
-            if (callback) {
-                callback();
-            }
+            callback();
         })
     }
 
@@ -237,8 +250,8 @@ class Backend {
             callback(null,{'errors':{'general': t("Системная ошибка")}});
             return;
         }
-        var method = 'POST';
-        var url = '/'+modelName;
+        let method = 'POST';
+        let url = '/'+modelName;
         if (options['uid']) {
             method = 'PUT';
             url += "/"+options['uid'].toString().replace(/#/g,"").replace(/:/g,"_");

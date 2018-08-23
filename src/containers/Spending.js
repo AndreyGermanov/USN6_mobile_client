@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import SpendingComponent from '../components/Spending'
+import {Item,List} from '../components/Components'
 import DocumentContainer from './Document'
 import t from '../utils/translate/translate'
 import actions from "../actions/Actions";
@@ -17,6 +17,71 @@ class SpendingContainer extends DocumentContainer {
     constructor() {
         super();
         this.model = "spending";
+        this.collection = "spendings";
+    }
+
+    /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        const result = super.mapStateToProps(state);
+        result["listColumns"] = {
+            "number": {
+                title: t("Номер")
+            },
+            "date": {
+                title: t("Дата")
+            },
+            "description": {
+                title: t("Описание")
+            },
+            "period": {
+                title: t("Период расхода")
+            },
+            "amount": {
+                title: t("Сумма")
+            },
+            "company": {
+                title: t("Организация")
+            }
+        };
+        if (!result["sortOrder"] || !result["sortOrder"].field) {
+            result["sortOrder"] = {field:'date',direction:'ASC'}
+        }
+        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
+        result["spending_types"] = state["spending_types"] ? state["spending_types"] : [];
+        return result;
+    }
+
+    /**
+     * Method called after standard "updateItem" action
+     */
+    updateItem(uid,callback) {
+        const self = this;
+        if (!callback) callback=()=>null;
+        super.updateItem(uid, function() {
+            self.getCompaniesList((companies_list) => {
+                Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
+                Backend.request("/spending/types",{},"GET",{},null, function(err,response) {
+                    if (!err && response) {
+                        response.json().then(function(spending_types) {
+                            const spending_types_array = [];
+                            for (let key in spending_types) {
+                                if (!spending_types.hasOwnProperty(key))
+                                    continue;
+                                spending_types_array.push({value:parseInt(key),label:spending_types[key]});
+                            }
+                            Store.store.dispatch(actions.changeProperty('spending_types',spending_types_array));
+                            callback();
+                        });
+                    } else {
+                        callback();
+                    }
+                })
+            })
+        })
     }
 
     /**********************************
@@ -53,8 +118,8 @@ class SpendingContainer extends DocumentContainer {
 
     validate_type(value) {
         if (!this.cleanStringField(value)) return t("Не указан тип расходов");
-        var value = this.cleanDecimalField(value)
-        if (value===null || value < 1 | value > 7 ) return t("Указан некорректный тип расходов");
+        const decValue = this.cleanDecimalField(value);
+        if (decValue===null || decValue < 1 | decValue > 7 ) return t("Указан некорректный тип расходов");
         return "";
     }
 
@@ -96,71 +161,8 @@ class SpendingContainer extends DocumentContainer {
     cleanField_period(value) {
         return this.cleanStringField(value);
     }
-
-    /**
-     * Method called after standard "updateItem" action
-     */
-    updateItem(uid,callback) {
-        const self = this;
-        super.updateItem(uid, function() {
-            self.getCompaniesList((companies_list) => {
-                Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                Backend.request("/spending/types",{},"GET",{},null, function(err,response) {
-                    if (!err && response) {
-                        response.json().then(function(spending_types) {
-                            var spending_types_array = [];
-                            for (var key in spending_types) {
-                                spending_types_array.push({value:parseInt(key),label:spending_types[key]});
-                            }
-                            Store.store.dispatch(actions.changeProperty('spending_types',spending_types_array));
-                            if (callback) callback();
-                        });
-                    } else {
-                        if (callback) callback();
-                    }
-                })
-            })
-        })
-    }
-
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
-     * @returns Array of properties
-     */
-    mapStateToProps(state,ownProps) {
-        var result = super.mapStateToProps(state,ownProps);
-        result["listColumns"] = {
-            "number": {
-                title: t("Номер")
-            },
-            "date": {
-                title: t("Дата")
-            },
-            "description": {
-                title: t("Описание")
-            },
-            "period": {
-                title: t("Период расхода")
-            },
-            "amount": {
-                title: t("Сумма")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        }
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'date',direction:'ASC'}
-        }
-        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
-        result["spending_types"] = state["spending_types"] ? state["spending_types"] : [];
-        return result;
-    }
 }
 
-var spending = new SpendingContainer();
-var Spending = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(SpendingComponent);
-export {Spending};
-export default SpendingContainer;
+const spending = new SpendingContainer();
+export const Spending = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(Item.Spending);
+export const Spendings = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(List.Spending);

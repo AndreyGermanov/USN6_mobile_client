@@ -2,7 +2,6 @@ import Store from '../store/Store';
 import _ from 'lodash';
 import actions from '../actions/Actions';
 import Backend from '../backend/Backend';
-import {Screens,ScreenModes} from '../reducers/RootReducer';
 import t from '../utils/translate/translate';
 import NavigationService from "../utils/NavigationService";
 import {Alert} from 'react-native';
@@ -18,12 +17,12 @@ class EntityContainer {
      */
     constructor() {
         this.model = "entity";
+        this.collection = "entities";
     }
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
      * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
      * @returns Array of properties
      */
     mapStateToProps(state) {
@@ -33,8 +32,6 @@ class EntityContainer {
             list: state.list[this.model] ? state.list[this.model] : [],
             item: state.item[this.model] ? state.item[this.model] : {},
             itemSaveSuccessText: state.itemSaveSuccessText,
-            screen: Screens.getScreenByModel(this.model),
-            screenMode: state.screen_mode ? state.screen_mode : ScreenModes.LIST,
             isUpdating: state.isUpdating,
             errors: state.errors,
             listColumns: {},
@@ -49,10 +46,36 @@ class EntityContainer {
     }
 
     /**
+     * Function defines methods which of controller methods will be available inside component, that controller manages
+     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
+     * @returns object of methods, which are available in component
+     */
+    mapDispatchToProps(dispatch) {
+        const self = this;
+        return {
+            selectItem: (uid) => self.selectItem(uid),
+            isItemChecked: (uid) => self.isItemChecked(uid),
+            selectAllItems: (elem) => self.selectAllItems(elem),
+            isAllItemsChecked: () => self.isAllItemsChecked(),
+            renderListField: (field_name,value) => self.renderListField(field_name,value),
+            changeItemField: (field_name,e) => self.changeItemField(field_name,e),
+            changeListPage: (pageNumber,append) => self.changeListPage(pageNumber,append),
+            changeListSortOrder: (field) => self.changeListSortOrder(field),
+            changeListFilter: (text) => self.changeListFilter(text),
+            updateList: (options={},callback=()=>null) => self.updateList(options,callback),
+            updateItem: (uid) => self.updateItem(uid),
+            saveToBackend: () => self.saveToBackend(),
+            deleteItems: () => self.deleteItems(),
+            openItem: (uid) => self.openItem(uid),
+            toggleSortOrderDialog: (mode) => self.toggleSortOrderDialog(mode)
+        }
+    }
+
+    /**
      * Method returns global application state
      */
     getState() {
-        return Store.store.getState();
+        return _.cloneDeep(Store.store.getState());
     }
 
     /**
@@ -60,8 +83,29 @@ class EntityContainer {
      * @returns Array of properties
      */
     getProps() {
-        const state = Store.store.getState();
+        const state = this.getState();
         return this.mapStateToProps(state);
+    }
+
+    /**
+     * Function used to validate all fields in the form
+     * @returns Array of found errors or null if nothing found
+     */
+    validate() {
+        const props = this.getProps();
+        const item = props.item;
+        const errors = {};
+        let has_errors = false;
+        for (const field_name in item) {
+            if (!item.hasOwnProperty(field_name) || field_name === 'uid')
+                continue;
+            const error = this.validateItemField(field_name,item[field_name]);
+            if (error) {
+                has_errors = true;
+                errors[field_name] = error;
+            }
+        }
+        return has_errors ? errors : null;
     }
 
     /**
@@ -71,8 +115,6 @@ class EntityContainer {
      * @returns {string}: Either string with error message or empty string if no error
      */
     validateItemField(field_name,field_value) {
-        const props = this.getProps();
-        const item = props.item;
         if (!field_value || typeof(field_value) === "undefined") {
             field_value = "";
         }
@@ -83,41 +125,22 @@ class EntityContainer {
     }
 
     /**
-     * Function used to validate all fields in the form
-     * @returns Array of found errors or null if nothing found
-     */
-    validate() {
-        const props = this.getProps();
-        const item = props.item;
-        var errors = {},
-            has_errors = false;
-        for (const field_name in item) {
-            if (field_name === 'uid') continue;
-            var error = this.validateItemField(field_name,item[field_name]);
-            if (error) {
-                has_errors = true;
-                errors[field_name] = error;
-            }
-        }
-        return has_errors ? errors : null;
-
-    }
-
-    /**
      * Method used to clean and prepare item data before sending to backend
      * @returns Object(hashmap) with data,ready to send to backend for this model
      */
     cleanDataForBackend() {
         const props = this.getProps();
         const item = props.item;
-        var result = {};
+        const result = {};
         if (item.uid && item.uid !== "new") {
             result["uid"] = item.uid;
         }
-        for (var field_name in item) {
+        for (let field_name in item) {
+            if (!item.hasOwnProperty(field_name))
+                continue;
             if (field_name === "uid") continue;
             if (typeof(this["cleanField_"+field_name])==="function") {
-                var value = this["cleanField_"+field_name](item[field_name]);
+                const value = this["cleanField_"+field_name](item[field_name]);
                 if (value !== null) result[field_name] = value;
             } else if (typeof(item[field_name]) === 'string') {
                 result[field_name] = item[field_name].trim();
@@ -138,20 +161,20 @@ class EntityContainer {
     }
 
     cleanIntField(value) {
-        var result = parseInt(value);
+        const result = parseInt(value);
         if (!isNaN(result) && value == result) return result;
         return null;
     }
 
     cleanDecimalField(value) {
-        var result = parseFloat(value);
+        const result = parseFloat(value);
         if (!isNaN(result) && value == result) return result;
         return null;
     }
 
     cleanEmailField(value) {
         value = value.toString().trim().toLowerCase();
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!re.test(value)) return null;
         return value;
     }
@@ -174,8 +197,8 @@ class EntityContainer {
                 const state = self.getState();
                 const list = _.cloneDeep(state.list);
                 if (!_.isEqual(list[self.model],result)) {
-                    if (options["append"] === true) {
-                        for (var i in result) {
+                    if (options["append"] == true) {
+                        for (let i in result) {
                             list[self.model].push(result[i])
                         }
                     } else {
@@ -205,22 +228,22 @@ class EntityContainer {
         if (!callback) callback = () => null;
         const props = this.getProps();
         const state = this.getState();
-        var pageNumber = props.pageNumber;
+        let pageNumber = props.pageNumber;
         if (options["append"] !== true) pageNumber = 1;
         if (props.listFilter && props.listFilter.length) {
             options["filter_value"] = props.listFilter;
             options["filter_fields"] = Object.keys(props.listColumns);
         }
-        var statePageNumber = _.cloneDeep(state.pageNumber);
+        const statePageNumber = _.cloneDeep(state.pageNumber);
         statePageNumber[this.model] = pageNumber;
         Store.store.dispatch(actions.changeProperties({'isUpdating':true,'pageNumber':statePageNumber}));
         Backend.getCount(this.model,options, function(err,result) {
             if (err) {
                 result = 0;
             }
-            var stateNumberOfItems = _.cloneDeep(state.numberOfItems);
+            const stateNumberOfItems = _.cloneDeep(state.numberOfItems);
             stateNumberOfItems[self.model] = result;
-            var skip = (pageNumber - 1) * props.itemsPerPage;
+            const skip = (pageNumber - 1) * props.itemsPerPage;
             options["skip"] = skip >= 0 ? skip : 0;
             options["limit"] = props.itemsPerPage;
             options["order"] = props.sortOrder.field + " " + props.sortOrder.direction;
@@ -239,13 +262,13 @@ class EntityContainer {
     selectItem(uid) {
         if (!uid) return;
         const state = this.getState();
-        var selectedItems = _.cloneDeep(state.selectedItems[this.model] ? state.selectedItems[this.model]: []);
+        const selectedItems = _.cloneDeep(state.selectedItems[this.model] ? state.selectedItems[this.model]: []);
         if (selectedItems.indexOf(uid) === -1) {
             selectedItems.push(uid)
         } else {
             selectedItems.splice(selectedItems.indexOf(uid),1)
         }
-        var stateSelectedItems = _.cloneDeep(state.selectedItems);
+        const stateSelectedItems = _.cloneDeep(state.selectedItems);
         stateSelectedItems[this.model] = selectedItems;
         Store.store.dispatch(actions.changeProperty("selectedItems",stateSelectedItems));
     }
@@ -256,20 +279,16 @@ class EntityContainer {
      */
     openItem(uid) {
         Store.store.dispatch(actions.changeProperties({
-            uid: uid,
-            screen_mode: ScreenModes.ITEM
+            uid: uid
         }));
-        NavigationService.replace(this.model,{screen_mode: ScreenModes.ITEM,uid:uid,obj:this});
+        NavigationService.navigate(this.model,{uid:uid,obj:this});
     }
 
     /**
      * Method used to open list view of Entity
      */
     goToList() {
-        Store.store.dispatch(actions.changeProperties({
-            screen_mode: ScreenModes.LIST
-        }));
-        NavigationService.replace(this.model,{screen_mode: ScreenModes.LIST,uid:null,obj:this});
+        NavigationService.navigate(this.collection,{uid:null,obj:this});
     }
 
     /**
@@ -285,19 +304,17 @@ class EntityContainer {
         return props.selectedItems.indexOf(uid) !== -1;
     }
 
-
     /**
      * Checkbox in table header event handler: selects/deselects all items in list (on current page) depending
      * on currect checkbox state
-     * @param elem: Link DOM element of checkbox
      */
     selectAllItems() {
         const state = this.getState();
-        var stateSelectedItems = _.cloneDeep(state.selectedItems);
+        const stateSelectedItems = _.cloneDeep(state.selectedItems);
         let list = _.cloneDeep(state.list[this.model] ? state.list[this.model]: []);
-        var selectedItems = [];
+        const selectedItems = [];
         if (!this.isAllItemsChecked()) {
-            for (var index in list) {
+            for (let index in list) {
                 selectedItems.push(list[index].uid);
             }
         }
@@ -338,11 +355,11 @@ class EntityContainer {
             value = this["parseItemField_" + field_name].bind(this)(value);
         }
         const state = this.getState();
-        var item = _.cloneDeep(state.item);
+        const item = _.cloneDeep(state.item);
         if (item[this.model][field_name] == value) {
             return;
         }
-        var errors = _.cloneDeep(state.errors);
+        const errors = _.cloneDeep(state.errors);
         item[this.model][field_name] = value;
         errors[field_name] = this.validateItemField(field_name,value);
         Store.store.dispatch(actions.changeProperties({"item":item,"errors":errors}));
@@ -350,14 +367,18 @@ class EntityContainer {
 
     /**
      * Method used to move list to new page
-     * @param pageNumber
+     * @param pageNumber: Number of page to
+     * @param append: should new page elements be appended to current page or replace whole list
      */
     changeListPage(pageNumber,append=false) {
         const state = this.getState();
         const statePageNumber = _.cloneDeep(state.pageNumber);
         statePageNumber[this.model] = pageNumber;
         Store.store.dispatch(actions.changeProperty('pageNumber',statePageNumber));
-        if (append) this.updateList({append:true}); else this.updateList();
+        if (append)
+            this.updateList({append:true});
+        else
+            this.updateList();
     }
 
     /**
@@ -366,8 +387,8 @@ class EntityContainer {
      */
     changeListSortOrder(field) {
         const state = this.getState();
-        var sortOrder = _.cloneDeep(state.sortOrder);
-        var pageNumber = _.cloneDeep(state.pageNumber);
+        const sortOrder = _.cloneDeep(state.sortOrder);
+        const pageNumber = _.cloneDeep(state.pageNumber);
         if (!sortOrder[this.model] || sortOrder[this.model].field !== field) {
             sortOrder[this.model] = {field:field,direction:'ASC'}
         } else {
@@ -385,12 +406,12 @@ class EntityContainer {
     /**
      * Method called when user changed value in "Search" field in list view. Used to filter
      * list rows by search phrase
-     * @param e: Link to "Search" input filed
+     * @param text: Text in search field
      */
     changeListFilter(text) {
         const state = this.getState();
-        var listFilter = _.cloneDeep(state.listFilter);
-        var pageNumber = _.cloneDeep(state.pageNumber);
+        const listFilter = _.cloneDeep(state.listFilter);
+        const pageNumber = _.cloneDeep(state.pageNumber);
         listFilter[this.model] = text.toString().toLowerCase();
         pageNumber[this.model] = 1;
         Store.store.dispatch(actions.changeProperties({listFilter:listFilter,pageNumber:pageNumber}));
@@ -417,12 +438,13 @@ class EntityContainer {
     updateItem(uid,callback) {
         const self = this;
         if (!uid) return;
-        var state = self.getState();
-        var item = _.cloneDeep(state.item);
+        if (!callback) callback = () => null;
+        const state = self.getState();
+        const item = _.cloneDeep(state.item);
         if (uid === "new") {
             item[self.model] = {};
             Store.store.dispatch(actions.changeProperty('item',item));
-            if (callback) callback();
+            callback();
             return;
         }
         Store.store.dispatch(actions.changeProperties({"isUpdating":true,"errors":{}}));
@@ -433,9 +455,7 @@ class EntityContainer {
             item[self.model] = result;
             Store.store.dispatch(actions.changeProperty('item',item));
             Store.store.dispatch(actions.changeProperty('isUpdating',false));
-            if (callback) {
-                callback()
-            }
+            callback()
         });
     }
 
@@ -445,44 +465,43 @@ class EntityContainer {
      */
     saveToBackend(callback) {
         const self = this;
+        if (!callback) callback = () => null;
         Store.store.dispatch(actions.changeProperty("errors",{}));
         const errors = self.validate();
         if (errors !== null) {
             Store.store.dispatch(actions.changeProperty("errors",errors));
-            if (callback) callback();
+            callback();
             return;
         }
-        const data = self.cleanDataForBackend();
-        const props = this.getProps();
-        const state = this.getState();
-        const item = props.item;
-        const stateItem = state.item;
+        const data = this.cleanDataForBackend();
+        const item = this.getProps().item;
+        const stateItem = this.getState().item;
         Store.store.dispatch(actions.changeProperty('isUpdating',true));
         Backend.saveItem(self.model,data, function(err,result) {
             Store.store.dispatch(actions.changeProperty('isUpdating',false));
-            if (err || !result) {
-                result = {'errors':{'general':t("Системная ошибка")}};
-            }
-            if (result['errors']) {
-                const errors = result['errors'];
-                Store.store.dispatch(actions.changeProperty('errors',errors));
-                if (callback) callback();
+            if (err || !result || result["errors"]) {
+                if (!result["errors"]) result = {'errors':{'general':t("Системная ошибка")}};
+                Store.store.dispatch(actions.changeProperty('errors',result['errors']));
+                callback();
                 return;
             }
             if (!item["uid"]) {
                 stateItem[self.model] = result["result"];
-                Store.store.dispatch(actions.changeProperties({
-                    uid: result["uid"],
-                    item: stateItem
-                }));
+                Store.store.dispatch(actions.changeProperties({uid: result["uid"], item: stateItem}));
                 window.location.href = "#"+self.model+"/"+result["uid"];
             }
-            Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",t("Операция успешно завершена")));
-            setTimeout(function() {
-                Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",""));
-            },3000)
-            if (callback) callback();
+            self.displaySuccessText();
         })
+    }
+
+    /**
+     * Method displays text about successful save to backend
+     */
+    displaySuccessText() {
+        Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",t("Операция успешно завершена")));
+        setTimeout(function() {
+            Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",""));
+        },3000);
     }
 
     /**
@@ -491,36 +510,30 @@ class EntityContainer {
      */
     deleteItems(callback) {
         const self = this;
-        const state = self.getState();
-        var stateSelectedItems = state.selectedItems;
-        const selectedItems = state.selectedItems[self.model] ? state.selectedItems[self.model] : [];
-        if (!selectedItems.length) return;
+        if (!callback) callback = () => null;
+        const stateSelectedItems = self.getState().selectedItems;
+        if (!stateSelectedItems[self.model] || !stateSelectedItems[self.model].length) {
+            callback();
+            return
+        }
         Alert.alert(t("Вопрос"),t("Вы уверены?"),[
             {text: t("Да"), onPress: () => {
                     Store.store.dispatch(actions.changeProperty('isUpdating',true));
-                    Backend.deleteItems(self.model,selectedItems,function(err,result) {
+                    Backend.deleteItems(self.model,stateSelectedItems[self.model],function(err,result) {
                         Store.store.dispatch(actions.changeProperty('isUpdating',false));
-                        if (err || !result) {
-                            result = {'errors':{'general':t("Системная ошибка")}};
-                        }
-                        if (result['errors']) {
-                            const errors = result['errors'];
-                            Store.store.dispatch(actions.changeProperty('errors',errors));
-                            if (callback) callback();
+                        if (err || !result || result['errors']) {
+                            if (!result['errors']) result = {'errors':{'general':t("Системная ошибка")}};
+                            Store.store.dispatch(actions.changeProperty('errors',result['errors']));
+                            callback();
                             return;
                         }
                         stateSelectedItems[self.model] = [];
                         Store.store.dispatch(actions.changeProperty('selectedItems',stateSelectedItems));
-                        self.updateList(function() {
-                            if (callback) callback();
-                        });
+                        self.updateList({},callback)
                     });
                 },
             },
-            {text: t("Нет"), onPress: () => {
-                    if (callback) callback();
-                }
-            }
+            {text: t("Нет"), onPress: callback}
         ])
     }
 
@@ -530,50 +543,20 @@ class EntityContainer {
      * @param callback
      */
     getCompaniesList(callback) {
+        if (!callback) callback = () => null;
         Backend.getList('company',{}, function(err, response) {
-            var companies_list = [];
+            let companies_list = [];
             if (err || typeof(response) !== "object") {
                 Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
-                if (callback) {
-                    callback();
-                }
+                callback();
                 return;
             }
             companies_list = response.map(function (item) {
                 return {value: item['uid'], label: item["name"]};
             });
-            if (callback) {
-                callback(companies_list);
-            }
+            callback(companies_list);
         });
     }
-
-    /**
-     * Function defines methods which of controller methods will be available inside component, that controller manages
-     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
-     * @returns object of methods, which are available in component
-     */
-    mapDispatchToProps(dispatch,ownProps) {
-        var self = this;
-        return {
-            selectItem: (uid) => self.selectItem(uid),
-            isItemChecked: (uid) => self.isItemChecked(uid),
-            selectAllItems: (elem) => self.selectAllItems(elem),
-            isAllItemsChecked: () => self.isAllItemsChecked(),
-            renderListField: (field_name,value) => self.renderListField(field_name,value),
-            changeItemField: (field_name,e) => self.changeItemField(field_name,e),
-            changeListPage: (pageNumber,append) => self.changeListPage(pageNumber,append),
-            changeListSortOrder: (field) => self.changeListSortOrder(field),
-            changeListFilter: (text) => self.changeListFilter(text),
-            updateList: (options={}) => self.updateList(options),
-            updateItem: (uid) => self.updateItem(uid),
-            saveToBackend: () => self.saveToBackend(),
-            deleteItems: () => self.deleteItems(),
-            openItem: (uid) => self.openItem(uid),
-            toggleSortOrderDialog: (mode) => self.toggleSortOrderDialog(mode)
-        }
-    }
-
 }
 
 export default EntityContainer;

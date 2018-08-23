@@ -1,9 +1,8 @@
 import {connect} from "react-redux";
-import IncomeComponent from '../components/Income'
+import {List,Item} from '../components/Components';
 import DocumentContainer from './Document'
 import t from '../utils/translate/translate'
 import actions from "../actions/Actions";
-import Backend from "../backend/Backend";
 import Store from "../store/Store";
 
 /**
@@ -17,6 +16,50 @@ class IncomeContainer extends DocumentContainer {
     constructor() {
         super();
         this.model = "income";
+        this.collection = "incomes";
+    }
+
+    /**
+     * Method defines set of properties, which are available inside controlled component inside "this.props"
+     * @param state: Link to application state
+     * @returns Array of properties
+     */
+    mapStateToProps(state) {
+        const result = super.mapStateToProps(state);
+        result["listColumns"] = {
+            "number": {
+                title: t("Номер")
+            },
+            "date": {
+                title: t("Дата")
+            },
+            "description": {
+                title: t("Описание")
+            },
+            "amount": {
+                title: t("Сумма")
+            },
+            "company": {
+                title: t("Организация")
+            }
+        };
+        if (!result["sortOrder"] || !result["sortOrder"].field) {
+            result["sortOrder"] = {field:'date',direction:'ASC'}
+        }
+        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
+        return result;
+    }
+
+    /**
+     * Method called after standard "updateItem" action
+     */
+    updateItem(uid,callback) {
+        const self = this;
+        super.updateItem(uid, function() {
+            self.getCompaniesList((companies_list) => {
+                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
+            });
+        })
     }
 
     /**********************************
@@ -76,53 +119,8 @@ class IncomeContainer extends DocumentContainer {
     cleanField_date(value) {
         return this.cleanIntField(value);
     }
-
-    /**
-     * Method called after standard "updateItem" action
-     */
-    updateItem(uid,callback) {
-        const self = this;
-        super.updateItem(uid, function() {
-            self.getCompaniesList((companies_list) => {
-                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
-            });
-        })
-    }
-
-    /**
-     * Method defines set of properties, which are available inside controlled component inside "this.props"
-     * @param state: Link to application state
-     * @param ownProps: Link to component properties (defined in component tag attributes)
-     * @returns Array of properties
-     */
-    mapStateToProps(state,ownProps) {
-        var result = super.mapStateToProps(state,ownProps);
-        result["listColumns"] = {
-            "number": {
-                title: t("Номер")
-            },
-            "date": {
-                title: t("Дата")
-            },
-            "description": {
-                title: t("Описание")
-            },
-            "amount": {
-                title: t("Сумма")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        };
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'date',direction:'ASC'}
-        }
-        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
-        return result;
-    }
 }
 
-var income = new IncomeContainer();
-var Income = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(IncomeComponent);
-export {Income};
-export default IncomeContainer;
+const income = new IncomeContainer();
+export const Income = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(Item.Income);
+export const Incomes = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(List.Income);

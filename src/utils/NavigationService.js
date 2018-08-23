@@ -72,6 +72,16 @@ function openDrawer() {
 }
 
 /**
+ * Method used to open left side navigation menu (Navigation drawer)
+ */
+function closeDrawer() {
+    if (!_navigator || typeof(_navigator)==="undefined") return;
+    _navigator.dispatch(
+        DrawerActions.closeDrawer()
+    );
+}
+
+/**
  * Method used to send additional params to navigator
  * @param params: Params to send
  */
@@ -86,6 +96,7 @@ export default {
     navigate,
     setTopLevelNavigator,
     openDrawer,
+    closeDrawer,
     setParams,
     push,
     replace

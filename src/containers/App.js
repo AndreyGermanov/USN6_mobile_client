@@ -9,6 +9,7 @@ class AppContainer {
     /**
      * Method returns list of properties, which are available inside component
      * @param state: Link to applicaiton state
+     * @param ownProps: Parameters, passed from top component or as a property of JSX tag
      * @returns Object in which keys are property names and values are property values
      */
     mapStateToProps(state,ownProps) {
@@ -19,21 +20,8 @@ class AppContainer {
             navigation: ownProps.navigation
         }
     }
-
-
-    /**
-     * Method returns list of methods, which are available inside component
-     * @param dispatch: Link to Redux dispatch function, which allows to send actions and modify Redux Store
-     * @returns Object in which keys are method names and values are methods
-     */
-    mapDispatchToProps(dispatch) {
-        return {
-
-        }
-    }
 }
 
-var app = new AppContainer();
-var App = connect(app.mapStateToProps.bind(this),app.mapDispatchToProps.bind(this))(AppComponent);
+const app = new AppContainer();
+const App = connect(app.mapStateToProps.bind(this),null)(AppComponent);
 export {App}
-export default AppContainer;

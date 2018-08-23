@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import t from "../utils/translate/translate";
-import { FormLabel, FormInput, FormValidationMessage,Button } from 'react-native-elements';
-import {View} from 'react-native';
-import Style from '../styles/Styles'
+import { FormValidationMessage,Button,FormLabel } from 'react-native-elements';
+import {Form,Input} from './ui/Form';
 
 /**
  * Component used to display user login screen
@@ -10,22 +9,11 @@ import Style from '../styles/Styles'
 class Login extends Component {
 
     // Navigation bar specific options
-    static navigationOptions = (navigation) => {
+    static navigationOptions = () => {
         return {
             header: null
         }
-    }
-
-    /**
-     * Method initializes all properties of item
-     * @returns Initialized item
-     */
-    initItem() {
-        var item = this.props.item;
-        if (!item.login) item.login = '';
-        if (!item.password) item.password = '';
-        return item;
-    }
+    };
 
     /**
      * Method used to render view
@@ -33,25 +21,28 @@ class Login extends Component {
     render() {
         const item = this.initItem();
         return (
-            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
+            <Form ownerProps={this.props}>
                 <FormValidationMessage>{this.props.errors["general"]}</FormValidationMessage>
-                <FormLabel>{t("Имя")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={item["login"]}
-                           autoCapitalize="none" autoCorrect={false}
-                           onChangeText={(value) => this.props.changeItemField("login",value)}/>
-                <FormValidationMessage>{this.props.errors["login"]}</FormValidationMessage>
-                <FormLabel>{t("Пароль")}</FormLabel>
-                <FormInput inputStyle={Style.inputField} value={item["password"]}
-                           autoCapitalize="none" autoCorrect={false}
-                           onChangeText={(value) => this.props.changeItemField("password",value)}
-                           secureTextEntry={true}/>
-                <FormValidationMessage>{this.props.errors["password"]}</FormValidationMessage>
+                <Input name="login" value={item["login"]} label="Имя"/>
+                <Input name="password" value={item["password"]} label="Пароль" password={true}/>
+                <FormLabel>{}</FormLabel>
                 <Button title={t("Войти")} onPress={() => this.props.doLogin()}
-                    backgroundColor="#339CFF" color="white"
-                    icon={{name: 'sign-in', type:'font-awesome', color:"white"}}
+                        backgroundColor="#339CFF" color="white"
+                        icon={{name: 'sign-in', type:'font-awesome', color:"white"}}
                 />
-            </View>
+            </Form>
         )
+    }
+
+    /**
+     * Method initializes all properties of item
+     * @returns Initialized item
+     */
+    initItem() {
+        const item = this.props.item;
+        if (!item.login) item.login = '';
+        if (!item.password) item.password = '';
+        return item;
     }
 }
 
