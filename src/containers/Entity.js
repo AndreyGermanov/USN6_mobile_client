@@ -32,22 +32,8 @@ class EntityContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        return {
-            checkIsLogin: () => this.checkIsLogin()
-        }
+        return {}
     }
-
-    /**
-     * Method used to check if user is logged to system. If not, moves to "Login" screen
-     */
-    checkIsLogin() {
-        if (!this.getProps().isLogin) {
-            NavigationService.navigate("Login");
-            return false
-        }
-        return true
-    }
-
 
     /**
      * Method returns array of properties, the same array that available in this component

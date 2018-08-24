@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import t from "../utils/translate/translate";
-import {View,Text} from 'react-native';
+import {View,Text,Image} from 'react-native';
 import Backend from '../backend/Backend';
 import NavigationService from '../utils/NavigationService';
 
@@ -35,7 +35,10 @@ class Loading extends Component {
      */
     render() {
         return (
-            <View><Text>{t("Загрузка ...")}</Text></View>
+            <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                <Image source={require("../../img/loading.gif")}/>
+                <Text>... Загрузка ...</Text>
+            </View>
         )
     }
 }

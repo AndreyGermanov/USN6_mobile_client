@@ -7,10 +7,21 @@ import RootNavigator from './RootNavigator';
  * "Loading" screen, which then manages application flow depending on user status (Authenticated or not authenticated)
  */
 const App = class extends Component {
+
+    /**
+     * Method used to render view
+     */
     render() {
         return (
             <RootNavigator ref={navigatorRef => NavigationService.setTopLevelNavigator(navigatorRef)}/>
         )
+    }
+
+    /**
+     * Method runs every time when application state updates
+     */
+    componentDidUpdate() {
+        this.props.checkLogin()
     }
 };
 
