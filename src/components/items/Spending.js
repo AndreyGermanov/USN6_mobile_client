@@ -2,7 +2,6 @@ import React from 'react';
 import Document from './Document';
 import t from '../../utils/translate/translate';
 import moment from 'moment-timezone'
-import Entity from "./Entity";
 import {Input,Select,DateTime} from '../ui/Form';
 
 /**
@@ -15,7 +14,7 @@ class Spending extends Document {
 
     // Navigation bar specific options
     static navigationOptions = ({navigation}) => {
-        const result = Entity.navigationOpts(navigation);
+        const result = Document.navigationOpts(navigation);
         result['title'] = Spending.listTitle;
         return result;
     };
@@ -32,8 +31,8 @@ class Spending extends Document {
             <Input name="number" value={item["number"]} label="Номер документа" keyboard="numeric"/>,
             <DateTime name="date" value={item["date"]} label="Дата документа"/>,
             <Input name="period" value={item["period"]} label="Период расхода"/>,
-            <Input type="amount" value={item["amount"]} label="Сумма расхода" keyboard="decimal-pad"/>,
-            <Input type="description" value={item["description"]} label="Описание операции" multiline={true}/>
+            <Input name="amount" value={item["amount"]} label="Сумма расхода" keyboard="decimal-pad"/>,
+            <Input name="description" value={item["description"]} label="Описание операции" multiline={true}/>
         ]
     }
 

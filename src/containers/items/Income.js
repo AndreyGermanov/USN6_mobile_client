@@ -1,22 +1,22 @@
 import {connect} from "react-redux";
-import {List,Item} from '../components/Components';
-import DocumentContainer from './Document'
-import t from '../utils/translate/translate'
-import actions from "../actions/Actions";
-import Store from "../store/Store";
+import {Item} from '../../components/Components';
+import DocumentItemContainer from './Document'
+import t from '../../utils/translate/translate'
+import actions from "../../actions/Actions";
+import Store from "../../store/Store";
+import Models from '../../models/Models';
 
 /**
- * Controller class for Income component. Contains all methods and properties, which used by this module.
+ * Controller class for Income Item component. Contains all methods and properties, which used by this module.
  */
-class IncomeContainer extends DocumentContainer {
+class IncomeItemContainer extends DocumentItemContainer {
 
     /**
      * Class constructor
      */
     constructor() {
         super();
-        this.model = "income";
-        this.collection = "incomes";
+        this.model = Models.getInstanceOf("income");
     }
 
     /**
@@ -25,29 +25,9 @@ class IncomeContainer extends DocumentContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        const result = super.mapStateToProps(state);
-        result["listColumns"] = {
-            "number": {
-                title: t("Номер")
-            },
-            "date": {
-                title: t("Дата")
-            },
-            "description": {
-                title: t("Описание")
-            },
-            "amount": {
-                title: t("Сумма")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        };
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'date',direction:'ASC'}
-        }
-        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
-        return result;
+        return Object.assign(super.mapStateToProps(state), {
+            "companies_list": state["companies_list"] ? state["companies_list"] : []
+        })
     }
 
     /**
@@ -120,7 +100,8 @@ class IncomeContainer extends DocumentContainer {
         return this.cleanIntField(value);
     }
 }
-
-const income = new IncomeContainer();
+const income = new IncomeItemContainer();
 export const Income = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(Item.Income);
-export const Incomes = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(List.Income);
+export const IncomeContainer = income;
+
+

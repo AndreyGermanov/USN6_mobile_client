@@ -2,7 +2,6 @@ import React from 'react';
 import Document from './Document';
 import t from '../../utils/translate/translate';
 import moment from 'moment-timezone'
-import Entity from "./Entity";
 import {Input,Select,DateTime} from '../ui/Form';
 
 /**
@@ -15,7 +14,7 @@ class Income extends Document {
 
     // Navigation bar specific options
     static navigationOptions = ({navigation}) => {
-        const result = Entity.navigationOpts(navigation);
+        const result = Document.navigationOpts(navigation);
         result['title'] = Income.listTitle;
         return result;
     };

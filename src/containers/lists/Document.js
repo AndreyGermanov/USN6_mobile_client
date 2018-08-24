@@ -1,12 +1,13 @@
-import EntityContainer from './Entity';
+import EntityListContainer from './Entity';
 import moment from 'moment-timezone';
-import actions from '../actions/Actions';
-import Store from '../store/Store';
+import actions from '../../actions/Actions';
+import Store from '../../store/Store';
+import t from "../../utils/translate/translate";
 
 /**
- * Controller class for Report component. Contains all methods and properties, which used by this module.
+ * Controller class for Document List containers. All descendant document container classes extend this class.
  */
-class DocumentContainer extends EntityContainer {
+class DocumentListContainer extends EntityListContainer {
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
@@ -14,13 +15,13 @@ class DocumentContainer extends EntityContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        const result = super.mapStateToProps(state);
-        result["periodStart"] = state["periodStart"] && state["periodStart"][this.model] ?
-            state["periodStart"][this.model] : moment().startOf('year').unix();
-        result["periodEnd"] = state["periodEnd"] &&  state["periodEnd"][this.model] ?
-            state["periodEnd"][this.model] : moment().endOf('year').unix();
-        result["showPeriodSelectionDialog"] = state.showPeriodSelectionDialog;
-        return result;
+        return Object.assign(super.mapStateToProps(state), {
+            periodStart: (state["periodStart"] && state["periodStart"][this.model.itemName]) ?
+                state["periodStart"][this.model.itemName] : moment().startOf('year').unix(),
+            periodEnd: (state["periodEnd"] && state["periodEnd"][this.model.itemName]) ?
+                state["periodEnd"][this.model.itemName] : moment().endOf('year').unix(),
+            showPeriodSelectionDialog: state.showPeriodSelectionDialog
+        });
     }
 
 
@@ -30,10 +31,10 @@ class DocumentContainer extends EntityContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        const result = super.mapDispatchToProps(dispatch);
-        result["changePeriodField"] = (field_name,date) => this.changePeriodField(field_name,data);
-        result["togglePeriodSelectionDialog"] = (mode) => this.togglePeriodSelectionDialog(mode);
-        return result;
+        return Object.assign(super.mapDispatchToProps(dispatch),{
+            changePeriodField: (field_name,date) => this.changePeriodField(field_name,date),
+            togglePeriodSelectionDialog: (mode) => this.togglePeriodSelectionDialog(mode)
+        });
     }
 
     /**
@@ -57,7 +58,7 @@ class DocumentContainer extends EntityContainer {
         const state = this.getState();
         const periodField = state[field_name] ? state[field_name] : {};
         periodField[this.model] = moment(date).unix();
-        dispatch(actions.changeProperty(field_name,periodField));
+        Store.store.dispatch(actions.changeProperty(field_name,periodField));
         this.updateList();
     }
 
@@ -66,7 +67,6 @@ class DocumentContainer extends EntityContainer {
      * @param mode - If true - show dialog, if false - hide.
      */
     togglePeriodSelectionDialog(mode) {
-        console.log(mode);
         Store.store.dispatch(actions.changeProperties({
             'showPeriodSelectionDialog':mode,
             'showSortOrderDialog':false
@@ -80,7 +80,7 @@ class DocumentContainer extends EntityContainer {
      * @returns formatted value
      */
     renderListField_date(value) {
-        if (!this.validate_date(value)) {
+        if (this.cleanIntField(value)) {
             return moment(value*1000).format("DD.MM.YYYY HH:mm:ss");
         } else {
             return 0;
@@ -88,25 +88,10 @@ class DocumentContainer extends EntityContainer {
     }
 
     renderListField_amount(value) {
-        if (this.cleanField_amount(value)!==null) {
+        if (this.cleanDecimalField(value)!==null) {
             return value.toFixed(2);
         }
     }
-
-    /********************************************************
-     * Functions used to convert field value from a form    *
-     * which it has in input to the form which accepted by  *
-     * application state                                    *
-     ********************************************************/
-    parseItemField_date(e) {
-        console.log(e);
-        console.log(moment(e));
-        if (typeof(moment(e).unix) === "function") {
-            console.log(moment(e).unix());
-            return moment(e).unix()
-        }
-        return 0;
-    }
 }
 
-export default DocumentContainer;
+export default DocumentListContainer;

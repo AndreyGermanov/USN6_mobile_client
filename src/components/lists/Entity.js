@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import t from "../../utils/translate/translate";
 import NavigationService from "../../utils/NavigationService";
-import Entity from "../items/Entity";
 import Backend from "../../backend/Backend";
 import {Text,View,TouchableOpacity,FlatList,ScrollView} from 'react-native';
 import {Button,SearchBar} from 'react-native-elements';
@@ -12,7 +11,7 @@ import Styles from '../../styles/Styles';
  * Base class which renders list of items
  * All concrete list views extends from it
  */
-class EntityList extends Component {
+class Entity extends Component {
 
     // Base Navigation bar options. All components uses it as a base
     static navigationOpts = () => {
@@ -199,4 +198,4 @@ class EntityList extends Component {
     }
 }
 
-export default EntityList;
+export default Entity;

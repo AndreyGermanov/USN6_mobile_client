@@ -51,6 +51,23 @@ class FormSelectField extends FormField {
         result.items = result.items ? result.items: [];
         return result;
     }
+
+    /**
+     * Utility method which used to return item of list by value
+     * @param value: Value to search
+     * @param items: Array of dropdown items to search in Each item is {value:'',label:''}
+     * @returns {*}
+     */
+    static getItemByValue(value,items) {
+        for (let i in items) {
+            if (!items.hasOwnProperty(i))
+                continue;
+            if (items[i].value === value) {
+                return items[i]
+            }
+        }
+        return null;
+    }
 }
 
 FormSelectField.propTypes = (new FormSelectField()).propTypes;

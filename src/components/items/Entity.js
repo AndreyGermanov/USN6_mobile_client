@@ -20,11 +20,11 @@ class Entity extends Component {
             },
             title: Entity.listTitle,
             headerLeft:
-                 <Button onPress={() => navigation.state.params.obj.goToList()}
+                 <Button onPress={() => navigation.state.params.model.getItemView().goToList()}
                               icon={{name: 'arrow-left', type: 'font-awesome', color: 'white'}}
                               backgroundColor="#339CFF"/>,
             headerRight:
-                <Button onPress={() => navigation.state.params.obj.saveToBackend()}
+                <Button onPress={() => navigation.state.params.model.getItemView().saveToBackend()}
                         icon={{name: 'check', type: 'font-awesome', color: 'white'}}
                         backgroundColor="#339CFF"/>
         }

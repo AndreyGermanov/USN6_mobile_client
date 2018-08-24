@@ -1,5 +1,5 @@
 import React from 'react';
-import EntityList from './EntityList';
+import Entity from './Entity';
 import {View,ScrollView,TouchableOpacity} from 'react-native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 import {DateTime} from '../ui/Form';
@@ -7,11 +7,11 @@ import {DateTime} from '../ui/Form';
 /**
  * Base component to manage lists of documents. All documents inherits from it
  */
-class DocumentList extends EntityList {
+class Document extends Entity {
 
-    // Navigation options for all descendants of DocumentList
+    // Navigation options for all descendants of Document
     static navigationOpts = () => {
-        return EntityList.navigationOpts();
+        return Entity.navigationOpts();
     };
 
     /**
@@ -51,4 +51,4 @@ class DocumentList extends EntityList {
 
 }
 
-export default DocumentList;
+export default Document;

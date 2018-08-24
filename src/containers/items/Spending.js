@@ -1,23 +1,22 @@
 import {connect} from "react-redux";
-import {Item,List} from '../components/Components'
-import DocumentContainer from './Document'
-import t from '../utils/translate/translate'
-import actions from "../actions/Actions";
-import Backend from "../backend/Backend";
-import Store from "../store/Store";
+import {Item} from '../../components/Components'
+import DocumentItemContainer from './Document'
+import t from '../../utils/translate/translate'
+import actions from "../../actions/Actions";
+import Store from "../../store/Store";
+import Models from '../../models/Models';
 
 /**
- * Controller class for Spending component. Contains all methods and properties, which used by this module.
+ * Controller class for Spending Item component. Contains all methods and properties, which used by this module.
  */
-class SpendingContainer extends DocumentContainer {
+class SpendingItemContainer extends DocumentItemContainer {
 
     /**
      * Class constructor
      */
     constructor() {
         super();
-        this.model = "spending";
-        this.collection = "spendings";
+        this.model = Models.getInstanceOf("spending");
     }
 
     /**
@@ -26,33 +25,10 @@ class SpendingContainer extends DocumentContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        const result = super.mapStateToProps(state);
-        result["listColumns"] = {
-            "number": {
-                title: t("Номер")
-            },
-            "date": {
-                title: t("Дата")
-            },
-            "description": {
-                title: t("Описание")
-            },
-            "period": {
-                title: t("Период расхода")
-            },
-            "amount": {
-                title: t("Сумма")
-            },
-            "company": {
-                title: t("Организация")
-            }
-        };
-        if (!result["sortOrder"] || !result["sortOrder"].field) {
-            result["sortOrder"] = {field:'date',direction:'ASC'}
-        }
-        result["companies_list"] = state["companies_list"] ? state["companies_list"] : [];
-        result["spending_types"] = state["spending_types"] ? state["spending_types"] : [];
-        return result;
+        return Object.assign(super.mapStateToProps(state), {
+            "companies_list": state["companies_list"] ? state["companies_list"] : [],
+            "spending_types": state["spending_types"] ? state["spending_types"] : []
+        })
     }
 
     /**
@@ -63,23 +39,13 @@ class SpendingContainer extends DocumentContainer {
         if (!callback) callback=()=>null;
         super.updateItem(uid, function() {
             self.getCompaniesList((companies_list) => {
-                Store.store.dispatch(actions.changeProperty('companies_list',companies_list));
-                Backend.request("/spending/types",{},"GET",{},null, function(err,response) {
-                    if (err || !response) {
-                        callback();
-                        return;
-                    }
-                    response.json().then(function(spending_types) {
-                        const spending_types_array = [];
-                        for (let key in spending_types) {
-                            if (!spending_types.hasOwnProperty(key))
-                                continue;
-                            spending_types_array.push({value:parseInt(key),label:spending_types[key]});
-                        }
-                        Store.store.dispatch(actions.changeProperty('spending_types',spending_types_array));
-                        callback();
-                    });
-                })
+                self.model.getTypes((error,spending_types_array) => {
+                    Store.store.dispatch(actions.changeProperties({
+                        'companies_list': companies_list,
+                        'spending_types':spending_types_array,
+                    }));
+                    callback();
+                });
             })
         })
     }
@@ -163,6 +129,6 @@ class SpendingContainer extends DocumentContainer {
     }
 }
 
-const spending = new SpendingContainer();
+const spending = new SpendingItemContainer();
 export const Spending = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(Item.Spending);
-export const Spendings = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(List.Spending);
+export const SpendingContainer = spending;

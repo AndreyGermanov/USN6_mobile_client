@@ -1,5 +1,5 @@
 import React from 'react';
-import Entity from './Entity';
+import Document from './Document';
 import moment from "moment-timezone";
 import t from "../../utils/translate/translate";
 import {FormLabel,Button} from 'react-native-elements';
@@ -8,14 +8,14 @@ import {Input,Select,DateTime} from '../ui/Form';
 /**
  * Component used to manage "Report" detail view.
  */
-class Report extends Entity {
+class Report extends Document {
 
     static listTitle = t("Отчеты");
     static itemTitle = t("Отчет");
 
     // Navigation bar specific options
     static navigationOptions = ({navigation}) => {
-        const result = Entity.navigationOpts(navigation);
+        const result = Document.navigationOpts(navigation);
         result['title'] = Report.listTitle;
         return result;
     };
