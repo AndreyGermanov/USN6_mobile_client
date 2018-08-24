@@ -24,16 +24,11 @@ class Entity extends Component {
             },
             title: Entity.listTitle,
             headerLeft:
-                <Button onPress={() => {
-                    NavigationService.openDrawer()
-                }} icon={{name: 'bars', type: 'font-awesome', color: 'white'}}
+                <Button onPress={() => NavigationService.openDrawer()}
+                        icon={{name: 'bars', type: 'font-awesome', color: 'white'}}
                         backgroundColor="#339CFF"/>,
             headerRight:
-                <Button onPress={() => {
-                    Backend.logout(() => {
-                        NavigationService.navigate('Login');
-                    })
-                }}
+                <Button onPress={() => Backend.logout()}
                         icon={{name: 'sign-out', type: 'font-awesome', color: 'white'}}
                         backgroundColor="#339CFF"
                 />
@@ -194,7 +189,15 @@ class Entity extends Component {
      * Method starts after component rendered and displayed on the screen
      */
     componentDidMount() {
-        this.props.updateList();
+        if (this.props.checkIsLogin())
+            this.props.updateList();
+    }
+
+    /**
+     * Method runs every time when application state updates
+     */
+    componentDidUpdate() {
+        this.props.checkIsLogin()
     }
 }
 

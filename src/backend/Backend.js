@@ -12,6 +12,33 @@ import t from '../utils/translate/translate';
 class Backend {
 
     /**
+     * Method used to login to backend server. Sends "Authorization" header to server with provided login and password
+     * and in case of successful response (STATUS=200 OK), stores authentication token to "token" cookie, which then
+     * used as authentication token in all next requests
+     * @param login: User login
+     * @param password: User password
+     * @param callback: Callback function than called after receive response from server. Contains "err" and "response"
+     *                  parameters. Err if error and response if success, contains response object
+     */
+    login(login,password,callback) {
+        if (!callback) callback = () => null;
+        Store.store.dispatch(actions.changeProperty('authenticating',true));
+        const self = this;
+        this.getAuthToken(login,password, function(token) {
+            self.request('/',{},'GET',{},token, function(err,response) {
+                Store.store.dispatch(actions.changeProperty('authenticating',false));
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                Store.store.dispatch(actions.changeProperties({'isLogin':true,item:{}}));
+                Cookie.set('token',token);
+                callback(null, response);
+            })
+        });
+    }
+
+    /**
      * Method used to generate "Basic" authentication token from login and password,
      * used to pass to the 'Authorization' header in each request to server
      * @param login
@@ -27,6 +54,17 @@ class Backend {
         Cookie.get("token", function(cookieValue) {
             callback(cookieValue)
         });
+    }
+
+    /**
+     * Method used to log out user from the system and clear authentication token
+     * @param callback: Method runs when operation finished
+     */
+    logout(callback= ()=>null) {
+        Cookie.delete('token', () => {
+            Store.store.dispatch(actions.changeProperty('isLogin',false));
+            callback();
+        })
     }
 
     /**
@@ -117,40 +155,6 @@ class Backend {
         Store.store.dispatch(actions.changeProperty('isLogin',false));
         Cookie.delete('token');
         callback(error,null);
-    }
-
-    /**
-     * Method used to login to backend server. Sends "Authorization" header to server with provided login and password
-     * and in case of successful response (STATUS=200 OK), stores authentication token to "token" cookie, which then
-     * used as authentication token in all next requests
-     * @param login: User login
-     * @param password: User password
-     * @param callback: Callback function than called after receive response from server. Contains "err" and "response"
-     *                  parameters. Err if error and response if success, contains response object
-     */
-    login(login,password,callback) {
-        if (!callback) callback = () => null;
-        Store.store.dispatch(actions.changeProperty('authenticating',true));
-        const self = this;
-        this.getAuthToken(login,password, function(token) {
-            self.request('/',{},'GET',{},token, function(err,response) {
-                Store.store.dispatch(actions.changeProperty('authenticating',false));
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                Store.store.dispatch(actions.changeProperties({'isLogin':true,item:{}}));
-                Cookie.set('token',token);
-                callback(null, response);
-            })
-        });
-    }
-
-    logout(callback= ()=>null) {
-        Cookie.delete('token', () => {
-            Store.store.dispatch(actions.changeProperty('isLogin',false));
-            callback();
-        })
     }
 
 }

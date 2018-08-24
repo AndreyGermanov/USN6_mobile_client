@@ -18,13 +18,11 @@ class EntityItemContainer extends EntityContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        return {
+        return Object.assign(super.mapStateToProps(state),{
             uid: state.uid,
             item: state.item[this.model.itemName] ? state.item[this.model.itemName] : {},
-            itemSaveSuccessText: state.itemSaveSuccessText,
-            isUpdating: state.isUpdating,
-            errors: state.errors,
-        }
+            itemSaveSuccessText: state.itemSaveSuccessText
+        })
     }
 
     /**
@@ -33,11 +31,11 @@ class EntityItemContainer extends EntityContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        return {
+        return Object.assign(super.mapDispatchToProps(dispatch),{
             updateItem: (uid) => this.updateItem(uid),
             changeItemField: (field_name,e) => this.changeItemField(field_name,e),
             saveToBackend: () => this.saveToBackend()
-        }
+        })
     }
 
     /**

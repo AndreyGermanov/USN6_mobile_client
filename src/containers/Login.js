@@ -20,7 +20,7 @@ class LoginContainer {
     mapStateToProps(state) {
         return {
             errors: state.errors,
-            item: state.item,
+            item: state.item
         }
     }
 
@@ -41,19 +41,17 @@ class LoginContainer {
      * Method, called when user presses "Login" button
      */
     doLogin() {
-        const props = this.mapStateToProps(Store.store.getState());
-        const login = props.item["login"];
-        const password = props.item["password"];
+        const props = this.mapStateToProps(Store.getState());
         Store.store.dispatch(actions.changeProperty('errors',{}));
-        if (!login) {
+        if (!props.item["login"]) {
             Store.store.dispatch(actions.changeProperty('errors',{"login":t("Введите имя")}));
             return;
         }
-        if (!password) {
+        if (!props.item["password"]) {
             Store.store.dispatch(actions.changeProperty('errors',{"password":t("Введите пароль")}));
             return;
         }
-        Backend.login(login,password, function(err) {
+        Backend.login(props.item["login"],props.item["password"], function(err) {
             if (err) {
                 Store.store.dispatch(actions.changeProperty('errors',{"general":t("Ошибка аутентификации")}));
             } else {
@@ -68,7 +66,7 @@ class LoginContainer {
      * @param field_value: Value to set to the field
      */
     changeItemField(field_name,field_value) {
-        const props = this.mapStateToProps(Store.store.getState());
+        const props = this.mapStateToProps(Store.getState());
         const item = _.cloneDeep(props.item);
         item[field_name] = field_value;
         Store.store.dispatch(actions.changeProperty('item',item));

@@ -1,5 +1,5 @@
 import Store from '../store/Store';
-import Models from '../models/Models'
+import NavigationService from '../utils/NavigationService'
 
 /**
  * Controller class for Entity base component. Contains all methods and properties, which used by any model
@@ -19,8 +19,35 @@ class EntityContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        return {}
+        return {
+            isLogin: state.isLogin,
+            isUpdating: state.isUpdating,
+            errors: state.errors
+        }
     }
+
+    /**
+     * Function defines methods which will be available inside component, which this controller manages
+     * @param dispatch - Store dispatch functions, allows to transfer actions to Redux store
+     * @returns object of methods, which are available in component
+     */
+    mapDispatchToProps(dispatch) {
+        return {
+            checkIsLogin: () => this.checkIsLogin()
+        }
+    }
+
+    /**
+     * Method used to check if user is logged to system. If not, moves to "Login" screen
+     */
+    checkIsLogin() {
+        if (!this.getProps().isLogin) {
+            NavigationService.navigate("Login");
+            return false
+        }
+        return true
+    }
+
 
     /**
      * Method returns array of properties, the same array that available in this component

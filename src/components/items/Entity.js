@@ -84,7 +84,15 @@ class Entity extends Component {
      * Method starts after component rendered and displayed on the screen
      */
     componentDidMount() {
-        this.props.updateItem(this.props.uid);
+        if (this.props.checkIsLogin())
+            this.props.updateItem(this.props.uid);
+    }
+
+    /**
+     * Method runs every time when application state updates
+     */
+    componentDidUpdate() {
+        this.props.checkIsLogin()
     }
 }
 

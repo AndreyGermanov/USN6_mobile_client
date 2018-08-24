@@ -14,10 +14,8 @@ class AppContainer {
      */
     mapStateToProps(state,ownProps) {
         return {
-            screen: state.screen,
             isLogin: state.isLogin,
-            authenticating: state.authenticating,
-            navigation: ownProps.navigation
+            authenticating: state.authenticating
         }
     }
 }

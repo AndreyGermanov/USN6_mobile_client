@@ -27,8 +27,8 @@ class ReportItemContainer extends DocumentItemContainer {
      */
     mapStateToProps(state) {
         return Object.assign(super.mapStateToProps(state), {
-            "companies_list": state["companies_list"] ? state["companies_list"] : [],
-            "report_types": state["report_types"] ? state["report_types"] : []
+            companies_list: state["companies_list"] ? state["companies_list"] : [],
+            report_types: state["report_types"] ? state["report_types"] : []
         })
     }
 
@@ -39,7 +39,7 @@ class ReportItemContainer extends DocumentItemContainer {
      */
     mapDispatchToProps(dispatch) {
         return Object.assign(super.mapDispatchToProps(dispatch), {
-            "sendByEmail": () => this.sendByEmail()
+            sendByEmail: () => this.sendByEmail()
         });
     }
 

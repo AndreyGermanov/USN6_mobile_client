@@ -18,10 +18,8 @@ class EntityListContainer extends EntityContainer {
      * @returns Array of properties
      */
     mapStateToProps(state) {
-        return {
+        return Object.assign(super.mapStateToProps(state),{
             list: state.list[this.model.itemName] ? state.list[this.model.itemName] : [],
-            isUpdating: state.isUpdating,
-            errors: state.errors,
             listColumns: {},
             selectedItems: state.selectedItems[this.model.itemName] ? state.selectedItems[this.model.itemName]: [],
             sortOrder: state.sortOrder[this.model.itemName] ? state.sortOrder[this.model.itemName]: {},
@@ -30,7 +28,7 @@ class EntityListContainer extends EntityContainer {
             numberOfItems: state.numberOfItems[this.model.itemName] ? state.numberOfItems[this.model.itemName]: 0,
             listFilter: state.listFilter[this.model.itemName] ? state.listFilter[this.model.itemName]: "",
             showSortOrderDialog: state.showSortOrderDialog
-        }
+        })
     }
 
     /**
@@ -39,21 +37,20 @@ class EntityListContainer extends EntityContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        const self = this;
-        return {
-            updateList: (options={},callback=()=>null) => self.updateList(options,callback),
-            selectItem: (uid) => self.selectItem(uid),
-            openItem: (uid) => self.openItem(uid),
-            isItemChecked: (uid) => self.isItemChecked(uid),
-            selectAllItems: (elem) => self.selectAllItems(elem),
-            isAllItemsChecked: () => self.isAllItemsChecked(),
-            renderListField: (field_name,value) => self.renderListField(field_name,value),
-            changeListPage: (pageNumber,append) => self.changeListPage(pageNumber,append),
-            changeListSortOrder: (field) => self.changeListSortOrder(field),
-            changeListFilter: (text) => self.changeListFilter(text),
-            deleteItems: () => self.deleteItems(),
-            toggleSortOrderDialog: (mode) => self.toggleSortOrderDialog(mode)
-        }
+        return Object.assign(super.mapDispatchToProps(dispatch), {
+            updateList: (options={},callback=()=>null) => this.updateList(options,callback),
+            selectItem: (uid) => this.selectItem(uid),
+            openItem: (uid) => this.openItem(uid),
+            isItemChecked: (uid) => this.isItemChecked(uid),
+            selectAllItems: (elem) => this.selectAllItems(elem),
+            isAllItemsChecked: () => this.isAllItemsChecked(),
+            renderListField: (field_name,value) => this.renderListField(field_name,value),
+            changeListPage: (pageNumber,append) => this.changeListPage(pageNumber,append),
+            changeListSortOrder: (field) => this.changeListSortOrder(field),
+            changeListFilter: (text) => this.changeListFilter(text),
+            deleteItems: () => this.deleteItems(),
+            toggleSortOrderDialog: (mode) => this.toggleSortOrderDialog(mode)
+        })
     }
 
     /**
