@@ -35,6 +35,7 @@ class AppContainer {
      * Method used to check if user is logged to system. If not, moves to "Login" screen
      */
     checkLogin() {
+        return;
         if (!Store.getState().isLogin)
             NavigationService.navigate("Login");
     }

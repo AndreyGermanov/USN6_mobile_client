@@ -7,7 +7,7 @@ import Models from "../../models/Models";
 /**
  * Controller class for Account List component. Contains all methods and properties, which used by this module.
  */
-class AccountListContainer extends EntityListContainer {
+export default class AccountListContainer extends EntityListContainer {
 
     /**
      * Class constructor
@@ -43,8 +43,9 @@ class AccountListContainer extends EntityListContainer {
                 result["sortOrder"] : {field:'number',direction:'ASC'}
         })
     }
-}
 
-const account = new AccountListContainer();
-export const Account = connect(account.mapStateToProps.bind(account),account.mapDispatchToProps.bind(account))(List.Account);
-export const AccountContainer = account;
+    static getComponent() {
+        const account = new AccountListContainer();
+        return connect(account.mapStateToProps.bind(account),account.mapDispatchToProps.bind(account))(List.Account);
+    }
+}

@@ -11,7 +11,7 @@ import {Select} from '../../components/ui/Form';
 /**
  * Controller class for Report component. Contains all methods and properties, which used by this module.
  */
-class ReportListContainer extends DocumentListContainer {
+export default class ReportListContainer extends DocumentListContainer {
 
     /**
      * Class constructor
@@ -63,27 +63,8 @@ class ReportListContainer extends DocumentListContainer {
         });
     }
 
-    /**
-     * Methods used to render presentations of field values
-     * in list view
-     * @param value: Source value
-     * @returns formatted value
-     */
-    renderListField_period(value) {
-        if (this.cleanIntField(value)) {
-            return moment(value*1000).format("YYYY "+t("г."));
-        } else {
-            return 0;
-        }
-    }
-
-    renderListField_type(value) {
-        const report_type = Select.getItemByValue(value,this.getProps().report_types);
-        if (report_type) return report_type.label;
-        return "";
+    static getComponent() {
+        const report = new ReportListContainer();
+        return connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(List.Report);
     }
 }
-
-const report = new ReportListContainer();
-export const Report = connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(List.Report);
-export const ReportContainer = report;

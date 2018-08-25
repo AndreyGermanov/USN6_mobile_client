@@ -49,35 +49,35 @@ function getNavigationStacks() {
 function getMainMenuStack() {
     return {
         Incomes: {
-            screen: createStackNavigator({incomes: List.Income,income: Item.Income}),
+            screen: createStackNavigator({incomes: List.getComponentOf("income"),income: Item.getComponentOf("income")}),
             navigationOptions: {
                 title: t("Доходы"),
                 drawerIcon: ({tintColor}) => <IconFontAwesome name="file-text-o" color={tintColor} size={16}/>
             },
         },
         Spendings: {
-            screen: createStackNavigator({spendings: List.Spending,spending: Item.Spending}),
+            screen: createStackNavigator({spendings: List.getComponentOf("spending"),spending: Item.getComponentOf("spending")}),
             navigationOptions: {
                 title: t("Расходы"),
                 drawerIcon: ({tintColor}) => <IconFontAwesome name="file-text-o" color={tintColor} size={16}/>
             }
         },
         Reports: {
-            screen: createStackNavigator({reports: List.Report,report:Item.Report}),
+            screen: createStackNavigator({reports: List.getComponentOf("report"),report:Item.getComponentOf("report")}),
             navigationOptions: {
                 title: t("Отчеты"),
                 drawerIcon: ({tintColor}) => <IconFoundation name="book" color={tintColor} size={20}/>
             }
         },
         Companies: {
-            screen: createStackNavigator({companies: List.Company,company:Item.Company}),
+            screen: createStackNavigator({companies: List.getComponentOf("company"),company:Item.getComponentOf("company")}),
             navigationOptions: {
                 title: t("Организации"),
                 drawerIcon: ({tintColor}) => <IconFontAwesome name="building-o" color={tintColor} size={16}/>
             }
         },
         Accounts: {
-            screen: createStackNavigator({accounts: List.Account,account: Item.Account}),
+            screen: createStackNavigator({accounts: List.getComponentOf("account"),account: Item.getComponentOf("account")}),
             navigationOptions: {
                 title: t("Банковские счета"),
                 drawerIcon: ({tintColor}) => <IconFontAwesome5 name="coins" color={tintColor} size={16}/>

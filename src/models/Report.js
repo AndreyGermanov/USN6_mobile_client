@@ -1,6 +1,10 @@
 import Document from './Document';
 import Backend from "../backend/Backend";
 import backendConfig from "../config/backend";
+import {Select} from "../components/ui/Form";
+import t from "../utils/translate/translate";
+import moment from "moment-timezone";
+import Store from '../store/Store';
 
 /**
  * Database model of Report entity
@@ -59,6 +63,89 @@ class Report extends Document {
                 callback(err,response);
             })
         });
+    }
+
+    /**********************************
+     * Item fields validation methods *
+     **********************************/
+
+    validate_company(value) {
+        if (!this.cleanStringField(value)) return t("Организация не указана");
+        return "";
+    }
+
+    validate_date(value) {
+        if (!this.cleanStringField(value)) return t("Не указана дата отчета");
+        if (this.cleanIntField(value)===null) return t("Указана некорректная дата отчета");
+        return "";
+    }
+
+    validate_period(value) {
+        if (!this.cleanStringField(value)) return t("Не указан период отчета");
+        if (this.cleanIntField(value)===null) return t("Указан некорректный период отчета");
+        return "";
+    }
+
+    validate_type(value) {
+        if (!this.cleanStringField(value)) return t("Не указан тип отчета");
+        if (!Select.getItemByValue(value,Store.getState().report_types)) return t("Указан некорректный тип отчета");
+        return "";
+    }
+
+    validate_email(value) {
+        value = value.toString().trim();
+        if (!value) return "";
+        if (this.cleanEmailField(value)===null) return t("Указан некорректный адрес email");
+        return "";
+    }
+
+    /***************************************************
+     * Item field values cleanup and transform methods *
+     * used to prepare fields to be pushed to database *
+     ***************************************************/
+
+    cleanField_company(value) {
+        return this.cleanStringField(value);
+    }
+
+
+    cleanField_date(value) {
+        return this.cleanIntField(value);
+    }
+
+    cleanField_period(value) {
+        return this.cleanIntField(value);
+    }
+
+    cleanField_type(value) {
+        if (this.validate_type(value)) return null;
+        return this.cleanStringField(value);
+    }
+
+    cleanField_email(value) {
+        if (!value.toString().trim()) return "";
+        if (this.validate_email(value)) return null;
+        return this.cleanEmailField(value);
+    }
+
+    /**
+     * Methods used to render presentations of field values
+     * in list view
+     * @param value: Source value
+     * @returns formatted value
+     */
+    getStringOfField_period(value) {
+        if (this.cleanIntField(value)) {
+            return moment(value*1000).format("YYYY "+t("г."));
+        } else {
+            return 0;
+        }
+    }
+
+    getStringOfField_type(value) {
+        const report_type = Select.getItemByValue(value,Store.getState().report_types);
+        if (report_type) return report_type.label;
+        return "";
     }
 }
 

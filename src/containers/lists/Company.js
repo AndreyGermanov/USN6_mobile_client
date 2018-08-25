@@ -7,7 +7,7 @@ import Models from '../../models/Models';
 /**
  * Controller class for Company List component. Contains all methods and properties, which used by this module.
  */
-class CompanyListContainer extends EntityListContainer {
+export default class CompanyListContainer extends EntityListContainer {
 
     /**
      * Class constructor
@@ -40,8 +40,9 @@ class CompanyListContainer extends EntityListContainer {
                 result["sortOrder"] : {field:'name',direction:'ASC'}
         })
     }
-}
 
-const company = new CompanyListContainer();
-export const Company = connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(List.Company);
-export const CompanyContainer = company;
+    static getComponent() {
+        const company = new CompanyListContainer();
+        return connect(company.mapStateToProps.bind(company),company.mapDispatchToProps.bind(company))(List.Company);
+    }
+}

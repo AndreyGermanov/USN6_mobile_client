@@ -10,7 +10,7 @@ import {Select} from '../../components/ui/Form';
 /**
  * Controller class for Report Item component. Contains all methods and properties, which used by this module.
  */
-class ReportItemContainer extends DocumentItemContainer {
+export default class ReportItemContainer extends DocumentItemContainer {
 
     /**
      * Class constructor
@@ -88,7 +88,7 @@ class ReportItemContainer extends DocumentItemContainer {
      */
     isValidForEmail() {
         Store.store.dispatch(actions.changeProperty("errors",{}));
-        const errors = this.validate();
+        const errors = this.model.validate();
         if (errors !== null) {
             Store.store.dispatch(actions.changeProperty("errors",errors));
             return false;
@@ -129,77 +129,9 @@ class ReportItemContainer extends DocumentItemContainer {
         })
     }
 
-    /********************************************************
-     * Functions used to convert field value from a form    *
-     * which it has in input to the form which accepted by  *
-     * application state                                    *
-     ********************************************************/
-
-    /**********************************
-     * Item fields validation methods *
-     **********************************/
-
-    validate_company(value) {
-        if (!this.cleanStringField(value)) return t("Организация не указана");
-        return "";
-    }
-
-    validate_date(value) {
-        if (!this.cleanStringField(value)) return t("Не указана дата отчета");
-        if (this.cleanIntField(value)===null) return t("Указана некорректная дата отчета");
-        return "";
-    }
-
-    validate_period(value) {
-        if (!this.cleanStringField(value)) return t("Не указан период отчета");
-        if (this.cleanIntField(value)===null) return t("Указан некорректный период отчета");
-        return "";
-    }
-
-    validate_type(value) {
-        if (!this.cleanStringField(value)) return t("Не указан тип отчета");
-        if (!Select.getItemByValue(value,this.getProps().report_types)) return t("Указан некорректный тип отчета");
-        return "";
-    }
-
-    validate_email(value) {
-        value = value.toString().trim();
-        if (!value) return "";
-        if (this.cleanEmailField(value)===null) return t("Указан некорректный адрес email");
-        return "";
-    }
-
-    /***************************************************
-     * Item field values cleanup and transform methods *
-     * used to prepare fields to be pushed to database *
-     ***************************************************/
-
-    cleanField_company(value) {
-        return this.cleanStringField(value);
-    }
-
-
-    cleanField_date(value) {
-        return this.cleanIntField(value);
-    }
-
-    cleanField_period(value) {
-        return this.cleanIntField(value);
-    }
-
-    cleanField_type(value) {
-        if (this.validate_type(value)) return null;
-        return this.cleanStringField(value);
-    }
-
-    cleanField_email(value) {
-        if (!value.toString().trim()) return "";
-        if (this.validate_email(value)) return null;
-        return this.cleanEmailField(value);
+    static getComponent() {
+        const report = new ReportItemContainer();
+        return connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(Item.Report);
     }
 
 }
-
-const report = new ReportItemContainer();
-export const Report = connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(Item.Report);
-export const ReportContainer = report;

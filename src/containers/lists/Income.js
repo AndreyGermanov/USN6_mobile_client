@@ -7,7 +7,7 @@ import Models from '../../models/Models';
 /**
  * Controller class for Income List component. Contains all methods and properties, which used by this module.
  */
-class IncomeListContainer extends DocumentListContainer {
+export default class IncomeListContainer extends DocumentListContainer {
 
     /**
      * Class constructor
@@ -47,8 +47,9 @@ class IncomeListContainer extends DocumentListContainer {
         })
     }
 
+    static getComponent() {
+        const income = new IncomeListContainer();
+        return connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(List.Income);
+    }
 }
 
-const income = new IncomeListContainer();
-export const Income = connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(List.Income);
-export const IncomeContainer = income;

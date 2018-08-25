@@ -10,7 +10,7 @@ import EntityContainer from '../Entity';
  * Base controller class for all object lists. Contains all methods and properties, which used by all
  * descendant lists
  */
-class EntityListContainer extends EntityContainer {
+export default class EntityListContainer extends EntityContainer {
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
@@ -209,8 +209,8 @@ class EntityListContainer extends EntityContainer {
      * @returns Converted value
      */
     renderListField(field_name,value) {
-        if (typeof(this["renderListField_"+field_name]) === "function") {
-            return this["renderListField_"+field_name].bind(this)(value);
+        if (typeof(this.model["getStringOfField_"+field_name]) === "function") {
+            return this.model["getStringOfField_"+field_name].bind(this.model)(value);
         } else {
             return value;
         }
@@ -315,5 +315,3 @@ class EntityListContainer extends EntityContainer {
         }));
     }
 }
-
-export default EntityListContainer;

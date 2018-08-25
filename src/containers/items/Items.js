@@ -1,39 +1,49 @@
-import {Account as AccountItem,AccountContainer} from './Account';
-import {Company as CompanyItem,CompanyContainer} from "./Company";
-import {Report as ReportItem,ReportContainer} from "./Report";
-import {Income as IncomeItem,IncomeContainer} from "./Income";
-import {Spending as SpendingItem,SpendingContainer} from "./Spending";
+import AccountContainer from './Account';
+import CompanyContainer from "./Company";
+import ReportContainer from "./Report";
+import IncomeContainer from "./Income";
+import SpendingContainer from "./Spending";
 
 /**
  * Factory to get instances of Item containers and connected components
  */
 export class Items {
-    static  Account = AccountItem;
-    static Company = CompanyItem;
-    static Report = ReportItem;
-    static Income = IncomeItem;
-    static Spending = SpendingItem;
 
     // Cache of created instances
     static instances = {};
+
+    static createInstanceOf(modelName) {
+        switch (modelName) {
+            case "account": return new AccountContainer();
+            case "company": return new CompanyContainer();
+            case "income": return new IncomeContainer();
+            case "spending": return new SpendingContainer();
+            case "report": return new ReportContainer();
+        }
+    }
 
     /**
      * Returns instance of Detail view container for specified database model
      * @param modelName: Name of model
      */
     static getInstanceOf(modelName) {
+        if (!Items.instances[modelName])
+            Items.instances[modelName] = Items.createInstanceOf(modelName);
+        return Items.instances[modelName];
+    }
+
+    /**
+     * Returns instance of wired Container component
+     * @param modelName: Name of model
+     */
+    static getComponentOf(modelName) {
         switch (modelName) {
-            case "account": return AccountContainer;
-            case "company": return CompanyContainer;
-            case "income": return IncomeContainer;
-            case "spending": return SpendingContainer;
-            case "report": return ReportContainer;
+            case "account": return AccountContainer.getComponent();
+            case "company": return CompanyContainer.getComponent();
+            case "income": return IncomeContainer.getComponent();
+            case "spending": return SpendingContainer.getComponent();
+            case "report": return ReportContainer.getComponent();
         }
     }
-}
 
-export const Account = AccountItem;
-export const Company = CompanyItem;
-export const Report = ReportItem;
-export const Income = IncomeItem;
-export const Spending = SpendingItem;
+}

@@ -24,10 +24,7 @@ class Loading extends Component {
      * Method runs when component first loaded. Used to start login process
      */
     componentDidMount() {
-        const self = this;
-        setTimeout(() => {
-            self.tryLogin();
-        },5000);
+        this.tryLogin();
     }
 
     /**

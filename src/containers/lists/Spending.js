@@ -7,7 +7,7 @@ import Models from '../../models/Models';
 /**
  * Controller class for Spending List component. Contains all methods and properties, which used by this module.
  */
-class SpendingListContainer extends DocumentListContainer {
+export default class SpendingListContainer extends DocumentListContainer {
 
     /**
      * Class constructor
@@ -50,8 +50,9 @@ class SpendingListContainer extends DocumentListContainer {
         })
     }
 
-}
+    static getComponent() {
+        const spending = new SpendingListContainer();
+        return connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(List.Spending);
+    }
 
-const spending = new SpendingListContainer();
-export const Spending = connect(spending.mapStateToProps.bind(spending),spending.mapDispatchToProps.bind(spending))(List.Spending);
-export const SpendingContainer = spending
+}

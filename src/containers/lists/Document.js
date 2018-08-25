@@ -7,7 +7,7 @@ import t from "../../utils/translate/translate";
 /**
  * Controller class for Document List containers. All descendant document container classes extend this class.
  */
-class DocumentListContainer extends EntityListContainer {
+export default class DocumentListContainer extends EntityListContainer {
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
@@ -73,25 +73,4 @@ class DocumentListContainer extends EntityListContainer {
         }));
     }
 
-    /**
-     * Methods used to render presentations of field values
-     * in list view
-     * @param value: Source value
-     * @returns formatted value
-     */
-    renderListField_date(value) {
-        if (this.cleanIntField(value)) {
-            return moment(value*1000).format("DD.MM.YYYY HH:mm:ss");
-        } else {
-            return 0;
-        }
-    }
-
-    renderListField_amount(value) {
-        if (this.cleanDecimalField(value)!==null) {
-            return value.toFixed(2);
-        }
-    }
 }
-
-export default DocumentListContainer;

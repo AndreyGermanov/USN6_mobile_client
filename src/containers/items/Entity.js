@@ -10,7 +10,7 @@ import NavigationService from '../../utils/NavigationService';
  * Base controller class for all object detail views. Contains all methods and properties, which used by all
  * descendant lists
  */
-class EntityItemContainer extends EntityContainer {
+export default class EntityItemContainer extends EntityContainer {
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
@@ -72,55 +72,20 @@ class EntityItemContainer extends EntityContainer {
      * @param value: Value to set
      */
     changeItemField(field_name,value) {
-        if (typeof(this["parseItemField_"+field_name]) === "function") {
-            value = this["parseItemField_" + field_name].bind(this)(value);
+        if (typeof(this.model["parseItemField_"+field_name]) === "function") {
+            value = this.model["parseItemField_" + field_name].bind(this)(value);
         }
         const state = Store.getState();
         const item = _.cloneDeep(state.item);
+        if (!item[this.model.itemName])
+            item[this.model.itemName] = {};
         if (item[this.model.itemName][field_name] == value) {
             return;
         }
         const errors = _.cloneDeep(state.errors);
         item[this.model.itemName][field_name] = value;
-        errors[field_name] = this.validateItemField(field_name,value);
+        errors[field_name] = this.model.validateItemField(field_name,value);
         Store.store.dispatch(actions.changeProperties({"item":item,"errors":errors}));
-    }
-
-    /**
-     * Function used to validate all fields in the form
-     * @returns Array of found errors or null if nothing found
-     */
-    validate() {
-        const props = this.getProps();
-        const item = props.item;
-        const errors = {};
-        let has_errors = false;
-        for (const field_name in item) {
-            if (!item.hasOwnProperty(field_name) || field_name === 'uid')
-                continue;
-            const error = this.validateItemField(field_name,item[field_name]);
-            if (error) {
-                has_errors = true;
-                errors[field_name] = error;
-            }
-        }
-        return has_errors ? errors : null;
-    }
-
-    /**
-     * Method used to validate specified field in item form
-     * @param field_name: Name of field to validate
-     * @param field_value: Value to validate
-     * @returns {string}: Either string with error message or empty string if no error
-     */
-    validateItemField(field_name,field_value) {
-        if (!field_value || typeof(field_value) === "undefined") {
-            field_value = "";
-        }
-        if (typeof(this["validate_"+field_name])==="function") {
-            return this["validate_"+field_name](field_value);
-        }
-        return "";
     }
 
     /**
@@ -130,21 +95,20 @@ class EntityItemContainer extends EntityContainer {
     saveToBackend(callback) {
         const self = this;
         if (!callback) callback = () => null;
+        const item = this.getProps().item;
         Store.store.dispatch(actions.changeProperty("errors",{}));
-        const errors = self.validate();
+        const errors = this.model.validate(item);
         if (errors !== null) {
             Store.store.dispatch(actions.changeProperty("errors",errors));
             callback();
             return;
         }
-        const data = this.cleanDataForBackend();
-        const item = this.getProps().item;
         const stateItem = Store.getState().item;
         Store.store.dispatch(actions.changeProperty('isUpdating',true));
-        this.model.saveItem(data, function(err,result) {
+        this.model.saveItem(item, function(err,result) {
             Store.store.dispatch(actions.changeProperty('isUpdating',false));
             if (err || !result || result["errors"]) {
-                if (!result["errors"])
+                if (!result || !result["errors"])
                     result = {'errors':{'general':t("Системная ошибка")}};
                 Store.store.dispatch(actions.changeProperty('errors',result['errors']));
                 callback();
@@ -155,33 +119,8 @@ class EntityItemContainer extends EntityContainer {
                 Store.store.dispatch(actions.changeProperties({uid: result["uid"], item: stateItem}));
             }
             self.displaySuccessText();
+            callback();
         })
-    }
-
-    /**
-     * Method used to clean and prepare item data before sending to backend
-     * @returns Object(hashmap) with data,ready to send to backend for this model
-     */
-    cleanDataForBackend() {
-        const props = this.getProps();
-        const item = props.item;
-        const result = {};
-        if (item.uid && item.uid !== "new") {
-            result["uid"] = item.uid;
-        }
-        for (let field_name in item) {
-            if (!item.hasOwnProperty(field_name) || field_name === "uid")
-                continue;
-            if (typeof(this["cleanField_"+field_name])==="function") {
-                const value = this["cleanField_"+field_name](item[field_name]);
-                if (value !== null) result[field_name] = value;
-            } else if (typeof(item[field_name]) === 'string') {
-                result[field_name] = item[field_name].trim();
-            } else {
-                result[field_name] = item[field_name];
-            }
-        }
-        return result;
     }
 
     /**
@@ -226,5 +165,3 @@ class EntityItemContainer extends EntityContainer {
         this.model.getListView().updateList();
     }
 }
-
-export default EntityItemContainer;

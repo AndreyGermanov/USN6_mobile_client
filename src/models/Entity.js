@@ -1,6 +1,5 @@
 import t from "../utils/translate/translate";
 import Backend from '../backend/Backend';
-import {Item,List} from '../containers/Containers';
 
 /**
  * Base class for database models, used in application
@@ -105,18 +104,19 @@ class Entity {
      */
     saveItem(options,callback) {
         if (typeof(callback)!=='function') callback = ()=>null;
-        if (!options) {
+        const data = this.cleanDataForBackend(options);
+        if (!data) {
             callback(null,{'errors':{'general': t("Системная ошибка")}});
             return;
         }
         let method = 'POST';
         let url = '/'+this.itemName;
-        if (options['uid']) {
+        if (data['uid']) {
             method = 'PUT';
             url += "/"+options['uid'].toString().replace(/#/g,"").replace(/:/g,"_");
-            delete options['uid'];
+            delete data['uid'];
         }
-        Backend.request(url,options,method,null,null, function(error, response) {
+        Backend.request(url,data,method,null,null, function(error, response) {
             if (!response || response.status !== 200 || error) {
                 callback(null,{'errors':{'general': t("Системная ошибка")}});
                 return;
@@ -125,6 +125,65 @@ class Entity {
                 callback(null,obj);
             });
         });
+    }
+
+    /**
+     * Method used to clean and prepare item data before sending to backend
+     * @returns Object(hashmap) with data,ready to send to backend for this model
+     */
+    cleanDataForBackend(item) {
+        const result = {};
+        if (item.uid && item.uid !== "new") {
+            result["uid"] = item.uid;
+        }
+        for (let field_name in item) {
+            if (!item.hasOwnProperty(field_name) || field_name === "uid")
+                continue;
+            if (typeof(this["cleanField_"+field_name])==="function") {
+                const value = this["cleanField_"+field_name](item[field_name]);
+                if (value !== null) result[field_name] = value;
+            } else if (typeof(item[field_name]) === 'string') {
+                result[field_name] = item[field_name].trim();
+            } else {
+                result[field_name] = item[field_name];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Function used to validate item before save to database
+     * @returns Array of found errors or null if nothing found
+     */
+    validate(item) {
+        const errors = {};
+        let has_errors = false;
+        for (const field_name in item) {
+            if (!item.hasOwnProperty(field_name) || field_name === 'uid')
+                continue;
+            const error = this.validateItemField(field_name,item[field_name]);
+            if (error) {
+                has_errors = true;
+                errors[field_name] = error;
+            }
+        }
+        return has_errors ? errors : null;
+    }
+
+    /**
+     * Method used to validate specified field
+     * @param field_name: Name of field to validate
+     * @param field_value: Value to validate
+     * @returns {string}: Either string with error message or empty string if no error
+     */
+    validateItemField(field_name,field_value) {
+        if (!field_value || typeof(field_value) === "undefined") {
+            field_value = "";
+        }
+        if (typeof(this["validate_"+field_name])==="function") {
+            return this["validate_"+field_name](field_value);
+        }
+        return "";
     }
 
     /**
@@ -152,14 +211,42 @@ class Entity {
      * Method returns instance of DetailView container for this model based on model name
      */
     getItemView() {
-        return Item.getInstanceOf(this.itemName);
+        return require('../containers/Containers').Item.getInstanceOf(this.itemName);
     }
 
     /**
      * Method returns instance of List View container for this model based on model name
      */
     getListView() {
-        return List.getInstanceOf(this.itemName);
+        return require('../containers/Containers').List.getInstanceOf(this.itemName);
+    }
+
+    /************************************************************
+     * Generic functions used to clean values of various types, *
+     * before pushing to database                               *
+     ************************************************************/
+
+    cleanStringField(value) {
+        return value.toString().trim()
+    }
+
+    cleanIntField(value) {
+        const result = parseInt(value);
+        if (!isNaN(result) && value == result) return result;
+        return null;
+    }
+
+    cleanDecimalField(value) {
+        const result = parseFloat(value);
+        if (!isNaN(result) && value == result) return result;
+        return null;
+    }
+
+    cleanEmailField(value) {
+        value = value.toString().trim().toLowerCase();
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(value)) return null;
+        return value;
     }
 }
 
