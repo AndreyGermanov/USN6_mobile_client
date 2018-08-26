@@ -32,20 +32,6 @@ class Account extends Entity {
             <Input name="ks" value={item["ks"]} label="Корр. счет" keyboard="numeric"/>
         ]
     }
-
-    /**
-     * Method initializes all properties of item
-     * @returns Initialized item
-     */
-    initItem() {
-        const item = this.props.item;
-        if (!item.bank_name) item.bank_name = '';
-        if (!item.company) item.company = '';
-        if (!item.number) item.number = '';
-        if (!item.bik) item.bik = '';
-        if (!item.ks) item.ks = '';
-        return item;
-    }
 }
 
 export default Account;

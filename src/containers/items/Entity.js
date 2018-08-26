@@ -32,10 +32,21 @@ export default class EntityItemContainer extends EntityContainer {
      */
     mapDispatchToProps(dispatch) {
         return Object.assign(super.mapDispatchToProps(dispatch),{
+            initItem: (item) => this.initItem(item),
             updateItem: (uid) => this.updateItem(uid),
             changeItemField: (field_name,e) => this.changeItemField(field_name,e),
             saveToBackend: () => this.saveToBackend()
         })
+    }
+
+    /**
+     * Method used to initialize item, which is displayed in view by populating
+     * all empty or undefined properties with default values
+     * @param item: Input item
+     * @returns item, with all fields defined
+     */
+    initItem(item) {
+        return this.model.initItem(item);
     }
 
     /**

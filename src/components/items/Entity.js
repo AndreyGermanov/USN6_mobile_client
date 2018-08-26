@@ -36,7 +36,7 @@ class Entity extends Component {
      */
     render() {
         if (!this.props.item) return null;
-        const item = this.initItem();
+        const item = this.props.initItem(this.props.item);
         return (
             <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
                 {this.renderStatusMessages()}

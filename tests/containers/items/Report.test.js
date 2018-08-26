@@ -19,7 +19,7 @@ describe("ReportItemContainer tests", () => {
     });
 
     const getErrors = () => {
-        return Store.getState().errors;
+        return Store.getState().errors ? Store.getState().errors : {};
     };
 
 
@@ -253,7 +253,109 @@ describe("ReportItemContainer tests", () => {
                 done()
             });
         });
-    })
+    });
+
+    describe("sendByEmail tests", () => {
+
+        test("Validation test (no data provided)", () => {
+            Store.store.dispatch(actions.changeProperties(
+                {
+                    item: {
+                        report: {
+                            'date': '',
+                            'period': '',
+                            'email':'',
+                            'company': '',
+                            'type': ''
+                        }
+                    }
+                }
+            ));
+            item.sendByEmail();
+            const errors = getErrors();
+            expect(Object.keys(errors).length).toBe(5)
+        });
+
+        test("Validation test (incorrect data provided)", () => {
+            Store.store.dispatch(actions.changeProperties(
+                {
+                    item: {
+                        report: {
+                            'date': {"boo":"woo"},
+                            'period': 'sdgsdd',
+                            'email':'fsdsf',
+                            'company': '  ',
+                            'type': 'dgs'
+                        }
+                    }
+                }
+            ));
+            item.sendByEmail();
+            const errors = getErrors();
+            expect(Object.keys(errors).length).toBe(5)
+        });
+
+        test("Validation test (correct data provided, server returned no response)", (done) => {
+            Store.store.dispatch(actions.changeProperties(
+                {
+                    item: {
+                        report: {
+                            'date': 15443343234,
+                            'period': 12323533,
+                            'email':'test@test.com',
+                            'company': 'Test.ru',
+                            'type': 'kudir'
+                        }
+                    }
+                }
+            ));
+            item.model = {
+                itemName: 'report',
+                sendByEmail : (options,callback) => {
+                    callback(null,{text: () => new Promise((resolve,reject) => {resolve(null)})})
+                },
+                validate: item.model.validate.bind(item.model)
+            };
+            item.sendByEmail(() => {
+                const errors = getErrors();
+                const state = Store.getState();
+                expect(Object.keys(errors).length).toBe(0);
+                expect(state.itemSaveSuccessText.length).toBeGreaterThan(0);
+                done();
+            });
+        });
+
+
+        test("Validation test (correct data provided, server returned error response)", (done) => {
+            Store.store.dispatch(actions.changeProperties(
+                {
+                    item: {
+                        report: {
+                            'date': 15443343234,
+                            'period': 12323533,
+                            'email':'test@test.com',
+                            'company': 'Test.ru',
+                            'type': 'kudir'
+                        }
+                    }
+                }
+            ));
+            item.model = {
+                itemName: 'report',
+                sendByEmail : (options,callback) => {
+                    callback(null,{text: () => new Promise((resolve,reject) => {resolve("ERROR")})})
+                },
+                validate: item.model.validate.bind(item.model)
+            };
+            item.sendByEmail(() => {
+                const errors = getErrors();
+                expect(Object.keys(errors).length).toBe(1);
+                expect(errors["general"]).toBe("ERROR");
+                done()
+            });
+        });
+
+    });
 
 });
 

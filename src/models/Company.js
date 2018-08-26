@@ -12,6 +12,21 @@ class Company extends Entity {
         this.collectionName = "companies";
     }
 
+    /**
+     * Method initializes all properties of item
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        item = super.initItem(item);
+        if (!item.name) item.name = '';
+        if (!item.inn) item.inn = '';
+        if (!item.kpp) item.kpp = '';
+        if (!item.address) item.address = '';
+        if (!item.type) item.type = 1;
+        return item;
+    }
+
     /**********************************
      * Item fields validation methods *
      **********************************/

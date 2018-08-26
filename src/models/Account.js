@@ -11,6 +11,21 @@ class Account extends Entity {
         this.collectionName = "accounts";
     }
 
+    /**
+     * Method initializes all properties of item
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        item = super.initItem(item);
+        if (!item.bank_name) item.bank_name = '';
+        if (!item.company) item.company = '';
+        if (!item.number) item.number = '';
+        if (!item.bik) item.bik = '';
+        if (!item.ks) item.ks = '';
+        return item;
+    }
+
     /**********************************
      * Item fields validation methods *
      **********************************/

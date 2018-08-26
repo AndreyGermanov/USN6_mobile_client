@@ -42,20 +42,6 @@ class Company extends Entity {
             {label:t("Общество с ограниченной ответственностью"),value:2}
         ]
     }
-
-    /**
-     * Method initializes all properties of item
-     * @returns Initialized item
-     */
-    initItem() {
-        const item = this.props.item;
-        if (!item.name) item.name = '';
-        if (!item.inn) item.inn = '';
-        if (!item.kpp) item.kpp = '';
-        if (!item.address) item.address = '';
-        if (!item.type) item.type = 1;
-        return item;
-    }
 }
 
 export default Company;

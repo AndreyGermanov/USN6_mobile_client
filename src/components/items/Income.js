@@ -33,20 +33,6 @@ class Income extends Document {
             <Input name="description" value={item["description"]} label="Описание операции" multiline={true}/>
         ]
     }
-
-    /**
-     * Method initializes all properties of item
-     * @returns Initialized item
-     */
-    initItem() {
-        const item = this.props.item;
-        if (!item.description) item.description = '';
-        if (!item.company) item.company = '';
-        if (!item.number) item.number = ''; else item.number = item.number.toString();
-        if (!item.date) item.date = moment().unix();
-        if (!item.amount) item.amount = ''; else item.amount = item.amount.toString();
-        return item;
-    }
 }
 
 export default Income;

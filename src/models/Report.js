@@ -10,10 +10,26 @@ import Store from '../store/Store';
  * Database model of Report entity
  */
 class Report extends Document {
+
     constructor() {
         super();
         this.itemName = "report";
         this.collectionName = "reports";
+    }
+
+    /**
+     * Method used to initialize item, by populating all empty or undefined fields with default values
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        item = super.initItem(item);
+        if (!item.company) item.company = '';
+        if (!item.date) item.date = moment().unix();
+        if (!item.period) item.period = moment().unix();
+        if (!item.type) item.type = 'kudir';
+        if (!item.email) item.email = "";
+        return item;
     }
 
     /**

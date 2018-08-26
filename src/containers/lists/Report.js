@@ -54,7 +54,6 @@ export default class ReportListContainer extends DocumentListContainer {
      * including search filter, current page and sort order and sets "list" state variable
      * based on returned result
      * @param options: Filter and other options to generate list
-     * @param callback: Callback called after operation finished
      */
     updateList(options={}) {
         super.updateList(options);

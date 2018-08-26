@@ -1,5 +1,6 @@
 import Document from './Document';
 import t from "../utils/translate/translate";
+import moment from "moment-timezone";
 
 /**
  * Database model of Income entity
@@ -10,6 +11,21 @@ class Income extends Document {
         super();
         this.itemName = "income";
         this.collectionName = "incomes";
+    }
+
+    /**
+     * Method initializes all properties of item
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        item = super.initItem(item);
+        if (!item.description) item.description = '';
+        if (!item.company) item.company = '';
+        if (!item.number) item.number = ''; else item.number = item.number.toString();
+        if (!item.date) item.date = moment().unix();
+        if (!item.amount) item.amount = ''; else item.amount = item.amount.toString();
+        return item;
     }
 
     /**********************************

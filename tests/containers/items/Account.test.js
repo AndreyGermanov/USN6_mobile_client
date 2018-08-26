@@ -21,7 +21,6 @@ describe("AccountItemContainer tests", () => {
         return Store.getState().errors;
     };
 
-
     describe("changeItemField tests", () => {
 
         test("Validate incorrect company (empty string)", () => {

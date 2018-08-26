@@ -54,20 +54,6 @@ class Report extends Document {
         }
         return years;
     }
-
-    /**
-     * Method initializes all properties of item
-     * @returns Initialized item
-     */
-    initItem() {
-        const item = this.props.item;
-        if (!item.company) item.company = '';
-        if (!item.date) item.date = moment().unix();
-        if (!item.period) item.period = moment().unix();
-        if (!item.type) item.type = 'kudir';
-        if (!item.email) item.email = "";
-        return item;
-    }
 }
 
 export default Report;

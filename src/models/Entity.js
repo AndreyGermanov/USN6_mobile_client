@@ -12,6 +12,16 @@ class Entity {
     }
 
     /**
+     * Method used to initialize item, by populating all empty or undefined fields with default values
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        if (!item || typeof(item)!="object") item = {};
+        return item;
+    }
+
+    /**
      * Method returns number of items in collection
      * @param options: params to query.
      * @param callback: Method which called after request. Contains "err" and "result" variables. Err can contain
@@ -207,20 +217,6 @@ class Entity {
         });
     }
 
-    /**
-     * Method returns instance of DetailView container for this model based on model name
-     */
-    getItemView() {
-        return require('../containers/Containers').Item.getInstanceOf(this.itemName);
-    }
-
-    /**
-     * Method returns instance of List View container for this model based on model name
-     */
-    getListView() {
-        return require('../containers/Containers').List.getInstanceOf(this.itemName);
-    }
-
     /************************************************************
      * Generic functions used to clean values of various types, *
      * before pushing to database                               *
@@ -247,6 +243,20 @@ class Entity {
         const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!re.test(value)) return null;
         return value;
+    }
+
+    /**
+     * Method returns instance of DetailView container for this model based on model name
+     */
+    getItemView() {
+        return require('../containers/Containers').Item.getInstanceOf(this.itemName);
+    }
+
+    /**
+     * Method returns instance of List View container for this model based on model name
+     */
+    getListView() {
+        return require('../containers/Containers').List.getInstanceOf(this.itemName);
     }
 }
 

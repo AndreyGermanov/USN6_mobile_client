@@ -14,7 +14,6 @@ export default class AccountItemContainer extends EntityItemContainer {
     /**
      * Class constructor
      */
-
     constructor() {
         super();
         this.model = Models.getInstanceOf("account");

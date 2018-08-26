@@ -5,7 +5,6 @@ import t from '../../utils/translate/translate'
 import actions from "../../actions/Actions";
 import Store from "../../store/Store";
 import Models from '../../models/Models';
-import {Select} from '../../components/ui/Form';
 
 /**
  * Controller class for Report Item component. Contains all methods and properties, which used by this module.
@@ -49,9 +48,9 @@ export default class ReportItemContainer extends DocumentItemContainer {
     updateItem(uid,callback) {
         const self = this;
         if (!callback) callback = () => null;
-        super.updateItem(uid,function() {
+        super.updateItem(uid,() => {
             self.getCompaniesList((companies_list) => {
-                self.model.getTypes(function(error,report_types) {
+                self.model.getTypes((error,report_types) => {
                     Store.store.dispatch(actions.changeProperties(
                         {
                             'report_types':report_types,
@@ -88,17 +87,14 @@ export default class ReportItemContainer extends DocumentItemContainer {
      */
     isValidForEmail() {
         Store.store.dispatch(actions.changeProperty("errors",{}));
-        const errors = this.model.validate();
-        if (errors !== null) {
-            Store.store.dispatch(actions.changeProperty("errors",errors));
-            return false;
-        }
-        const email = this.getProps().item["email"];
-        if (!email || !email.trim()) {
-            Store.store.dispatch(actions.changeProperty("errors",{email:t("Укажите адрес email")}));
-            return false
-        }
-        return true;
+        const item = this.getProps().item;
+        let errors = this.model.validate(item);
+        if (!errors) errors = {};
+        if (!item["email"] || !item["email"].trim())
+            errors['email'] = t("Укажите адрес email");
+        if (Object.keys(errors).length)
+            Store.store.dispatch(actions.changeProperty('errors',errors));
+        return !Object.keys(errors).length;
     }
 
     /**
@@ -116,7 +112,7 @@ export default class ReportItemContainer extends DocumentItemContainer {
             return;
         }
         const self = this;
-        response.text().then(function(text) {
+        response.text().then((text) => {
             if (text && text.length) {
                 Store.store.dispatch(actions.changeProperty('errors',{'general':text}));
                 callback();
@@ -133,5 +129,4 @@ export default class ReportItemContainer extends DocumentItemContainer {
         const report = new ReportItemContainer();
         return connect(report.mapStateToProps.bind(report),report.mapDispatchToProps.bind(report))(Item.Report);
     }
-
 }

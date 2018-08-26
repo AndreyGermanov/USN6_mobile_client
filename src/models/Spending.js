@@ -1,6 +1,7 @@
 import Document from './Document';
 import Backend from '../backend/Backend';
 import t from "../utils/translate/translate";
+import moment from "moment-timezone";
 
 /**
  * Database model of Spending entity
@@ -10,6 +11,23 @@ class Spending extends Document {
         super();
         this.itemName = "spending";
         this.collectionName = "spendings";
+    }
+
+    /**
+     * Method used to initialize item, by populating all empty or undefined fields with default values
+     * @param item: Input item
+     * @returns item with populated values
+     */
+    initItem(item) {
+        item = super.initItem(item);
+        if (!item.description) item.description = '';
+        if (!item.company) item.company = '';
+        if (!item.number) item.number = '';else item.number = item.number.toString();
+        if (!item.date) item.date = moment().unix();
+        if (!item.amount) item.amount = '';else item.amount = item.amount.toString();
+        if (!item.type) item.type = 1;
+        if (!item.period) item.period = '';
+        return item;
     }
 
     /**
