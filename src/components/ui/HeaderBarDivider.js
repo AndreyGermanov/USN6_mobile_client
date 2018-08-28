@@ -15,7 +15,7 @@ export default class HeaderBarDivider extends Component {
 const Styles = StyleSheet.create({
     headerDivider:{
         height:'100%',
-            width:4,
+        width:4,
         borderLeftColor:'#3f4653',
         borderLeftWidth:2,
         borderRightColor:'#373e49',

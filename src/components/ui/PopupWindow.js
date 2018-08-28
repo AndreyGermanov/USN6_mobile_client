@@ -77,8 +77,18 @@ class PopupWindow extends ScreenComponent {
 PopupWindow.propTypes = (new PopupWindow()).propTypes;
 
 const Styles = StyleSheet.create({
-    scrollViewContentStyle: {flex:1,flexDirection:'column',alignItems:'center',justifyContent:'center'},
-    outerContainer: {flex:1,flexDirection:'column',alignItems:'center',justifyContent:'center'},
+    scrollViewContentStyle: {
+        flex:1,
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    outerContainer: {
+        flex:1,
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center'
+    },
     innerContainer: {
         backgroundColor:'white',
         width:"90%",
@@ -97,6 +107,13 @@ const Styles = StyleSheet.create({
         borderColor:'#ff6600',
         backgroundColor:'#ff6600'
     },
-    contentContainer: {flexDirection:'column',paddingTop:5,paddingBottom:10,paddingLeft:10,paddingRight:10}
-})
+    contentContainer: {
+        flexDirection:'column',
+        paddingTop:5,
+        paddingBottom:10,
+        paddingLeft:10,
+        paddingRight:10
+    }
+});
+
 export default PopupWindow;

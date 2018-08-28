@@ -73,9 +73,15 @@ class Document extends Entity {
 
 // Styles, used in design of this component
 const Styles = StyleSheet.create({
-    periodContainer: {flex:1,flexDirection:'column'},
+    periodContainer: {
+        flex:1,
+        flexDirection:'column'
+    },
     periodButton: {paddingRight: 5},
-    periodButtonContainer: {flexDirection:'column',alignItems:'center',justifyContent:'center'},
+    periodButtonContainer: {
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center'},
     periodButtonText: {color:'white'},
     periodCloseButton: {
         backgroundColor:'#ff6600',
@@ -87,9 +93,7 @@ const Styles = StyleSheet.create({
         borderColor:'#ff6600',
         borderRadius:5
     },
-    periodCloseButtonText: {
-        color:'white'
-    }
+    periodCloseButtonText: {color:'white'}
 });
 
 export default Document;

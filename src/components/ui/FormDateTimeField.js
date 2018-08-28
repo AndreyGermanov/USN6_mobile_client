@@ -75,7 +75,14 @@ FormDateTimeField.propTypes = (new FormDateTimeField()).propTypes;
 
 const Styles = StyleSheet.create({
     datePickerContainer: {width:'100%'},
-    dateInput: {flexDirection:'row',justifyContent:'flex-start',paddingLeft:10},
-    datePicker: {borderWidth:1,borderColor:'#e6e6e6'}
-})
+    dateInput: {
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        paddingLeft:10
+    },
+    datePicker: {
+        borderWidth:1,
+        borderColor:'#e6e6e6'
+    }
+});
 export default FormDateTimeField;

@@ -62,9 +62,23 @@ const Styles = StyleSheet.create({
         height:'100%',
         backgroundColor:'white'
     },
-    formStyle: {width:'100%',paddingLeft:30,paddingRight:30,flexDirection:'column',justifyContent:'center'},
-    logoContainerStyle: {width:'100%',flexDirection:'row',justifyContent:'center'},
-    logoTextStyle: {fontWeight:'bold',fontSize:64,color:'#ff6600'},
+    formStyle: {
+        width:'100%',
+        paddingLeft:30,
+        paddingRight:30,
+        flexDirection:'column',
+        justifyContent:'center'
+    },
+    logoContainerStyle: {
+        width:'100%',
+        flexDirection:'row',
+        justifyContent:'center'
+    },
+    logoTextStyle: {
+        fontWeight: 'bold',
+        fontSize: 64,
+        color: '#ff6600'
+    }
 });
 
 export default Login;

@@ -232,7 +232,10 @@ const Styles = StyleSheet.create({
     headerTitleStyle: {
         color: 'white'
     },
-    rootContainer: {flex:1,flexDirection:'column',backgroundColor:'white'},
+    rootContainer: {flex:1,
+        flexDirection:'column',
+        backgroundColor:'white'
+    },
     flatList: {paddingRight:5},
     headerButtonBar: {
         flexDirection:'row',
@@ -250,15 +253,43 @@ const Styles = StyleSheet.create({
     },
     headerLeftButton: {paddingLeft:10},
     headerRightButton: {paddingRight:10},
-    searchBarContainer: {backgroundColor:'#ff6600',borderTopWidth:0,borderBottomWidth:0,flex:1},
-    searchBar: {backgroundColor:'white',justifyContent:'center'},
-    checkAllButtonContainer: {flexDirection:'column',height:'100%',alignItems:'center',justifyContent:'center'},
-    checkAllIcon: {paddingRight:5,paddingLeft:3},
-    headerBarIconContainer: {flexDirection:'column',alignItems:'center'},
+    searchBarContainer: {
+        backgroundColor:'#ff6600',
+        borderTopWidth:0,
+        borderBottomWidth:0,
+        flex:1
+    },
+    searchBar: {
+        backgroundColor:'white',
+        justifyContent:'center'
+    },
+    checkAllButtonContainer: {
+        flexDirection:'column',
+        height:'100%',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    checkAllIcon: {
+        paddingRight:5,
+        paddingLeft:3
+    },
+    headerBarIconContainer: {
+        flexDirection:'column',
+        alignItems:'center'
+    },
     headerBarIconText: {color:'white'},
     headerBarSortIcon: {paddingRight: 5},
-    headerBarDeleteIcon: {paddingRight: 5, paddingLeft: 5},
-    listRowContainer: {flex:1,flexDirection:'row',paddingTop:20,paddingLeft:20,paddingRight:10},
+    headerBarDeleteIcon: {
+        paddingRight: 5,
+        paddingLeft: 5
+    },
+    listRowContainer: {
+        flex:1,
+        flexDirection:'row',
+        paddingTop:20,
+        paddingLeft:20,
+        paddingRight:10
+    },
     listRowContent: {
         flex:1,
         flexDirection:'column',
@@ -267,11 +298,27 @@ const Styles = StyleSheet.create({
         paddingRight:3,
         backgroundColor:'white'
     },
-    listRowOpenIconContainer: {flexDirection:'column',justifyContent:'center'},
+    listRowOpenIconContainer: {
+        flexDirection:'column',
+        justifyContent:'center'
+    },
     listRowOpenIcon: {color:'#bbdf00'},
-    listRowColumnContainer: {flex:1,flexDirection:'row',flexGrow:1},
-    listRowColumnTitle: {fontWeight:'bold',paddingRight:3,color:'#3e4552'},
-    sortOrderFieldContainer: {flexDirection:'row',justifyContent:'flex-start',alignItems:'center',marginBottom:10},
+    listRowColumnContainer: {
+        flex:1,
+        flexDirection:'row',
+        flexGrow:1
+    },
+    listRowColumnTitle: {
+        fontWeight:'bold',
+        paddingRight:3,
+        color:'#3e4552'
+    },
+    sortOrderFieldContainer: {
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        alignItems:'center',
+        marginBottom:10
+    },
     sortOrderIcon: {
         marginRight:5
     },

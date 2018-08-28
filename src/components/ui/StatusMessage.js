@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ScreenComponent from './ScreenComponent';;
+import ScreenComponent from './ScreenComponent';
 import {View,Text,StyleSheet} from 'react-native';
 
 /**
@@ -91,7 +91,6 @@ const Styles = StyleSheet.create({
         margin:5,
         backgroundColor:'#bbdf00',
         padding:5,
-        margin:5,
         borderWidth:2,
         borderRadius:4,
         borderColor: '#00BB00',
@@ -102,7 +101,6 @@ const Styles = StyleSheet.create({
         margin:5,
         backgroundColor:'#f39096',
         padding:5,
-        margin:5,
         borderWidth:2,
         borderRadius:4,
         borderColor: '#BB0000',

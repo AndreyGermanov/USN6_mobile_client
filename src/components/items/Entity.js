@@ -89,10 +89,14 @@ const Styles = {
         backgroundColor: '#ff6600',
         elevation: 0
     },
-    headerTitleStyle: { color: 'white' },
+    headerTitleStyle: {color: 'white'},
     leftButtonStyle: {paddingLeft:10},
     rightButtonStyle: {paddingRight:10},
-    bodyContainer: { flex: 1, flexDirection: 'column', backgroundColor:'white'}
+    bodyContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor:'white'
+    }
 };
 
 export default Entity;
