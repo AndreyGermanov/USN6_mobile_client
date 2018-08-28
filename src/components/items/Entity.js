@@ -84,7 +84,7 @@ class Entity extends Component {
     }
 }
 
-const Styles = {
+const Styles = StyleSheet.create({
     headerStyle: {
         backgroundColor: '#ff6600',
         elevation: 0
@@ -97,6 +97,6 @@ const Styles = {
         flexDirection: 'column',
         backgroundColor:'white'
     }
-};
+});
 
 export default Entity;

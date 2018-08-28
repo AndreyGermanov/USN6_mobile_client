@@ -2,8 +2,8 @@ import React from 'react';
 import Document from './Document';
 import moment from "moment-timezone";
 import t from "../../utils/translate/translate";
-import {FormLabel,Button} from 'react-native-elements';
-import {Input,Select,DateTime} from '../ui/Form';
+import {Input,Select,DateTime,Button} from '../ui/Form'
+import {StyleSheet} from 'react-native';
 
 /**
  * Component used to manage "Report" detail view.
@@ -32,11 +32,7 @@ class Report extends Document {
             <DateTime name="date" value={item["date"]} label="Дата"/>,
             <Select name="period" value={item["period"]} label="Период отчета" items={Report.getReportPeriods()}/>,
             <Input name="email" value={item["email"]} label="Email" keyboard="email-address"/>,
-            <Button icon={{name: 'envelope', type:'font-awesome', color:"white"}}
-                    title={t('Отправить по email')}
-                    backgroundColor="#bbdf00" color="white" buttonStyle={{borderRadius:5,elevation:0,marginTop:10}}
-                    onPress={()=>this.props.sendByEmail.bind(this)()}
-            />
+            <Button onPress={this.props.sendByEmail} text={t("Отправить по email")} buttonStyle={Styles.emailButton}/>
         ]
     }
 
@@ -54,5 +50,15 @@ class Report extends Document {
         return years;
     }
 }
+
+const Styles = StyleSheet.create({
+    emailButton: {
+        marginTop:10,
+        backgroundColor: "#bbdf00",
+        marginLeft:10,
+        marginRight:10,
+        borderColor: "#bbdf00"
+    }
+});
 
 export default Report;

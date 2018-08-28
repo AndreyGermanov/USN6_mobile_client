@@ -7,7 +7,7 @@ import {SearchBar} from 'react-native-elements';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import Divider from '../ui/HeaderBarDivider';
-import PopupWindow from '../ui/PopupWindow';
+import {Button,PopupWindow} from '../ui/Form';
 
 /**
  * Base class which renders list of items
@@ -204,16 +204,10 @@ class Entity extends Component {
                         <Text>{this.props.listColumns[field].title}</Text>
                     </View>
                 </TouchableOpacity>
-            )
+            );
         }
-        return [
-            buttons,
-            <TouchableOpacity onPress={() => this.props.hidePopupWindow()}>
-                <View style={Styles.sortOrderButton}>
-                    <Text style={Styles.sortOrderButtonText}>Закрыть</Text>
-                </View>
-            </TouchableOpacity>
-        ]
+        buttons.push(<Button onPress={this.props.hidePopupWindow} text={t("Закрыть")}/>);
+        return buttons
     }
 
     /**

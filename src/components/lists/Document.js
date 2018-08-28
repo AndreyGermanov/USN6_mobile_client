@@ -4,7 +4,7 @@ import {View,TouchableOpacity,Text,StyleSheet} from 'react-native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 import Divider from '../ui/HeaderBarDivider';
 import {DateTime} from '../ui/Form'
-import PopupWindow from '../ui/PopupWindow';
+import {PopupWindow,Button} from '../ui/Form';
 import t from "../../utils/translate/translate";
 
 /**
@@ -44,11 +44,7 @@ class Document extends Entity {
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
             <DateTime name="periodEnd" value={this.props.periodEnd} label="Дата окончания"
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
-            <TouchableOpacity onPress={() => this.props.hidePopupWindow()}>
-                <View style={Styles.periodCloseButton}>
-                    <Text style={Styles.periodCloseButtonText}>Закрыть</Text>
-                </View>
-            </TouchableOpacity>
+            <Button onPress={() => this.props.hidePopupWindow()} text={t("Закрыть")}/>
         ]
     }
 
