@@ -257,6 +257,18 @@ describe("CompanyItemContainer tests", () => {
                 done()
             });
         });
+
+        describe("initItem tests", () => {
+            test("Should fill all undefined fields", () => {
+                const data = item.initItem();
+                expect(data.name).toBeDefined();
+                expect(data.address).toBeDefined();
+                expect(data.inn).toBeDefined();
+                expect(data.kpp).toBeDefined();
+                expect(data.type).toBe(1);
+            })
+        })
+
     })
 
 });

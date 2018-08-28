@@ -1,9 +1,7 @@
 import React from 'react';
 import ScreenComponent from './ScreenComponent';
 import PropTypes from 'prop-types';
-import {View} from 'react-native';
-import {FormLabel} from 'react-native-elements';
-import styles from "../../styles/Styles";
+import {View,Text,StyleSheet} from 'react-native';
 
 /**
  * Component defines Field container, which surrounds form field. It also includes label
@@ -34,22 +32,46 @@ class FormFieldContainer extends ScreenComponent {
      * Method used to render item on screen
      */
     render() {
-        const containerStyle = this.props.containerStyle ? this.props.containerStyle :
-            styles.fieldContainer;
-        const labelStyle = this.props.labelStyle ? this.props.labelStyle: {};
+        const containerStyle = this.props.containerStyle ? this.props.containerStyle : Styles.fieldContainer;
+        const labelStyle = this.props.labelStyle ? this.props.labelStyle: Styles.label;
         let label = null;
         if (this.props.label) {
-            label = <FormLabel labelStyle={labelStyle}>{this.props.label}</FormLabel>
+            label = <Text style={labelStyle}>{this.props.label}</Text>
         }
-        return [
-            label,
+        return (
             <View style={containerStyle}>
+                {label}
                 {this.props.children}
             </View>
-        ]
+        )
     }
 }
 
 FormFieldContainer.propTypes = (new FormFieldContainer()).propTypes;
+
+const Styles = StyleSheet.create({
+    fieldContainer: {
+        marginLeft:10,
+        marginRight:10,
+        borderRadius:5,
+        borderTopWidth:2,
+        borderTopColor:'#efeeed',
+        borderBottomWidth:2,
+        borderBottomColor:'#efeeed',
+        borderLeftWidth:2,
+        borderLeftColor:'#efeeed',
+        borderRightWidth:2,
+        borderRightColor:'#efeeed',
+        paddingLeft:20,
+        paddingRight:20,
+        paddingTop:10,
+        paddingBottom:10,
+        marginBottom:10
+    },
+    label:{
+        color:'#acacad',
+        paddingBottom:10
+    }
+});
 
 export default FormFieldContainer;

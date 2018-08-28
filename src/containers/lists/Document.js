@@ -2,7 +2,6 @@ import EntityListContainer from './Entity';
 import moment from 'moment-timezone';
 import actions from '../../actions/Actions';
 import Store from '../../store/Store';
-import t from "../../utils/translate/translate";
 
 /**
  * Controller class for Document List containers. All descendant document container classes extend this class.
@@ -20,7 +19,7 @@ export default class DocumentListContainer extends EntityListContainer {
                 state["periodStart"][this.model.itemName] : moment().startOf('year').unix(),
             periodEnd: (state["periodEnd"] && state["periodEnd"][this.model.itemName]) ?
                 state["periodEnd"][this.model.itemName] : moment().endOf('year').unix(),
-            showPeriodSelectionDialog: state.showPeriodSelectionDialog
+            periodSelectionDialogVisible: state.periodSelectionDialogVisible
         });
     }
 
@@ -33,7 +32,8 @@ export default class DocumentListContainer extends EntityListContainer {
     mapDispatchToProps(dispatch) {
         return Object.assign(super.mapDispatchToProps(dispatch),{
             changePeriodField: (field_name,date) => this.changePeriodField(field_name,date),
-            togglePeriodSelectionDialog: (mode) => this.togglePeriodSelectionDialog(mode)
+            openPeriodSelectionDialog: () => this.openPeriodSelectionDialog(),
+            hidePopupWindow: () => this.hidePopupWindow()
         });
     }
 
@@ -55,22 +55,26 @@ export default class DocumentListContainer extends EntityListContainer {
      * @param date: Value to set to this field
      */
     changePeriodField(field_name,date) {
-        const state = this.getState();
+        const state = Store.getState();
         const periodField = state[field_name] ? state[field_name] : {};
-        periodField[this.model] = moment(date).unix();
+        periodField[this.model.itemName] = moment(date).unix();
         Store.store.dispatch(actions.changeProperty(field_name,periodField));
         this.updateList();
     }
 
     /**
      * Method used to show/hide "Period select" dialog, when user presses appropriate button in list view
-     * @param mode - If true - show dialog, if false - hide.
      */
-    togglePeriodSelectionDialog(mode) {
-        Store.store.dispatch(actions.changeProperties({
-            'showPeriodSelectionDialog':mode,
-            'showSortOrderDialog':false
-        }));
+    openPeriodSelectionDialog() {
+        Store.store.dispatch(actions.changeProperty('periodSelectionDialogVisible',true));
+    }
+
+    /**
+     * Method used to hide currently displayed popup window
+     */
+    hidePopupWindow() {
+        super.hidePopupWindow();
+        Store.store.dispatch(actions.changeProperty('periodSelectionDialogVisible',false));
     }
 
 }

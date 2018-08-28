@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from "../../styles/Styles";
 import ScreenComponent from './ScreenComponent';
 import FormFieldContainer from './FormFieldContainer';
+import {StyleSheet} from 'react-native';
 import _ from 'lodash';
 
 /**
@@ -45,12 +45,30 @@ class FormField extends ScreenComponent {
      */
     getProps() {
         let result = _.cloneDeep(this.props);
-        result.inputStyle = result.inputStyle ? result.inputStyle : styles.inputField;
+        result.inputStyle = result.inputStyle ? result.inputStyle : Styles.inputField;
         result.onChange = result.onChange ? result.onChange : result.ownerProps.changeItemField;
         return result;
     }
 }
 
 FormField.propTypes = (new FormField()).propTypes;
+
+const Styles = StyleSheet.create({
+    inputField: {
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        borderTopWidth: 1,
+        borderTopColor: '#e6e6e6',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e6e6e6',
+        borderLeftWidth: 1,
+        borderLeftColor: '#e6e6e6',
+        borderRightWidth: 1,
+        borderRightColor: '#e6e6e6',
+        color: 'black',
+        borderWidth: 0,
+        width: '100%'
+    }
+});
 
 export default FormField;

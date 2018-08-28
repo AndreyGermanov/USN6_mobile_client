@@ -239,6 +239,17 @@ describe("IncomeItemContainer tests", () => {
                 done()
             });
         });
+
+        describe("initItem tests", () => {
+            test("Should fill all undefined fields", () => {
+                const data = item.initItem();
+                expect(data.company).toBeDefined();
+                expect(data.number).toBeDefined();
+                expect(data.date).toBeDefined();
+                expect(data.amount).toBeDefined();
+                expect(data.description).toBeDefined();
+            })
+        })
     })
 
 });

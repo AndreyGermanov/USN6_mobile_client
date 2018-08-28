@@ -357,6 +357,17 @@ describe("ReportItemContainer tests", () => {
 
     });
 
+    describe("initItem tests", () => {
+        test("Should fill all undefined fields", () => {
+            const data = item.initItem();
+            expect(data.company).toBeDefined();
+            expect(data.period).toBeDefined();
+            expect(data.date).toBeDefined();
+            expect(data.email).toBeDefined();
+            expect(data.type).toBe("kudir");
+        })
+    })
+
 });
 
 

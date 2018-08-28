@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FormInput} from 'react-native-elements';
+import {TextInput,StyleSheet} from 'react-native';
 import FormField from './FormField';
 import Container from './FormFieldContainer';
 import Error from './FieldErrorMessage';
@@ -38,12 +38,12 @@ class FormInputField extends FormField {
         return [
             <Container label={props.label} containerStyle={props.containerStyle}
                        labelStyle={props.labelStyle} ownerProps={props.ownerProps}>
-                <FormInput value={props.value} autoCaptialize="none" autoCorrect={false}
+                <TextInput value={props.value} autoCaptialize="none" autoCorrect={false}
                            onChangeText={(value) => props.onChange(props.name,value)}
-                           inputStyle={props.inputStyle} keyboardType={props.keyboard}
-                           secureTextEntry={props.password} multilne={props.multiline}/>
+                           style={[Styles.inputField,props.inputStyle]} keyboardType={props.keyboard}
+                           secureTextEntry={props.password} multiline={props.multiline}/>
+                <Error fieldName={props.name} ownerProps={props.ownerProps}/>
             </Container>,
-            <Error fieldName={props.name} ownerProps={props.ownerProps}/>
         ]
     }
 
@@ -59,6 +59,10 @@ class FormInputField extends FormField {
         return result;
     }
 }
+
+const Styles = StyleSheet.create({
+    inputField: {paddingLeft:10}
+});
 
 FormInputField.propTypes = (new FormInputField()).propTypes;
 

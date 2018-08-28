@@ -27,7 +27,7 @@ export default class EntityListContainer extends EntityContainer {
             itemsPerPage: state.itemsPerPage[this.model.itemName] ? state.itemsPerPage[this.model.itemName]: 5,
             numberOfItems: state.numberOfItems[this.model.itemName] ? state.numberOfItems[this.model.itemName]: 0,
             listFilter: state.listFilter[this.model.itemName] ? state.listFilter[this.model.itemName]: "",
-            showSortOrderDialog: state.showSortOrderDialog
+            sortOrderDialogVisible: state.sortOrderDialogVisible
         })
     }
 
@@ -49,7 +49,8 @@ export default class EntityListContainer extends EntityContainer {
             changeListSortOrder: (field) => this.changeListSortOrder(field),
             changeListFilter: (text) => this.changeListFilter(text),
             deleteItems: () => this.deleteItems(),
-            toggleSortOrderDialog: (mode) => this.toggleSortOrderDialog(mode)
+            openSortOrderDialog: () => this.openSortOrderDialog(),
+            hidePopupWindow: () => this.hidePopupWindow()
         })
     }
 
@@ -306,12 +307,15 @@ export default class EntityListContainer extends EntityContainer {
 
     /**
      * Shows/closes sort order config dialog
-     * @param mode: If true, show dialog, if false - hide
      */
-    toggleSortOrderDialog(mode) {
-        Store.store.dispatch(actions.changeProperties({
-            'showPeriodSelectionDialog':false,
-            'showSortOrderDialog':mode
-        }));
+    openSortOrderDialog() {
+        Store.store.dispatch(actions.changeProperty('sortOrderDialogVisible',true));
+    }
+
+    /**
+     * Method used to hide currently opened popup window
+     */
+    hidePopupWindow() {
+        Store.store.dispatch(actions.changeProperty('sortOrderDialogVisible',false));
     }
 }

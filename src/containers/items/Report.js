@@ -1,3 +1,4 @@
+import async from 'async';
 import {connect} from "react-redux";
 import {Item} from '../../components/Components';
 import DocumentItemContainer from './Document'
@@ -48,19 +49,18 @@ export default class ReportItemContainer extends DocumentItemContainer {
     updateItem(uid,callback) {
         const self = this;
         if (!callback) callback = () => null;
-        super.updateItem(uid,() => {
-            self.getCompaniesList((companies_list) => {
-                self.model.getTypes((error,report_types) => {
-                    Store.store.dispatch(actions.changeProperties(
-                        {
-                            'report_types':report_types,
-                            'companies_list':companies_list
-                        })
-                    );
-                    callback();
-                });
-            })
-        })
+        async.waterfall([
+            (callback) => super.updateItem(uid,callback),
+            (callback) => self.getCompaniesList((companies) => callback(null,companies)),
+            (companies,callback) => self.model.getTypes((error,types) => callback(null,companies,types)),
+            (companies,types,callback) => {
+                Store.store.dispatch(actions.changeProperties({
+                    'companies_list':companies,
+                    'report_types':types
+                }));
+                callback()
+            }
+        ], () => callback());
     }
 
     /**

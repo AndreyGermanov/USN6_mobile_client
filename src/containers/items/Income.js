@@ -1,7 +1,7 @@
+import async from 'async';
 import {connect} from "react-redux";
 import {Item} from '../../components/Components';
 import DocumentItemContainer from './Document'
-import t from '../../utils/translate/translate'
 import actions from "../../actions/Actions";
 import Store from "../../store/Store";
 import Models from '../../models/Models';
@@ -35,11 +35,13 @@ export default class IncomeItemContainer extends DocumentItemContainer {
      */
     updateItem(uid,callback) {
         const self = this;
-        super.updateItem(uid, function() {
-            self.getCompaniesList((companies_list) => {
-                Store.store.dispatch(actions.changeProperty('companies_list', companies_list));
-            });
-        })
+        async.waterfall([
+            (callback) => super.updateItem(uid,callback),
+            (callback) => self.getCompaniesList((companies) => callback(null,companies)),
+            (companies) => {
+                Store.store.dispatch(actions.changeProperty('companies_list', companies));
+            }
+        ], () => callback())
     }
 
     static getComponent() {

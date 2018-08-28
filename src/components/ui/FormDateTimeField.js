@@ -6,6 +6,7 @@ import FormField from './FormField';
 import moment from "moment-timezone";
 import t from "../../utils/translate/translate";
 import DatePicker from 'react-native-datepicker';
+import {StyleSheet} from 'react-native';
 
 /**
  * Component used to display Date and Time select field in the form
@@ -47,12 +48,14 @@ class FormDateTimeField extends FormField {
                     cancelBtnText={t("Отмена")}
                     showIcon={false}
                     onDateChange={(date) => props.onChange(props.name,date)}
+                    style={Styles.datePickerContainer}
                     customStyles={{
-                        dateInput: props.inputStyle
+                        dateInput: [Styles.dateInput,props.inputStyle],
+                        datePicker: Styles.datePicker
                     }}
                 />
+                <Error fieldName={props.name} ownerProps={props.ownerProps}/>
             </Container>,
-            <Error fieldName={props.name} ownerProps={props.ownerProps}/>
         ]
     }
 
@@ -70,4 +73,9 @@ class FormDateTimeField extends FormField {
 
 FormDateTimeField.propTypes = (new FormDateTimeField()).propTypes;
 
+const Styles = StyleSheet.create({
+    datePickerContainer: {width:'100%'},
+    dateInput: {flexDirection:'row',justifyContent:'flex-start',paddingLeft:10},
+    datePicker: {borderWidth:1,borderColor:'#e6e6e6'}
+})
 export default FormDateTimeField;

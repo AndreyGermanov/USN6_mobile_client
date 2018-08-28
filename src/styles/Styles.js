@@ -4,7 +4,7 @@
 import {StyleSheet} from 'react-native';
 
 const listHeaderContainer = {
-    backgroundColor:'#F3E790',
+    backgroundColor:'#ff6600',
     height:54,
     flexDirection:'row',
     justifyContent:'space-evenly',
@@ -14,55 +14,39 @@ const listHeaderContainer = {
 const form = {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor:'white'
+    backgroundColor:'#faf9f8',
+    paddingTop:10
 };
 
 const inputField = {
-    backgroundColor: "#dddddd",
+    backgroundColor: "#ffffff",
+    borderRadius:5,
+    borderTopWidth:1,
+    borderTopColor:'#e6e6e6',
+    borderBottomWidth:1,
+    borderBottomColor:'#e6e6e6',
+    borderLeftWidth:1,
+    borderLeftColor:'#e6e6e6',
+    borderRightWidth:1,
+    borderRightColor:'#e6e6e6',
     color: 'black',
-    borderWidth:0
+    borderWidth:0,
+    width:'100%'
 };
 
 const fieldContainer = {
     marginLeft:10,
-    marginRight:10
+    marginRight:10,
+    borderTopWidth:1,
+    borderRadius:5,
+    borderTopColor:'black',
+    paddingTop:15,
+    paddingBottom:15,
+    paddingLeft:15,
+    paddingRight:15
 };
 
 Object.assign(fieldContainer,inputField);
-
-const successMessageBackground = {
-    margin:5,
-    backgroundColor:'#33FF64',
-    paddingTop:3,
-    paddingBottom:3,
-    paddingLeft:3,
-    paddingRight:3,
-    height:30};
-
-const errorMessageBackground = {
-    margin:5,
-    backgroundColor:'#F39096',
-    paddingTop:3,
-    paddingBottom:3,
-    paddingLeft:3,
-    paddingRight:3,
-    height:40
-};
-
-const customMessageBackground = {
-    margin:5,
-    backgroundColor:'#99CCFF',
-    paddingTop:3,
-    paddingBottom:3,
-    paddingLeft:3,
-    paddingRight:3,
-    height:30,
-    borderWidth:1,
-    borderColor:'black'
-};
-const messageText = {
-    color:'black'
-};
 
 export default StyleSheet.create({
     inputField: inputField,
@@ -77,10 +61,4 @@ export default StyleSheet.create({
     listHeaderContainer: listHeaderContainer,
     form: form,
     fieldContainer: fieldContainer,
-    successMessageText: messageText,
-    successMessageBackground: successMessageBackground,
-    errorMessageText: messageText,
-    errorMessageBackground: errorMessageBackground,
-    customMessageText: messageText,
-    customMessageBackground: customMessageBackground
 })

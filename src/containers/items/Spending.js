@@ -1,7 +1,7 @@
+import async from 'async';
 import {connect} from "react-redux";
 import {Item} from '../../components/Components'
 import DocumentItemContainer from './Document'
-import t from '../../utils/translate/translate'
 import actions from "../../actions/Actions";
 import Store from "../../store/Store";
 import Models from '../../models/Models';
@@ -37,17 +37,17 @@ export default class SpendingItemContainer extends DocumentItemContainer {
     updateItem(uid,callback) {
         const self = this;
         if (!callback) callback=()=>null;
-        super.updateItem(uid, function() {
-            self.getCompaniesList((companies_list) => {
-                self.model.getTypes((error,spending_types_array) => {
-                    Store.store.dispatch(actions.changeProperties({
-                        'companies_list': companies_list,
-                        'spending_types':spending_types_array,
-                    }));
-                    callback();
-                });
-            })
-        })
+        async.waterfall([
+            (callback) => super.updateItem(uid,callback),
+            (callback) => self.getCompaniesList((companies) => callback(null,companies)),
+            (companies,callback) => self.model.getTypes((error,types) => callback(null,companies,types)),
+            (companies,types,callback) => {
+                Store.store.dispatch(actions.changeProperties({
+                    'companies_list': companies,
+                    'spending_types': types
+                }));
+            }
+        ], () => callback())
     }
 
     static getComponent() {

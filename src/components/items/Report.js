@@ -32,10 +32,9 @@ class Report extends Document {
             <DateTime name="date" value={item["date"]} label="Дата"/>,
             <Select name="period" value={item["period"]} label="Период отчета" items={Report.getReportPeriods()}/>,
             <Input name="email" value={item["email"]} label="Email" keyboard="email-address"/>,
-            <FormLabel>{""}</FormLabel>,
-            <Button raised icon={{name: 'envelope', type:'font-awesome', color:"white"}}
+            <Button icon={{name: 'envelope', type:'font-awesome', color:"white"}}
                     title={t('Отправить по email')}
-                    backgroundColor="#339CFF" color="white"
+                    backgroundColor="#bbdf00" color="white" buttonStyle={{borderRadius:5,elevation:0,marginTop:10}}
                     onPress={()=>this.props.sendByEmail.bind(this)()}
             />
         ]

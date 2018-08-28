@@ -25,8 +25,8 @@ const initialState = {
     itemsPerPage: {"company":5},
     numberOfItems: {"company":16},
     companies_list: [],
-    showSortOrderDialog: false,
-    showPeriodSelectionDialog: false
+    sortOrderDialogVisible: false,
+    periodSelectionDialogVisible: false
 };
 
 /**

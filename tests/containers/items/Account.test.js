@@ -235,6 +235,17 @@ describe("AccountItemContainer tests", () => {
         });
     })
 
+    describe("initItem tests", () => {
+        test("Should fill all undefined fields", () => {
+            const data = item.initItem();
+            expect(data.company).toBeDefined();
+            expect(data.bank_name).toBeDefined();
+            expect(data.number).toBeDefined();
+            expect(data.bik).toBeDefined();
+            expect(data.ks).toBeDefined();
+        })
+    })
+
 });
 
 

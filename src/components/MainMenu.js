@@ -12,11 +12,6 @@ const MainMenu = (props) => {
     return (
         <ScrollView>
             <SafeAreaView style={{flex:1}} forceInset={{ top: 'always', horizontal: 'never' }}>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end'}}>
-                    <TouchableOpacity onPress={() => NavigationService.closeDrawer()}>
-                        <IconFeather name="x" color="black" size={32}/>
-                    </TouchableOpacity>
-                </View>
                 <DrawerItems {...props}/>
             </SafeAreaView>
         </ScrollView>

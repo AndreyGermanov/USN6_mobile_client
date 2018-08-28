@@ -29,11 +29,13 @@ function getNavigationStacks() {
         AuthLoading: LoadingScreen,
         Auth: createStackNavigator({Login: Login}),
         App: createDrawerNavigator(getMainMenuStack(),{
-            initialRouteName: 'Incomes',
+            initialRouteName: 'Companies',
             contentOptions: {
-                activeTintColor: 'black',
-                inactiveTintColor: 'black'
+                activeTintColor: 'white',
+                inactiveTintColor: 'white',
+                itemStyle: {borderBottomWidth:1,borderBottomColor:'#3f4654',borderTopColor:'#3a414d',borderTopWidth:2}
             },
+            drawerBackgroundColor: '#3e4552',
             contentComponent: (props) => <MainMenu {...props} onItemPress={
                 ({route}) => {
                     mainMenuClick(route);

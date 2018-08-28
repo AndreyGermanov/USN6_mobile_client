@@ -68,7 +68,7 @@ export default class EntityItemContainer extends EntityContainer {
             return;
         }
         Store.store.dispatch(actions.changeProperties({"isUpdating":true,"errors":{}}));
-        this.model.getItem(uid,{},function(err,result) {
+        this.model.getItem(uid,{},(err,result) => {
             if (err)
                 result = {};
             item[self.model.itemName] = result;

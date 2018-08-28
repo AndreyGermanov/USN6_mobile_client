@@ -2,10 +2,12 @@ import React,{Component} from 'react';
 import t from "../../utils/translate/translate";
 import NavigationService from "../../utils/NavigationService";
 import Backend from "../../backend/Backend";
-import {Text,View,TouchableOpacity,FlatList,ScrollView} from 'react-native';
-import {Button,SearchBar} from 'react-native-elements';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
-import Styles from '../../styles/Styles';
+import {Text,View,TouchableOpacity,FlatList,StyleSheet} from 'react-native';
+import {SearchBar} from 'react-native-elements';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import Divider from '../ui/HeaderBarDivider';
+import PopupWindow from '../ui/PopupWindow';
 
 /**
  * Base class which renders list of items
@@ -16,22 +18,17 @@ class Entity extends Component {
     // Base Navigation bar options. All components uses it as a base
     static navigationOpts = () => {
         return {
-            headerStyle: {
-                backgroundColor: '#339CFF'
-            },
-            headerTitleStyle: {
-                color: 'white'
-            },
+            headerStyle: Styles.headerStyle,
+            headerTitleStyle: Styles.headerTitleStyle,
             title: Entity.listTitle,
             headerLeft:
-                <Button onPress={() => NavigationService.openDrawer()}
-                        icon={{name: 'bars', type: 'font-awesome', color: 'white'}}
-                        backgroundColor="#339CFF"/>,
+                <TouchableOpacity onPress={() => NavigationService.openDrawer()}>
+                    <IconFontAwesome style={Styles.headerLeftButton} name="bars" color="white" size={24}/>
+                </TouchableOpacity>,
             headerRight:
-                <Button onPress={() => Backend.logout()}
-                        icon={{name: 'sign-out', type: 'font-awesome', color: 'white'}}
-                        backgroundColor="#339CFF"
-                />
+                <TouchableOpacity onPress={() => Backend.logout()}>
+                    <IconFontAwesome style={Styles.headerRightButton} name="sign-out" color="white" size={24}/>
+                </TouchableOpacity>
         }
     };
 
@@ -41,22 +38,23 @@ class Entity extends Component {
      */
     render() {
         const self = this;
-        return (
-            <View style={{flex:1,flexDirection:'column'}}>
+        return [
+            <View style={Styles.rootContainer}>
                 {this.renderHeaderRow()}
-                {this.props.showSortOrderDialog ? this.renderSortOrderDialog() : null}
-                {this.props.showPeriodSelectionDialog ? this.renderPeriodSelectionDialog() : null}
-                {!this.props.showSortOrderDialog && !this.props.showPeriodSelectionDialog ?
-                    <FlatList data={this.props.list} style={{paddingRight:5}}
-                              renderItem={({item}) => this.renderListRow.bind(self)(item)}
-                              onEndReached={() => {
-                                  if (this.props.list.length < this.props.numberOfItems) {
-                                      this.props.changeListPage(this.props.pageNumber + 1, true);
-                                  }
-                              }}
-                    /> : null }
-            </View>
-        )
+                <FlatList data={this.props.list} style={Styles.flatList}
+                          renderItem={({item}) => this.renderListRow.bind(self)(item)}
+                          onEndReached={() => {
+                              if (this.props.list.length < this.props.numberOfItems) {
+                                  this.props.changeListPage(this.props.pageNumber + 1, true);
+                              }
+                          }}
+                />
+            </View>,
+            <PopupWindow title={t("Сортировка")} ownerProps={this.props}
+                         visible={this.props.sortOrderDialogVisible}>
+                {this.renderSortOrderDialog()}
+            </PopupWindow>
+        ];
     }
 
     /**
@@ -65,22 +63,34 @@ class Entity extends Component {
      */
     renderHeaderRow() {
         return (
-            <View style={Styles.listHeaderContainer}>
-                <TouchableOpacity onPress={() => this.props.selectAllItems()}>
-                    <IconFontAwesome name={this.props.isAllItemsChecked() ? 'check-square' : 'square-o'}
-                          color='#339CFF' size={20} style={{paddingRight:5,paddingLeft:3}}/>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.openItem('new')}>
-                    <IconFontAwesome name='plus' color='#339CFF' size={20}/>
-                </TouchableOpacity>
-                <SearchBar
-                    containerStyle={{backgroundColor:'#F3E790',borderTopWidth:0,borderBottomWidth:0,flex:1}}
-                    inputStyle={{backgroundColor:'white',justifyContent:'center'}}
-                    icon={{ type: 'font-awesome', name: 'search' }}
-                    clearIcon={{type: 'font-awesome', name: 'times'}}
-                    onChangeText={(text) => this.props.changeListFilter(text)}
-                    placeholder={t("Поиск")}/>
-                {this.renderListActionButtons()}
+            <View style={{flexDirection:'column'}}>
+                <View style={Styles.listHeaderContainer}>
+                    <SearchBar
+                        containerStyle={Styles.searchBarContainer}
+                        inputStyle={Styles.searchBar}
+                        icon={{ type: 'font-awesome', name: 'search' }}
+                        clearIcon={{type: 'font-awesome', name: 'times'}}
+                        onChangeText={(text) => this.props.changeListFilter(text)}
+                        placeholder={t("Поиск")}/>
+                </View>
+                <View style={Styles.headerButtonBar}>
+                    <TouchableOpacity onPress={() => this.props.selectAllItems()}>
+                        <View style={Styles.checkAllButtonContainer}>
+                            <IconFontAwesome name={this.props.isAllItemsChecked() ? 'check-square' : 'square-o'}
+                                  color='white' size={20} style={Styles.checkAllIcon}/>
+                            <Text style={Styles.headerBarIconText}>Выделить все</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <Divider/>
+                    <TouchableOpacity onPress={() => this.props.openItem('new')}>
+                        <View style={Styles.headerBarIconContainer}>
+                            <IconFontAwesome name='plus' color='white' size={20}/>
+                            <Text style={Styles.headerBarIconText}>Добавить</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <Divider/>
+                    {this.renderListActionButtons()}
+                </View>
             </View>
         )
     }
@@ -91,13 +101,20 @@ class Entity extends Component {
      */
     renderListActionButtons() {
         return [
-            <TouchableOpacity onPress={() => this.props.toggleSortOrderDialog(!this.props.showSortOrderDialog)}>
-                <IconFontAwesome name='sort' color='#339CFF' size={20} style={{paddingRight: 5}}/>
+            <TouchableOpacity onPress={() => this.props.openSortOrderDialog()}>
+                <View style={Styles.headerBarIconContainer}>
+                    <IconFontAwesome name='sort' color='white' size={20} style={Styles.headerBarSortIcon}/>
+                    <Text style={Styles.headerBarIconText}>Упорядочить</Text>
+                </View>
             </TouchableOpacity>,
-            this.props.selectedItems && this.props.selectedItems.length > 0 ?
+            this.props.selectedItems && this.props.selectedItems.length > 0 ? [
+                <Divider/>,
                 <TouchableOpacity onPress={() => {this.props.deleteItems()}}>
-                    <IconFontAwesome name='trash' color='#339CFF' size={20} style={{paddingRight: 5, paddingLeft: 5}}/>
-                </TouchableOpacity>
+                    <View style={Styles.headerBarIconContainer}>
+                        <IconFontAwesome name='trash' color='white' size={20} style={Styles.headerBarDeleteIcon}/>
+                        <Text style={Styles.headerBarIconText}>Удалить</Text>
+                    </View>
+                </TouchableOpacity>]
                 : null
         ];
     }
@@ -110,21 +127,24 @@ class Entity extends Component {
     renderListRow(item) {
         const uid = item.uid.replace(/#/g,'').replace(/:/g,"_");
         const columns = this.renderListRowColumns(uid,item);
+        const checkboxStyle = {paddingLeft:5,color:this.props.isItemChecked(item.uid) ? '#db2525' : '#d7dbdf'};
         return (
-            <View key={'list_row_'+uid} style={{flex:1,flexDirection:'row'}}>
+            <View key={'list_row_'+uid} style={Styles.listRowContainer}>
                 <TouchableOpacity key={'list_row_'+uid+"_fields_checkbox"}
                                   onPress={() => this.props.selectItem(item.uid)}>
                     <IconFontAwesome name={this.props.isItemChecked(item.uid) ? 'check-square' : 'square-o'}
-                          color='#339CFF' size={20} style={{paddingTop:5,paddingLeft:5}}/>
+                          color='#' size={20} style={checkboxStyle}/>
                 </TouchableOpacity>
-                <TouchableOpacity key={'list_row_'+uid+"_fields_list"} onPress={() => this.props.openItem(uid)}>
-                    <View key={'list_row_'+uid+"_fields"} style={{flex:1,flexDirection:'column',
-                        marginTop:5,marginBottom:5,marginLeft:5,marginRight:5,
-                        paddingTop:3,paddingBottom:3,paddingLeft:3,paddingRight:3,
-                        backgroundColor:'white'}}>
-                        {columns}
-                    </View>
-                </TouchableOpacity>
+                <View key={'list_row_'+uid+"_fields"} style={Styles.listRowContent}>
+                    <TouchableOpacity key={'list_row_'+uid+"_fields_list"} onPress={() => this.props.openItem(uid)}>
+                            {columns}
+                    </TouchableOpacity>
+                </View>
+                <View style={Styles.listRowOpenIconContainer}>
+                    <TouchableOpacity key={'list_row_'+uid+"_fields_list"} onPress={() => this.props.openItem(uid)}>
+                        <IconMaterialCommunity size={45} style={Styles.listRowOpenIcon} name="arrow-right-drop-circle"/>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -136,14 +156,24 @@ class Entity extends Component {
             if (typeof(item[field]) === "undefined")
                 continue;
             const field_value = this.props.renderListField(field,item[field]);
+            let field_color = 'black';
+            switch (field) {
+                case 'date':
+                    field_color = '#db2525';
+                    break;
+                case 'company':
+                    field_color = '#ff6600';
+                    break;
+            }
+            const field_style = {paddingLeft:3,color:field_color};
             if (!field_value) continue;
             columns.push(
-                <View style={{flex:1,flexDirection:'row',flexGrow:1}} key={'list_row_'+uid+"_"+item[field]}>
-                    <Text style={{fontWeight:'bold',paddingRight:3}}
+                <View style={Styles.listRowColumnContainer} key={'list_row_'+uid+"_"+item[field]}>
+                    <Text style={Styles.listRowColumnTitle}
                           key={'list_row_'+uid+"_"+item[field]+"_title"}>
                         {this.props.listColumns[field].title}:
                     </Text>
-                    <Text style={{paddingLeft:3}} key={'list_row_'+uid+"_"+item[field]}>
+                    <Text style={field_style} key={'list_row_'+uid+"_"+item[field]}>
                         {field_value}
                     </Text>
                 </View>
@@ -160,29 +190,30 @@ class Entity extends Component {
         const buttons = [];
         for (let field in this.props.listColumns) {
             if (!this.props.listColumns.hasOwnProperty(field)) continue;
-            let icon = {};
+            let icon = <IconFontAwesome name='sort-down' color="#ff6600" style={[Styles.sortOrderIcon,{opacity:0}]}/>;
             if (this.props.sortOrder.field === field) {
                 if (this.props.sortOrder.direction === "ASC")
-                    icon = {name: "sort-down", type: 'font-awesome',color:"#000000"};
+                    icon = <IconFontAwesome name='arrow-down' color="#ff6600" style={Styles.sortOrderIcon}/>;
                 if (this.props.sortOrder.direction === "DESC")
-                    icon = {name: "sort-up", type: 'font-awesome',color:"#000000"};
+                    icon = <IconFontAwesome name='arrow-up' color="#ff6600" style={Styles.sortOrderIcon}/>
             }
-            buttons.push(<Button backgroundColor="#ffffff" leftIcon={icon} color="#000000"
-                                 title={this.props.listColumns[field].title}
-                                 onPress={this.props.changeListSortOrder.bind(this,field)}/>)
+            buttons.push(
+                <TouchableOpacity onPress={this.props.changeListSortOrder.bind(this,field)}>
+                    <View style={Styles.sortOrderFieldContainer}>
+                        {icon}
+                        <Text>{this.props.listColumns[field].title}</Text>
+                    </View>
+                </TouchableOpacity>
+            )
         }
-        return (
-            <ScrollView style={{flex:1,flexDirection:'column'}}>
-                <View style={
-                    {   backgroundColor:"#ffffff",borderWidth:1,borderColor:"#000000",flex:1,flexDirection:'column',
-                        alignItems:'center'
-                    }
-                }>
-                    <Text style={{fontWeight:"bold"}}>Сортировать по:</Text>
-                    {buttons}
+        return [
+            buttons,
+            <TouchableOpacity onPress={() => this.props.hidePopupWindow()}>
+                <View style={Styles.sortOrderButton}>
+                    <Text style={Styles.sortOrderButtonText}>Закрыть</Text>
                 </View>
-            </ScrollView>
-        )
+            </TouchableOpacity>
+        ]
     }
 
     /**
@@ -192,5 +223,71 @@ class Entity extends Component {
         this.props.updateList();
     }
 }
+
+const Styles = StyleSheet.create({
+    headerStyle:{
+        backgroundColor: '#ff6600',
+        elevation:0
+    },
+    headerTitleStyle: {
+        color: 'white'
+    },
+    rootContainer: {flex:1,flexDirection:'column',backgroundColor:'white'},
+    flatList: {paddingRight:5},
+    headerButtonBar: {
+        flexDirection:'row',
+        justifyContent:'space-evenly',
+        alignItems:'center',
+        height:65,
+        backgroundColor:"#3e4552"
+    },
+    listHeaderContainer: {
+        backgroundColor:'#ff6600',
+        height:54,
+        flexDirection:'row',
+        justifyContent:'space-evenly',
+        alignItems:'center'
+    },
+    headerLeftButton: {paddingLeft:10},
+    headerRightButton: {paddingRight:10},
+    searchBarContainer: {backgroundColor:'#ff6600',borderTopWidth:0,borderBottomWidth:0,flex:1},
+    searchBar: {backgroundColor:'white',justifyContent:'center'},
+    checkAllButtonContainer: {flexDirection:'column',height:'100%',alignItems:'center',justifyContent:'center'},
+    checkAllIcon: {paddingRight:5,paddingLeft:3},
+    headerBarIconContainer: {flexDirection:'column',alignItems:'center'},
+    headerBarIconText: {color:'white'},
+    headerBarSortIcon: {paddingRight: 5},
+    headerBarDeleteIcon: {paddingRight: 5, paddingLeft: 5},
+    listRowContainer: {flex:1,flexDirection:'row',paddingTop:20,paddingLeft:20,paddingRight:10},
+    listRowContent: {
+        flex:1,
+        flexDirection:'column',
+        paddingBottom:3,
+        paddingLeft:10,
+        paddingRight:3,
+        backgroundColor:'white'
+    },
+    listRowOpenIconContainer: {flexDirection:'column',justifyContent:'center'},
+    listRowOpenIcon: {color:'#bbdf00'},
+    listRowColumnContainer: {flex:1,flexDirection:'row',flexGrow:1},
+    listRowColumnTitle: {fontWeight:'bold',paddingRight:3,color:'#3e4552'},
+    sortOrderFieldContainer: {flexDirection:'row',justifyContent:'flex-start',alignItems:'center',marginBottom:10},
+    sortOrderIcon: {
+        marginRight:5
+    },
+    sortOrderButton: {
+        backgroundColor:'#ff6600',
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding:5,
+        borderWidth:1,
+        borderColor:'#ff6600',
+        borderRadius:5
+    },
+    sortOrderButtonText: {
+        color:'white'
+    }
+});
 
 export default Entity;

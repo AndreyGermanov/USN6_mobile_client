@@ -37,8 +37,8 @@ class FormSelectField extends FormField {
                 <SelectInput options={props.items} onSubmitEditing={(value) => props.onChange(props.name,value)}
                              value={props.value} style={props.inputStyle}
                 />
+                <Error fieldName={props.name} ownerProps={props.ownerProps}/>
             </Container>,
-            <Error fieldName={props.name} ownerProps={props.ownerProps}/>
         ]
     }
 

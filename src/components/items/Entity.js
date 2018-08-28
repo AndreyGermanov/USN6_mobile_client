@@ -1,7 +1,7 @@
 import React,{Component} from "react";
-import {View,ScrollView} from 'react-native'
-import {Button,FormLabel} from 'react-native-elements'
+import {View,ScrollView,TouchableOpacity,Text,StyleSheet} from 'react-native'
 import {Form,StatusMessage} from '../ui/Form';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 
 /**
  * Base class used to render item of list
@@ -12,21 +12,17 @@ class Entity extends Component {
     // Base Navigation bar options. All components uses it as a base
     static navigationOpts = (navigation) => {
         return {
-            headerStyle: {
-                backgroundColor: '#339CFF'
-            },
-            headerTitleStyle: {
-                color: 'white'
-            },
+            headerStyle: Styles.headerStyle,
+            headerTitleStyle: Styles.headerTitleStyle,
             title: Entity.listTitle,
             headerLeft:
-                 <Button onPress={() => navigation.state.params.model.getItemView().goToList()}
-                              icon={{name: 'arrow-left', type: 'font-awesome', color: 'white'}}
-                              backgroundColor="#339CFF"/>,
+                 <TouchableOpacity onPress={() => navigation.state.params.model.getItemView().goToList()}>
+                       <IconFontAwesome style={Styles.leftButtonStyle} name='arrow-left' color='white' size={24}/>
+                 </TouchableOpacity>,
             headerRight:
-                <Button onPress={() => navigation.state.params.model.getItemView().saveToBackend()}
-                        icon={{name: 'check', type: 'font-awesome', color: 'white'}}
-                        backgroundColor="#339CFF"/>
+                <TouchableOpacity onPress={() => navigation.state.params.model.getItemView().saveToBackend()}>
+                    <IconFontAwesome style={Styles.rightButtonStyle} name='check' color='white' size={24}/>
+                </TouchableOpacity>
         }
     };
 
@@ -38,12 +34,12 @@ class Entity extends Component {
         if (!this.props.item) return null;
         const item = this.props.initItem(this.props.item);
         return (
-            <View style={{ flex: 1, flexDirection: 'column',backgroundColor:'white'}}>
+            <View style={Styles.bodyContainer}>
                 {this.renderStatusMessages()}
                 <ScrollView>
                     <Form ownerProps={this.props}>
                         {this.renderForm(item)}
-                        <FormLabel>{""}</FormLabel>
+                        <Text>{""}</Text>
                     </Form>
                 </ScrollView>
             </View>
@@ -87,5 +83,16 @@ class Entity extends Component {
         this.props.updateItem(this.props.uid);
     }
 }
+
+const Styles = {
+    headerStyle: {
+        backgroundColor: '#ff6600',
+        elevation: 0
+    },
+    headerTitleStyle: { color: 'white' },
+    leftButtonStyle: {paddingLeft:10},
+    rightButtonStyle: {paddingRight:10},
+    bodyContainer: { flex: 1, flexDirection: 'column', backgroundColor:'white'}
+};
 
 export default Entity;
