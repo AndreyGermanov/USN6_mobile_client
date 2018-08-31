@@ -23,15 +23,16 @@ class Report extends Document {
     /**
      * Method used to render contents of form in detail view
      * @param item: Entity to display in the form
+     * @param labels: Object of labels for items
      * @returns array of rendered components
      */
-    renderForm(item) {
+    renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label="Организация" items={this.props.companies_list}/>,
-            <Select name="type" value={item["type"]} label="Тип отчета" items={this.props.report_types}/>,
-            <DateTime name="date" value={item["date"]} label="Дата"/>,
-            <Select name="period" value={item["period"]} label="Период отчета" items={Report.getReportPeriods()}/>,
-            <Input name="email" value={item["email"]} label="Email" keyboard="email-address"/>,
+            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
+            <Select name="type" value={item["type"]} label={labels["type"]} items={this.props.report_types}/>,
+            <DateTime name="date" value={item["date"]} label={labels["date"]}/>,
+            <Select name="period" value={item["period"]} label={labels["period"]} items={Report.getReportPeriods()}/>,
+            <Input name="email" value={item["email"]} label={labels["email"]} keyboard="email-address"/>,
             <Button onPress={this.props.sendByEmail} text={t("Отправить по email")} buttonStyle={Styles.emailButton}/>
         ]
     }

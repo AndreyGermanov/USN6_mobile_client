@@ -33,12 +33,13 @@ class Entity extends Component {
     render() {
         if (!this.props.item) return null;
         const item = this.props.initItem(this.props.item);
+        const labels = this.props.getFieldLabels();
         return (
             <View style={Styles.bodyContainer}>
                 {this.renderStatusMessages()}
                 <ScrollView>
                     <Form ownerProps={this.props}>
-                        {this.renderForm(item)}
+                        {this.renderForm(item,labels)}
                         <Text>{""}</Text>
                     </Form>
                 </ScrollView>
@@ -62,9 +63,10 @@ class Entity extends Component {
     /**
      * Method used to render contents of form in detail view
      * @param item: Entity to display in the form
+     * @param labels: Object of labels for items
      * @returns array of rendered components
      */
-    renderForm(item) {
+    renderForm(item,labels) {
         return []
     }
 

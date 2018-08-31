@@ -25,17 +25,7 @@ export default class CompanyListContainer extends EntityListContainer {
     mapStateToProps(state) {
         const result = super.mapStateToProps(state);
         return Object.assign(result, {
-            "listColumns": {
-                "inn": {
-                    title: t("ИНН")
-                },
-                "kpp": {
-                    title: t("КПП")
-                },
-                "name": {
-                    title: t("Наименование")
-                }
-            },
+            "listColumns": this.getListColumns(["inn","kpp","name"]),
             "sortOrder": (result["sortOrder"] && result["sortOrder"].field) ?
                 result["sortOrder"] : {field:'name',direction:'ASC'}
         })

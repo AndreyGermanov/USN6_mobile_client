@@ -25,7 +25,9 @@ class EntityContainer {
      * @returns object of methods, which are available in component
      */
     mapDispatchToProps(dispatch) {
-        return {}
+        return {
+            getFieldLabels: () => this.getFieldLabels()
+        }
     }
 
     /**
@@ -36,6 +38,15 @@ class EntityContainer {
         const state = Store.getState();
         return this.mapStateToProps(state);
     }
+
+    /**
+     * Method used to get label texts for all item fields
+     * @returns object where keys are field names and values are labels
+     */
+    getFieldLabels() {
+        return this.model.getFieldLabels();
+    }
+
 }
 
 export default EntityContainer;

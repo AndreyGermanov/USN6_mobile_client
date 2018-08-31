@@ -29,20 +29,7 @@ export default class ReportListContainer extends DocumentListContainer {
     mapStateToProps(state) {
         const result = super.mapStateToProps(state);
         return Object.assign(result, {
-            "listColumns": {
-                "date": {
-                    title: t("Дата создания")
-                },
-                "period": {
-                    title: t("Период отчета")
-                },
-                "type": {
-                    title: t("Тип отчета")
-                },
-                "company": {
-                    title: t("Организация")
-                }
-            },
+            "listColumns": this.getListColumns(["date","period","type","company"]),
             "sortOrder": (result["sortOrder"] && result["sortOrder"].field) ?
                 result["sortOrder"] : {field:'date',direction:'ASC'},
             "report_types": state["report_types"] ? state["report_types"] : []

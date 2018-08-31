@@ -33,6 +33,20 @@ class Report extends Document {
     }
 
     /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() {
+        return {
+            "company": t("Организация"),
+            "date": t("Дата создания"),
+            "period": t("Период отчета"),
+            "type": t("Тип отчета"),
+            "email": t("Адрес email")
+        }
+    }
+
+    /**
      * Method used to get list of report types for "Report type" dropdown of Report detail view
      * @param callback: This method called when response from server received. Two parameters passed to it:
      * "err" - error string or null, report_types_array - array of fetched results or empty array or null.

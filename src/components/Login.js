@@ -25,11 +25,11 @@ class Login extends Component {
             <View style={Styles.containerStyle}>
                 <Form ownerProps={this.props} style={Styles.formStyle}>
                     <View style={Styles.logoContainerStyle}>
-                        <Text style={Styles.logoTextStyle}>УСН 6%</Text>
+                        <Text style={Styles.logoTextStyle}>{t("УСН 6%")}</Text>
                     </View>
                     <FormValidationMessage>{this.props.errors["general"]}</FormValidationMessage>
-                    <Input name="login" value={item["login"]} label="Имя"/>
-                    <Input name="password" value={item["password"]} label="Пароль" password={true}/>
+                    <Input name="login" value={item["login"]} label={t("Имя")}/>
+                    <Input name="password" value={item["password"]} label={t("Пароль")} password={true}/>
                     <FormLabel>{}</FormLabel>
                     <Button title={t("Войти")} onPress={() => this.props.doLogin()}
                             backgroundColor="#ff6600" color="white"

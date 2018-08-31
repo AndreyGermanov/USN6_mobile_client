@@ -21,15 +21,16 @@ class Account extends Entity {
     /**
      * Method used to render contents of form in detail view
      * @param item: Entity to display in the form
+     * @param labels: Object of labels for items
      * @returns array of rendered components
      */
-    renderForm(item) {
+    renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label="Организация" items={this.props.companies_list}/>,
-            <Input name="bank_name" value={item["bank_name"]} label="Банк"/>,
-            <Input name="bik" value={item["bik"]} label="БИК" keyboard="numeric"/>,
-            <Input name="number" value={item["number"]} label="Номер счета" keyboard="numeric"/>,
-            <Input name="ks" value={item["ks"]} label="Корр. счет" keyboard="numeric"/>
+            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
+            <Input name="bank_name" value={item["bank_name"]} label={labels["bank_name"]}/>,
+            <Input name="bik" value={item["bik"]} label={labels["bik"]} keyboard="numeric"/>,
+            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric"/>,
+            <Input name="ks" value={item["ks"]} label={labels["ks"]} keyboard="numeric"/>
         ]
     }
 }

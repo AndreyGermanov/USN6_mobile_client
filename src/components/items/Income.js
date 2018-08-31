@@ -22,15 +22,16 @@ class Income extends Document {
     /**
      * Method used to render contents of form in detail view
      * @param item: Entity to display in the form
+     * @param labels: Object of labels for items
      * @returns array of rendered components
      */
-    renderForm(item) {
+    renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label="Организация" items={this.props.companies_list}/>,
-            <Input name="number" value={item["number"]} label="Номер документа" keyboard="numeric"/>,
-            <DateTime name="date" value={item["date"]} label="Дата документа"/>,
-            <Input name="amount" value={item["amount"]} label="Сумма дохода" keyboard="decimal-pad"/>,
-            <Input name="description" value={item["description"]} label="Описание операции" multiline={true}/>
+            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
+            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric"/>,
+            <DateTime name="date" value={item["date"]} label={labels["date"]}/>,
+            <Input name="amount" value={item["amount"]} label={labels["amount"]} keyboard="decimal-pad"/>,
+            <Input name="description" value={item["description"]} label={labels["description"]} multiline={true}/>
         ]
     }
 }

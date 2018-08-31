@@ -22,6 +22,12 @@ class Entity {
     }
 
     /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() { return {} }
+
+    /**
      * Method returns number of items in collection
      * @param options: params to query.
      * @param callback: Method which called after request. Contains "err" and "result" variables. Err can contain

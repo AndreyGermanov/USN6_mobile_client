@@ -25,20 +25,7 @@ export default class AccountListContainer extends EntityListContainer {
     mapStateToProps(state) {
         const result = super.mapStateToProps(state);
         return Object.assign(result, {
-            "listColumns": {
-                "number": {
-                    title: t("Номер")
-                },
-                "bik": {
-                    title: t("БИК")
-                },
-                "bank_name": {
-                    title: t("Банк")
-                },
-                "company": {
-                    title: t("Организация")
-                }
-            },
+            "listColumns": this.getListColumns(['number','bik','bank_name','company']),
             "sortOrder": (result["sortOrder"] && result["sortOrder"].field) ?
                 result["sortOrder"] : {field:'number',direction:'ASC'}
         })

@@ -25,23 +25,7 @@ export default class IncomeListContainer extends DocumentListContainer {
     mapStateToProps(state) {
         const result = super.mapStateToProps(state);
         return Object.assign(result, {
-            "listColumns": {
-                "number": {
-                    title: t("Номер")
-                },
-                "date": {
-                    title: t("Дата")
-                },
-                "description": {
-                    title: t("Описание")
-                },
-                "amount": {
-                    title: t("Сумма")
-                },
-                "company": {
-                    title: t("Организация")
-                }
-            },
+            "listColumns": this.getListColumns(["number","date","description","amount","company"]),
             "sortOrder": (result["sortOrder"] && result["sortOrder"].field) ?
                 result["sortOrder"] : {field:'date',direction:'ASC'}
         })

@@ -21,15 +21,16 @@ class Company extends Entity {
     /**
      * Method used to render contents of form in detail view
      * @param item: Entity to display in the form
+     * @param labels: Object of labels for items
      * @returns array of rendered components
      */
-    renderForm(item) {
+    renderForm(item,labels) {
         return [
-            <Input name="name" value={item["name"]} label="Имя"/>,
-            <Select name="type" value={item["type"]} label="Тип" items={Company.getTypesList()}/>,
-            <Input name="inn" value={item["inn"]} label="ИНН" keyboard="numeric"/>,
-            item["type"] === 2 ? <Input name="kpp" value={item["kpp"]} label="КПП" keyboard="numeric"/> : null,
-            <Input name="address" value={item["address"]} label="Адрес" multiline={true}/>
+            <Input name="name" value={item["name"]} label={labels["name"]}/>,
+            <Select name="type" value={item["type"]} label={labels["type"]} items={Company.getTypesList()}/>,
+            <Input name="inn" value={item["inn"]} label={labels["inn"]} keyboard="numeric"/>,
+            item["type"] === 2 ? <Input name="kpp" value={labels["kpp"]} label={t("КПП")} keyboard="numeric"/> : null,
+            <Input name="address" value={item["address"]} label={labels["address"]} multiline={true}/>
         ]
     }
 

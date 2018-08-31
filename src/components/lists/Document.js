@@ -40,9 +40,9 @@ class Document extends Entity {
      */
     renderPeriodSelectionDialog() {
         return [
-            <DateTime name="periodStart" value={this.props.periodStart} label="Дата начала"
+            <DateTime name="periodStart" value={this.props.periodStart} label={t("Дата начала")}
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
-            <DateTime name="periodEnd" value={this.props.periodEnd} label="Дата окончания"
+            <DateTime name="periodEnd" value={this.props.periodEnd} label={t("Дата окончания")}
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
             <Button onPress={() => this.props.hidePopupWindow()} text={t("Закрыть")}/>
         ]
@@ -59,7 +59,7 @@ class Document extends Entity {
                 onPress={() => this.props.openPeriodSelectionDialog()}>
                 <View style={Styles.periodButtonContainer}>
                     <IconFontAwesome name="calendar-o" color='white' size={20} style={Styles.periodButton}/>
-                    <Text style={Styles.periodButtonText}>Период</Text>
+                    <Text style={Styles.periodButtonText}>{t("Период")}</Text>
                 </View>
             </TouchableOpacity>,
             <Divider/>]);

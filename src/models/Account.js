@@ -26,6 +26,20 @@ class Account extends Entity {
         return item;
     }
 
+    /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() {
+        return {
+            "bank_name": t("Банк"),
+            "company": t("Организация"),
+            "number": t("Номер счета"),
+            "bik": t("БИК"),
+            "ks": t("Корр. счет")
+        }
+    }
+
     /**********************************
      * Item fields validation methods *
      **********************************/

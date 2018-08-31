@@ -28,6 +28,20 @@ class Income extends Document {
         return item;
     }
 
+    /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() {
+        return {
+            "description": t("Описание"),
+            "company": t("Организация"),
+            "number": t("Номер документа"),
+            "date": t("Дата документа"),
+            "amount": t("Сумма")
+        }
+    }
+
     /**********************************
      * Item fields validation methods *
      **********************************/

@@ -134,6 +134,21 @@ export default class EntityListContainer extends EntityContainer {
     }
 
     /**
+     * Method used to generate typical configuration object for list view columns
+     * @param item_fields: Array of field names for which need to create columns in the list
+     * @returns Columns list configuration object
+     */
+    getListColumns(item_fields) {
+        const result = {};
+        if (!item_fields | !item_fields.length) return {};
+        const labels = this.getFieldLabels();
+        item_fields.forEach((field) => {
+            result[field] = {title:labels[field]};
+        })
+        return result;
+    }
+
+    /**
      * Method fired when user clicks checkbox near item in the list. Selects row for delete or unselects
      * @param uid: ID of item to check/uncheck
      */

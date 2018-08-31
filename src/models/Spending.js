@@ -31,6 +31,22 @@ class Spending extends Document {
     }
 
     /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() {
+        return {
+            "description": t("Описание"),
+            "company": t("Организация"),
+            "number": t("Номер документа"),
+            "date": t("Дата документа"),
+            "amount": t("Сумма"),
+            "type": t("Тип расхода"),
+            "period": t("Период расхода")
+        }
+    }
+
+    /**
      * Method used to get content for "Spending types" dropdown from database
      * @param callback: This method called when response from server received. Two parameters passed to it:
      * "err" - error string or null, spending_types_array - array of fetched results or empty array or null.

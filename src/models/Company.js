@@ -27,6 +27,20 @@ class Company extends Entity {
         return item;
     }
 
+    /**
+     * Method returns field labels for all fields of this model
+     * @returns Array
+     */
+    getFieldLabels() {
+        return {
+            "name": t("Имя"),
+            "inn": t("ИНН"),
+            "kpp": t("КПП"),
+            "address": t("Адрес"),
+            "type": t("Тип")
+        }
+    }
+
     /**********************************
      * Item fields validation methods *
      **********************************/

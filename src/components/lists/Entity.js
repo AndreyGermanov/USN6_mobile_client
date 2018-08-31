@@ -78,14 +78,14 @@ class Entity extends Component {
                         <View style={Styles.checkAllButtonContainer}>
                             <IconFontAwesome name={this.props.isAllItemsChecked() ? 'check-square' : 'square-o'}
                                   color='white' size={20} style={Styles.checkAllIcon}/>
-                            <Text style={Styles.headerBarIconText}>Выделить все</Text>
+                            <Text style={Styles.headerBarIconText}>{t("Выделить все")}</Text>
                         </View>
                     </TouchableOpacity>
                     <Divider/>
                     <TouchableOpacity onPress={() => this.props.openItem('new')}>
                         <View style={Styles.headerBarIconContainer}>
                             <IconFontAwesome name='plus' color='white' size={20}/>
-                            <Text style={Styles.headerBarIconText}>Добавить</Text>
+                            <Text style={Styles.headerBarIconText}>{t("Добавить")}</Text>
                         </View>
                     </TouchableOpacity>
                     <Divider/>
@@ -104,7 +104,7 @@ class Entity extends Component {
             <TouchableOpacity onPress={() => this.props.openSortOrderDialog()}>
                 <View style={Styles.headerBarIconContainer}>
                     <IconFontAwesome name='sort' color='white' size={20} style={Styles.headerBarSortIcon}/>
-                    <Text style={Styles.headerBarIconText}>Упорядочить</Text>
+                    <Text style={Styles.headerBarIconText}>{t("Упорядочить")}</Text>
                 </View>
             </TouchableOpacity>,
             this.props.selectedItems && this.props.selectedItems.length > 0 ? [
@@ -112,7 +112,7 @@ class Entity extends Component {
                 <TouchableOpacity onPress={() => {this.props.deleteItems()}}>
                     <View style={Styles.headerBarIconContainer}>
                         <IconFontAwesome name='trash' color='white' size={20} style={Styles.headerBarDeleteIcon}/>
-                        <Text style={Styles.headerBarIconText}>Удалить</Text>
+                        <Text style={Styles.headerBarIconText}>{t("Удалить")}</Text>
                     </View>
                 </TouchableOpacity>]
                 : null
