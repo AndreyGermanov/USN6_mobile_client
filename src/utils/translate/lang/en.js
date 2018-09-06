@@ -17,6 +17,7 @@ export default {
     "Дата документа": "Date",
     "Сумма": "Amount",
     "Тип расхода": "Type of spending",
+    "Тип отчета": "Type of report",
     "Период расхода": "Spending period",
     "Адрес email": "Email address",
     "Период отчета": "Report period",

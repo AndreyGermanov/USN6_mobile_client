@@ -1,7 +1,6 @@
 import {connect} from "react-redux";
 import {Item} from '../../components/Components';
 import EntityItemContainer from './Entity';
-import t from '../../utils/translate/translate';
 import Models from '../../models/Models';
 
 /**

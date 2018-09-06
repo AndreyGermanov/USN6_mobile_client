@@ -140,11 +140,11 @@ export default class EntityListContainer extends EntityContainer {
      */
     getListColumns(item_fields) {
         const result = {};
-        if (!item_fields | !item_fields.length) return {};
+        if (!item_fields || !item_fields.length) return {};
         const labels = this.getFieldLabels();
         item_fields.forEach((field) => {
             result[field] = {title:labels[field]};
-        })
+        });
         return result;
     }
 
@@ -193,7 +193,7 @@ export default class EntityListContainer extends EntityContainer {
 
     /**
      * Checkbox in table header event handler: selects/deselects all items in list (on current page) depending
-     * on currect checkbox state
+     * on current checkbox state
      */
     selectAllItems() {
         const state = Store.getState();

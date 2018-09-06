@@ -4,7 +4,6 @@ import base64 from 'base-64';
 import actions from '../actions/Actions';
 import Store from '../store/Store';
 import Cookie from '../utils/Cookie';
-import t from '../utils/translate/translate';
 
 /**
  * Class contains base methods to communicate with Backend database

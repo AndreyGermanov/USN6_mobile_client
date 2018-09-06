@@ -33,7 +33,7 @@ export default class AccountItemContainer extends EntityItemContainer {
     /**
      * Method called after standard "updateItem" action
      */
-    updateItem(uid) {
+    updateItem(uid,callback) {
         const self = this;
         async.waterfall([
             (callback) => super.updateItem(uid,callback),

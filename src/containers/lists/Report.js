@@ -1,12 +1,9 @@
 import {connect} from "react-redux";
 import {List} from '../../components/Components';
 import DocumentListContainer from './Document'
-import t from '../../utils/translate/translate'
 import actions from "../../actions/Actions";
 import Store from "../../store/Store";
-import moment from "moment-timezone";
 import Models from '../../models/Models';
-import {Select} from '../../components/ui/Form';
 
 /**
  * Controller class for Report component. Contains all methods and properties, which used by this module.

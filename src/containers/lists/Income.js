@@ -1,7 +1,6 @@
 import {connect} from "react-redux";
 import {List} from '../../components/Components';
 import DocumentListContainer from './Document'
-import t from '../../utils/translate/translate'
 import Models from '../../models/Models';
 
 /**
