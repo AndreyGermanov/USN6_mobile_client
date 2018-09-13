@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ScreenComponent from './ScreenComponent';
-import FormFieldContainer from './FormFieldContainer';
 import {StyleSheet} from 'react-native';
 import _ from 'lodash';
 
@@ -11,7 +10,7 @@ import _ from 'lodash';
 class FormField extends ScreenComponent {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Name of field
         name: PropTypes.string.isRequired,
         // Current field value
@@ -20,16 +19,7 @@ class FormField extends ScreenComponent {
         onChange: PropTypes.func,
         // Style of input part of item
         inputStyle: PropTypes.object
-    };
-
-    /**
-     * Class constructor
-     * @param props
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,FormFieldContainer.propertyTypes,FormField.propertyTypes);
-    }
+    },ScreenComponent.propTypes);
 
     /**
      * Method renders component on the screen
@@ -51,8 +41,6 @@ class FormField extends ScreenComponent {
     }
 }
 
-FormField.propTypes = (new FormField()).propTypes;
-
 const Styles = StyleSheet.create({
     inputField: {
         backgroundColor: "#ffffff",
@@ -65,7 +53,6 @@ const Styles = StyleSheet.create({
         borderLeftColor: '#e6e6e6',
         borderRightWidth: 1,
         borderRightColor: '#e6e6e6',
-        color: 'black',
         borderWidth: 0,
         width: '100%'
     }

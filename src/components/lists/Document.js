@@ -25,7 +25,7 @@ class Document extends Entity {
         const content = super.render();
         if (this.props.periodSelectionDialogVisible) {
             content.push(
-                <PopupWindow title={t("Установка периода")} ownerProps={this.props}
+                <PopupWindow key="popup_period_selection" title={t("Установка периода")} ownerProps={this.props}
                      visible={this.props.periodSelectionDialogVisible}>
                     {this.renderPeriodSelectionDialog()}
                 </PopupWindow>
@@ -40,11 +40,11 @@ class Document extends Entity {
      */
     renderPeriodSelectionDialog() {
         return [
-            <DateTime name="periodStart" value={this.props.periodStart} label={t("Дата начала")}
+            <DateTime key="periodStart" name="periodStart" value={this.props.periodStart} label={t("Дата начала")}
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
-            <DateTime name="periodEnd" value={this.props.periodEnd} label={t("Дата окончания")}
+            <DateTime key="periodEnd" name="periodEnd" value={this.props.periodEnd} label={t("Дата окончания")}
                       onChange={this.props.changePeriodField} ownerProps={this.props}/>,
-            <Button onPress={() => this.props.hidePopupWindow()} text={t("Закрыть")}/>
+            <Button key="periodSubmit" onPress={() => this.props.hidePopupWindow()} text={t("Закрыть")}/>
         ]
     }
 
@@ -55,14 +55,14 @@ class Document extends Entity {
     renderListActionButtons() {
         let buttons = super.renderListActionButtons();
         buttons.unshift([
-            <TouchableOpacity
+            <TouchableOpacity key="periodSelectButton"
                 onPress={() => this.props.openPeriodSelectionDialog()}>
                 <View style={Styles.periodButtonContainer}>
                     <IconFontAwesome name="calendar-o" color='white' size={20} style={Styles.periodButton}/>
                     <Text style={Styles.periodButtonText}>{t("Период")}</Text>
                 </View>
             </TouchableOpacity>,
-            <Divider/>]);
+            <Divider key="d5"/>]);
         return buttons;
     }
 }

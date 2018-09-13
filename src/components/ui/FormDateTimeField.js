@@ -14,21 +14,12 @@ import {StyleSheet} from 'react-native';
 class FormDateTimeField extends FormField {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Mode of date/time selector (datetime,date or time)
         mode: PropTypes.string,
         // Format of date display (as defined in moment.js)
         format: PropTypes.string
-    };
-
-    /**
-     * Class constructor
-     * @param props
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes, FormDateTimeField.propertyTypes);
-    }
+    },FormField.propTypes);
 
     /**
      * Method renders component on the screen
@@ -36,7 +27,7 @@ class FormDateTimeField extends FormField {
      */
     render() {
         const props = this.getProps();
-        return [
+        return (
             <Container label={props.label} containerStyle={props.containerStyle}
                        labelStyle={props.labelStyle} ownerProps={props.ownerProps}>
                 <DatePicker
@@ -55,8 +46,8 @@ class FormDateTimeField extends FormField {
                     }}
                 />
                 <Error fieldName={props.name} ownerProps={props.ownerProps}/>
-            </Container>,
-        ]
+            </Container>
+        )
     }
 
     /**
@@ -70,8 +61,6 @@ class FormDateTimeField extends FormField {
         return result;
     }
 }
-
-FormDateTimeField.propTypes = (new FormDateTimeField()).propTypes;
 
 const Styles = StyleSheet.create({
     datePickerContainer: {width:'100%'},

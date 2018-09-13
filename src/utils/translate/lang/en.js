@@ -111,5 +111,6 @@ export default {
     "Введите новый пароль": "Enter new password",
     "Изменить пароль": "Change password",
     "Пароль успешно изменен": "Password changed successfully",
-    "Подтверждение пароля": "Confirm password"
+    "Подтверждение пароля": "Confirm password",
+    "Пароли должны совпадать": "Passwords must match"
 }

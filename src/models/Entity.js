@@ -126,13 +126,14 @@ class Entity {
      */
     saveItem(options,callback) {
         if (typeof(callback)!=='function') callback = ()=>null;
-        const data = this.getSaveItemData(this.cleanDataForBackend(options));
+        let method = this.getSaveItemMethod(options);
+        let url = this.getSaveItemUrl(options);
+        let data = this.getSaveItemData(options);
         if (!data) {
             callback(null,{'errors':{'general': t("Системная ошибка")}});
             return;
         }
-        let method = this.getSaveItemMethod(data);
-        let url = this.getSaveItemUrl(data);
+        data = this.cleanDataForBackend(data);
         Backend.request(url,data,method,null,null, function(error, response) {
             if (!response || response.status !== 200 || error) {
                 callback(null,{'errors':{'general': t("Системная ошибка")}});

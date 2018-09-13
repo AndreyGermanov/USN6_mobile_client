@@ -11,23 +11,14 @@ import Error from './FieldErrorMessage';
 class FormInputField extends FormField {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Type of keyboard of this input item (React Native keyboardType property)
         keyboard: PropTypes.string,
         // Is input field multiline (true or false)
         multiline: PropTypes.bool,
         // Should input field work in password enter mode
         password: PropTypes.bool
-    };
-
-    /**
-     * Class constructor
-     * @param props
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,FormInputField.propertyTypes);
-    }
+    },FormField.propTypes);
 
     /**
      * Method renders component on the screen
@@ -35,7 +26,7 @@ class FormInputField extends FormField {
      */
     render() {
         const props = this.getProps();
-        return [
+        return (
             <Container label={props.label} containerStyle={props.containerStyle}
                        labelStyle={props.labelStyle} ownerProps={props.ownerProps}>
                 <TextInput value={props.value} autoCaptialize="none" autoCorrect={false}
@@ -43,8 +34,8 @@ class FormInputField extends FormField {
                            style={[Styles.inputField,props.inputStyle]} keyboardType={props.keyboard}
                            secureTextEntry={props.password} multiline={props.multiline}/>
                 <Error fieldName={props.name} ownerProps={props.ownerProps}/>
-            </Container>,
-        ]
+            </Container>
+        )
     }
 
     /**
@@ -63,7 +54,5 @@ class FormInputField extends FormField {
 const Styles = StyleSheet.create({
     inputField: {paddingLeft:10}
 });
-
-FormInputField.propTypes = (new FormInputField()).propTypes;
 
 export default FormInputField;

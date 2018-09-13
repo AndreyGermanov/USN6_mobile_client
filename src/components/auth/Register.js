@@ -16,7 +16,7 @@ class Register extends Entity {
             <TouchableOpacity onPress={() => NavigationService.navigate("Login")}>
                 <IconFontAwesome style={Styles.leftButtonStyle} name='arrow-left' color='white' size={24}/>
             </TouchableOpacity>;
-        result["headerRight"] = null
+        result["headerRight"] = null;
         return result;
     };
 
@@ -34,7 +34,7 @@ class Register extends Entity {
                    label={labels["confirm_password"]} password={true} key="f3"/>,
             <Input name="email" value={item["email"]} label={labels["email"]}  key="f4"/>,
             <Button onPress={() => this.props.saveToBackend()} text={t("Отправить")}
-                    buttonContainerStyle={Styles.sendButtonStyle}/>
+                    buttonContainerStyle={Styles.sendButtonStyle} key="f5"/>
         ]
     }
 }

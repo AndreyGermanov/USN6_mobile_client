@@ -27,13 +27,13 @@ class Spending extends Document {
      */
     renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
-            <Select name="type" value={item["type"]} label={labels["type"]} items={this.props.spending_types}/>,
-            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric"/>,
-            <DateTime name="date" value={item["date"]} label={labels["date"]}/>,
-            <Input name="period" value={item["period"]} label={labels["period"]}/>,
-            <Input name="amount" value={item["amount"]} label={labels["amount"]} keyboard="decimal-pad"/>,
-            <Input name="description" value={item["description"]} label={labels["description"]} multiline={true}/>
+            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list} key="s1"/>,
+            <Select name="type" value={item["type"]} label={labels["type"]} items={this.props.spending_types} key="s2"/>,
+            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric" key="s3"/>,
+            <DateTime name="date" value={item["date"]} label={labels["date"]} key="s4"/>,
+            <Input name="period" value={item["period"]} label={labels["period"]} key="s5"/>,
+            <Input name="amount" value={item["amount"]} label={labels["amount"]} keyboard="decimal-pad" key="s6"/>,
+            <Input name="description" value={item["description"]} label={labels["description"]} multiline={true} key="s7"/>
         ]
     }
 }

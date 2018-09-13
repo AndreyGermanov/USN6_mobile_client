@@ -28,9 +28,9 @@ class RequestResetPassword extends Entity {
      */
     renderForm(item,labels) {
         return [
-            <Input name="email" value={item["email"]} label={labels["email"]}/>,
+            <Input name="email" value={item["email"]} label={labels["email"]} key="p1"/>,
             <Button onPress={() => this.props.saveToBackend()} text={t("Отправить")}
-                    buttonStyle={Styles.sendButtonStyle}/>
+                    buttonStyle={Styles.sendButtonStyle} key="p2"/>
         ]
     }
 }

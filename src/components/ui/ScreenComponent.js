@@ -7,16 +7,10 @@ import _ from 'lodash';
  * and have link to owning component properties
  */
 class ScreenComponent extends Component {
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        this.propTypes = {
-            ownerProps: PropTypes.object // Link to "props" of owner component
-        }
-    }
+
+    static propTypes = {
+        ownerProps: PropTypes.object // Link to "props" of owner component
+    };
 
     /**
      * Method to render component body of component
@@ -33,7 +27,5 @@ class ScreenComponent extends Component {
         return _.cloneDeep(this.props);
     }
 }
-
-ScreenComponent.propTypes = (new ScreenComponent()).propTypes;
 
 export default ScreenComponent;

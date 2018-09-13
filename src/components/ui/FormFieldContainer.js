@@ -10,23 +10,14 @@ import {View,Text,StyleSheet} from 'react-native';
 class FormFieldContainer extends ScreenComponent {
 
     // Component properties definition
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Style of field container View
         containerStyle: PropTypes.object,
         // Style of label of field before field container view
         labelStyle: PropTypes.object,
         // Text of label (optional, if no text, no label)
         label: PropTypes.string
-    };
-
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,FormFieldContainer.propertyTypes)
-    }
+    },ScreenComponent.propTypes);
 
     /**
      * Method used to render item on screen
@@ -46,8 +37,6 @@ class FormFieldContainer extends ScreenComponent {
         )
     }
 }
-
-FormFieldContainer.propTypes = (new FormFieldContainer()).propTypes;
 
 const Styles = StyleSheet.create({
     fieldContainer: {

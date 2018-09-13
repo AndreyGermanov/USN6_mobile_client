@@ -22,11 +22,11 @@ class Entity extends Component {
             headerTitleStyle: Styles.headerTitleStyle,
             title: Entity.listTitle,
             headerLeft:
-                <TouchableOpacity onPress={() => NavigationService.openDrawer()}>
+                <TouchableOpacity onPress={() => NavigationService.openDrawer()} key="t1">
                     <IconFontAwesome style={Styles.headerLeftButton} name="bars" color="white" size={24}/>
                 </TouchableOpacity>,
             headerRight:
-                <TouchableOpacity onPress={() => Backend.logout()}>
+                <TouchableOpacity onPress={() => Backend.logout()} key="t2">
                     <IconFontAwesome style={Styles.headerRightButton} name="sign-out" color="white" size={24}/>
                 </TouchableOpacity>
         }
@@ -39,10 +39,11 @@ class Entity extends Component {
     render() {
         const self = this;
         return [
-            <View style={Styles.rootContainer}>
+            <View style={Styles.rootContainer} key="r1">
                 {this.renderHeaderRow()}
                 <FlatList data={this.props.list} style={Styles.flatList}
                           renderItem={({item}) => this.renderListRow.bind(self)(item)}
+                          keyExtractor={(item, index) => index.toString()}
                           onEndReached={() => {
                               if (this.props.list.length < this.props.numberOfItems) {
                                   this.props.changeListPage(this.props.pageNumber + 1, true);
@@ -50,7 +51,7 @@ class Entity extends Component {
                           }}
                 />
             </View>,
-            <PopupWindow title={t("Сортировка")} ownerProps={this.props}
+            <PopupWindow title={t("Сортировка")} ownerProps={this.props} key="r2"
                          visible={this.props.sortOrderDialogVisible}>
                 {this.renderSortOrderDialog()}
             </PopupWindow>
@@ -101,15 +102,15 @@ class Entity extends Component {
      */
     renderListActionButtons() {
         return [
-            <TouchableOpacity onPress={() => this.props.openSortOrderDialog()}>
+            <TouchableOpacity onPress={() => this.props.openSortOrderDialog()} key="b1">
                 <View style={Styles.headerBarIconContainer}>
                     <IconFontAwesome name='sort' color='white' size={20} style={Styles.headerBarSortIcon}/>
                     <Text style={Styles.headerBarIconText}>{t("Упорядочить")}</Text>
                 </View>
             </TouchableOpacity>,
             this.props.selectedItems && this.props.selectedItems.length > 0 ? [
-                <Divider/>,
-                <TouchableOpacity onPress={() => {this.props.deleteItems()}}>
+                <Divider key="b2"/>,
+                <TouchableOpacity onPress={() => {this.props.deleteItems()}} key="b3">
                     <View style={Styles.headerBarIconContainer}>
                         <IconFontAwesome name='trash' color='white' size={20} style={Styles.headerBarDeleteIcon}/>
                         <Text style={Styles.headerBarIconText}>{t("Удалить")}</Text>
@@ -129,19 +130,16 @@ class Entity extends Component {
         const columns = this.renderListRowColumns(uid,item);
         const checkboxStyle = {paddingLeft:5,color:this.props.isItemChecked(item.uid) ? '#db2525' : '#d7dbdf'};
         return (
-            <View key={'list_row_'+uid} style={Styles.listRowContainer}>
-                <TouchableOpacity key={'list_row_'+uid+"_fields_checkbox"}
-                                  onPress={() => this.props.selectItem(item.uid)}>
+            <View key={'list_row_'+this.props.collectionName+"_"+uid} style={Styles.listRowContainer}>
+                <TouchableOpacity onPress={() => this.props.selectItem(item.uid)}>
                     <IconFontAwesome name={this.props.isItemChecked(item.uid) ? 'check-square' : 'square-o'}
                           color='#' size={20} style={checkboxStyle}/>
                 </TouchableOpacity>
-                <View key={'list_row_'+uid+"_fields"} style={Styles.listRowContent}>
-                    <TouchableOpacity key={'list_row_'+uid+"_fields_list"} onPress={() => this.props.openItem(uid)}>
-                            {columns}
-                    </TouchableOpacity>
+                <View style={Styles.listRowContent}>
+                    {columns}
                 </View>
                 <View style={Styles.listRowOpenIconContainer}>
-                    <TouchableOpacity key={'list_row_'+uid+"_fields_list"} onPress={() => this.props.openItem(uid)}>
+                    <TouchableOpacity onPress={() => this.props.openItem(uid)}>
                         <IconMaterialCommunity size={45} style={Styles.listRowOpenIcon} name="arrow-right-drop-circle"/>
                     </TouchableOpacity>
                 </View>
@@ -151,6 +149,7 @@ class Entity extends Component {
 
     renderListRowColumns(uid,item) {
         const columns = [];
+        let counter = 0;
         for (let field in this.props.listColumns) {
             if (!this.props.listColumns.hasOwnProperty(field)) continue;
             if (typeof(item[field]) === "undefined")
@@ -168,12 +167,11 @@ class Entity extends Component {
             const field_style = {paddingLeft:3,color:field_color};
             if (!field_value) continue;
             columns.push(
-                <View style={Styles.listRowColumnContainer} key={'list_row_'+uid+"_"+item[field]}>
-                    <Text style={Styles.listRowColumnTitle}
-                          key={'list_row_'+uid+"_"+item[field]+"_title"}>
+                <View style={Styles.listRowColumnContainer} key={'list_row_'+this.props.collectionName+"_"+uid+"_"+(counter++)}>
+                    <Text style={Styles.listRowColumnTitle}>
                         {this.props.listColumns[field].title}:
                     </Text>
-                    <Text style={field_style} key={'list_row_'+uid+"_"+item[field]}>
+                    <Text style={field_style}>
                         {field_value}
                     </Text>
                 </View>
@@ -198,7 +196,7 @@ class Entity extends Component {
                     icon = <IconFontAwesome name='arrow-up' color="#ff6600" style={Styles.sortOrderIcon}/>
             }
             buttons.push(
-                <TouchableOpacity onPress={this.props.changeListSortOrder.bind(this,field)}>
+                <TouchableOpacity onPress={this.props.changeListSortOrder.bind(this,field)} key={"sortOrderBtn_"+field}>
                     <View style={Styles.sortOrderFieldContainer}>
                         {icon}
                         <Text>{this.props.listColumns[field].title}</Text>
@@ -206,7 +204,7 @@ class Entity extends Component {
                 </TouchableOpacity>
             );
         }
-        buttons.push(<Button onPress={this.props.hidePopupWindow} text={t("Закрыть")}/>);
+        buttons.push(<Button onPress={this.props.hidePopupWindow} text={t("Закрыть")} key="sortOrderCloseBtn"/>);
         return buttons
     }
 

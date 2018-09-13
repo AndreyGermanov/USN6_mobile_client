@@ -27,11 +27,11 @@ class Income extends Document {
      */
     renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
-            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric"/>,
-            <DateTime name="date" value={item["date"]} label={labels["date"]}/>,
-            <Input name="amount" value={item["amount"]} label={labels["amount"]} keyboard="decimal-pad"/>,
-            <Input name="description" value={item["description"]} label={labels["description"]} multiline={true}/>
+            <Select name="company" value={item["company"]} label={labels["company"]} key="i1" items={this.props.companies_list}/>,
+            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric" key="i2"/>,
+            <DateTime name="date" value={item["date"]} label={labels["date"]} key="i3"/>,
+            <Input name="amount" value={item["amount"]} label={labels["amount"]} keyboard="decimal-pad" key="i4"/>,
+            <Input name="description" value={item["description"]} label={labels["description"]} multiline={true} key="i5"/>
         ]
     }
 }

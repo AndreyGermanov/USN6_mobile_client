@@ -10,28 +10,23 @@ import {View,Text,StyleSheet} from 'react-native';
  */
 class StatusMessage extends ScreenComponent {
 
+    static propTypes = Object.assign({},{
+        // Message to display
+        message: PropTypes.string.isRequired,
+        // String name or hex code of background color
+        backgroundStyle: PropTypes.object,
+        // String name or hex code of background color
+        textStyle: PropTypes.object,
+        // Type of message (from "types" static variable)
+        type: PropTypes.string
+    },ScreenComponent.propTypes);
+
     // Types of static message
     static types = {
         ERROR: "ERROR",
         SUCCESS: "SUCCESS",
         CUSTOM: "CUSTOM"
     };
-
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        // Message to display
-        this.propTypes["message"] = PropTypes.string.isRequired;
-        // String name or hex code of background color
-        this.propTypes["backgroundStyle"] = PropTypes.object;
-        // String name or hex code of background color
-        this.propTypes["textStyle"] = PropTypes.object;
-        // Type of message (from "types" static variable)
-        this.propTypes["type"] = PropTypes.string;
-    }
 
     /**
      * Method used to render component
@@ -63,7 +58,6 @@ class StatusMessage extends ScreenComponent {
         return result;
     }
 
-
     /**
      * Get default styles for component depending on type
      * @param type: Type of status message (item of StatusMessage.types enumeration)
@@ -82,8 +76,6 @@ class StatusMessage extends ScreenComponent {
         return result;
     }
 }
-
-StatusMessage.propTypes = (new StatusMessage()).propTypes;
 
 // Design styles, used on this page
 const Styles = StyleSheet.create({

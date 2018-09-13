@@ -27,7 +27,8 @@ export default class EntityListContainer extends EntityContainer {
             itemsPerPage: state.itemsPerPage[this.model.itemName] ? state.itemsPerPage[this.model.itemName]: 5,
             numberOfItems: state.numberOfItems[this.model.itemName] ? state.numberOfItems[this.model.itemName]: 0,
             listFilter: state.listFilter[this.model.itemName] ? state.listFilter[this.model.itemName]: "",
-            sortOrderDialogVisible: state.sortOrderDialogVisible
+            sortOrderDialogVisible: state.sortOrderDialogVisible,
+            collectionName: this.model.collectionName
         })
     }
 

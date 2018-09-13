@@ -11,19 +11,10 @@ import SelectInput from 'react-native-select-input-ios';
 class FormSelectField extends FormField {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Array of items to choose from. Each item is an object of format {value:"",label:""}
         items: PropTypes.array.isRequired
-    };
-
-    /**
-     * Class constructor
-     * @param props
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes, FormSelectField.propertyTypes);
-    }
+    },FormField.propTypes);
 
     /**
      * Method renders component on the screen
@@ -31,15 +22,15 @@ class FormSelectField extends FormField {
      */
     render() {
         const props = this.getProps();
-        return [
+        return (
             <Container label={props.label} containerStyle={props.containerStyle}
                        labelStyle={props.labelStyle} ownerProps={props.ownerProps}>
                 <SelectInput options={props.items} onSubmitEditing={(value) => props.onChange(props.name,value)}
                              value={props.value} style={props.inputStyle}
                 />
                 <Error fieldName={props.name} ownerProps={props.ownerProps}/>
-            </Container>,
-        ]
+            </Container>
+        )
     }
 
     /**
@@ -69,7 +60,5 @@ class FormSelectField extends FormField {
         return null;
     }
 }
-
-FormSelectField.propTypes = (new FormSelectField()).propTypes;
 
 export default FormSelectField;

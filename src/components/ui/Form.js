@@ -16,19 +16,10 @@ import PropTypes from 'prop-types';
 export class Form extends ScreenComponent {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Styles of object
         style: PropTypes.object,
-    };
-
-    /**
-     * Class constructor
-     * @param props
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,Form.propertyTypes);
-    }
+    },ScreenComponent.propTypes);
 
     /**
      * Method used to render component
@@ -63,7 +54,6 @@ const Styles = StyleSheet.create({
     }
 });
 
-Form.propTypes = (new Form()).propTypes;
 export const Input = InputField;
 export const Select = SelectField;
 export const DateTime = DateTimeField;

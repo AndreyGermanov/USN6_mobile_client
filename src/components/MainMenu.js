@@ -8,7 +8,6 @@ import NavigationService from '../utils/NavigationService';
  * Component which manages Application Main menu
  */
 const MainMenu = (props) => {
-
     return (
         <ScrollView>
             <SafeAreaView style={{flex:1}} forceInset={{ top: 'always', horizontal: 'never' }}>

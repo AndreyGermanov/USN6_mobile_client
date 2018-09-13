@@ -3,20 +3,14 @@ import PropTypes from 'prop-types';
 import ScreenComponent from './ScreenComponent';
 import {Text,StyleSheet} from 'react-native';
 
-
 /**
  * Component used to display Error message related to field
  */
 class FieldErrorMessage extends ScreenComponent {
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        // Name of field, for which error message is intended
-        this.propTypes["fieldName"] = PropTypes.string.isRequired
-    }
+
+    static propTypes = Object.assign({},{
+        fieldName: PropTypes.string.isRequired
+    },ScreenComponent.propTypes);
 
     /**
      * Method to render component body
@@ -27,8 +21,6 @@ class FieldErrorMessage extends ScreenComponent {
             <Text style={Styles.errorFieldText}>{errors[this.props.fieldName]}</Text> : null
     }
 }
-
-FieldErrorMessage.propTypes = (new FieldErrorMessage()).propTypes;
 
 const Styles = StyleSheet.create({
     errorFieldText: {color:'red'}

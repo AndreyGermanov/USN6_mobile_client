@@ -11,20 +11,13 @@ import IconFeather from 'react-native-vector-icons/Feather';
 class PopupWindow extends ScreenComponent {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Title of popup window
         title: PropTypes.string.isRequired,
         // Is popup window currently visible
         visible: PropTypes.bool
-    };
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,PopupWindow.propertyTypes);
-    }
+    },ScreenComponent.propTypes);
+
     /**
      * Method which shows component on the screen
      * @returns Rendered component
@@ -73,8 +66,6 @@ class PopupWindow extends ScreenComponent {
         return result;
     }
 }
-
-PopupWindow.propTypes = (new PopupWindow()).propTypes;
 
 const Styles = StyleSheet.create({
     scrollViewContentStyle: {

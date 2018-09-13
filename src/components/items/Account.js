@@ -26,11 +26,11 @@ class Account extends Entity {
      */
     renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
-            <Input name="bank_name" value={item["bank_name"]} label={labels["bank_name"]}/>,
-            <Input name="bik" value={item["bik"]} label={labels["bik"]} keyboard="numeric"/>,
-            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric"/>,
-            <Input name="ks" value={item["ks"]} label={labels["ks"]} keyboard="numeric"/>
+            <Select name="company" value={item["company"]} label={labels["company"]} key="a1" items={this.props.companies_list}/>,
+            <Input name="bank_name" value={item["bank_name"]} label={labels["bank_name"]} key="a2"/>,
+            <Input name="bik" value={item["bik"]} label={labels["bik"]} keyboard="numeric" key="a3"/>,
+            <Input name="number" value={item["number"]} label={labels["number"]} keyboard="numeric" key="a4"/>,
+            <Input name="ks" value={item["ks"]} label={labels["ks"]} keyboard="numeric" key="a5"/>
         ]
     }
 }

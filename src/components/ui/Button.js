@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 class Button extends ScreenComponent {
 
     // types of properties which component can accept
-    static propertyTypes = {
+    static propTypes = Object.assign({},{
         // Text of button
         text: PropTypes.string.isRequired,
         // Style of button view
@@ -21,16 +21,7 @@ class Button extends ScreenComponent {
         buttonContainerStyle: PropTypes.object,
         // Button click handler
         onPress: PropTypes.func
-    };
-
-    /**
-     * Class constructor
-     * @param props: Properties, directly assigned to component
-     */
-    constructor(props) {
-        super(props);
-        Object.assign(this.propTypes,Button.propertyTypes);
-    }
+    },ScreenComponent.propTypes);
 
     /**
      * Method which shows component on the screen
@@ -68,8 +59,6 @@ class Button extends ScreenComponent {
         return result;
     }
 }
-
-Button.propTypes = (new Button()).propTypes;
 
 const Styles = StyleSheet.create({
     button: {

@@ -26,11 +26,11 @@ class Company extends Entity {
      */
     renderForm(item,labels) {
         return [
-            <Input name="name" value={item["name"]} label={labels["name"]}/>,
-            <Select name="type" value={item["type"]} label={labels["type"]} items={Company.getTypesList()}/>,
-            <Input name="inn" value={item["inn"]} label={labels["inn"]} keyboard="numeric"/>,
-            item["type"] === 2 ? <Input name="kpp" value={labels["kpp"]} label={t("КПП")} keyboard="numeric"/> : null,
-            <Input name="address" value={item["address"]} label={labels["address"]} multiline={true}/>
+            <Input name="name" value={item["name"]} label={labels["name"]} key="c1"/>,
+            <Select name="type" value={item["type"]} label={labels["type"]} items={Company.getTypesList()} key="c2"/>,
+            <Input name="inn" value={item["inn"]} label={labels["inn"]} keyboard="numeric" key="c3"/>,
+            item["type"] === 2 ? <Input name="kpp" value={labels["kpp"]} label={t("КПП")} keyboard="numeric" key="c4"/> : null,
+            <Input name="address" value={item["address"]} label={labels["address"]} multiline={true} key="c5"/>
         ]
     }
 

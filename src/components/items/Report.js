@@ -28,12 +28,12 @@ class Report extends Document {
      */
     renderForm(item,labels) {
         return [
-            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list}/>,
-            <Select name="type" value={item["type"]} label={labels["type"]} items={this.props.report_types}/>,
-            <DateTime name="date" value={item["date"]} label={labels["date"]}/>,
-            <Select name="period" value={item["period"]} label={labels["period"]} items={Report.getReportPeriods()}/>,
-            <Input name="email" value={item["email"]} label={labels["email"]} keyboard="email-address"/>,
-            <Button onPress={this.props.sendByEmail} text={t("Отправить по email")} buttonStyle={Styles.emailButton}/>
+            <Select name="company" value={item["company"]} label={labels["company"]} items={this.props.companies_list} key="re1"/>,
+            <Select name="type" value={item["type"]} label={labels["type"]} items={this.props.report_types} key="re2"/>,
+            <DateTime name="date" value={item["date"]} label={labels["date"]} key="re3"/>,
+            <Select name="period" value={item["period"]} label={labels["period"]} items={Report.getReportPeriods()} key="re4"/>,
+            <Input name="email" value={item["email"]} label={labels["email"]} keyboard="email-address" key="re5"/>,
+            <Button onPress={this.props.sendByEmail} text={t("Отправить по email")} buttonStyle={Styles.emailButton} key="re6"/>
         ]
     }
 

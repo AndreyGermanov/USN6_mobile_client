@@ -54,9 +54,9 @@ class Entity extends Component {
         const errors = this.props.errors;
         return [
             this.props.itemSaveSuccessText ?
-                <StatusMessage type={StatusMessage.types.SUCCESS} message={this.props.itemSaveSuccessText}/> : null,
+                <StatusMessage key="e1" type={StatusMessage.types.SUCCESS} message={this.props.itemSaveSuccessText}/> : null,
             errors["general"] && errors["general"].length ?
-                <StatusMessage type={StatusMessage.types.ERROR} message={errors["general"]}/> : null
+                <StatusMessage key="e2" type={StatusMessage.types.ERROR} message={errors["general"]}/> : null
         ]
     }
 
