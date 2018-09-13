@@ -9,21 +9,25 @@ class Entity {
     constructor() {
         this.itemName = "entity";
         this.collectionName = "entities";
+        this.itemTitle = t("Объект");
+        this.collectionTitle = t("Объекты");
+        // Fields of model, which will be validated for errors before save to backend.
+        this.fieldsToValidate = [];
     }
 
     /**
      * Method used to initialize item, by populating all empty or undefined fields with default values
      * @param item: Input item
-     * @returns item with populated values
+     * @returns object item with populated values
      */
     initItem(item) {
-        if (!item || typeof(item)!="object") item = {};
+        if (!item || typeof(item)!=="object") item = {};
         return item;
     }
 
     /**
      * Method returns field labels for all fields of this model
-     * @returns Array
+     * @returns Object
      */
     getFieldLabels() { return {} }
 
@@ -107,7 +111,9 @@ class Entity {
             response.json().then(function(jsonObject) {
                 callback(null,jsonObject)
             }).catch(function() {
-                callback(null,{});
+                try {
+                    callback(null, {});
+                } catch(e) {}
             })
         })
     }
@@ -120,18 +126,13 @@ class Entity {
      */
     saveItem(options,callback) {
         if (typeof(callback)!=='function') callback = ()=>null;
-        const data = this.cleanDataForBackend(options);
+        const data = this.getSaveItemData(this.cleanDataForBackend(options));
         if (!data) {
             callback(null,{'errors':{'general': t("Системная ошибка")}});
             return;
         }
-        let method = 'POST';
-        let url = '/'+this.itemName;
-        if (data['uid']) {
-            method = 'PUT';
-            url += "/"+options['uid'].toString().replace(/#/g,"").replace(/:/g,"_");
-            delete data['uid'];
-        }
+        let method = this.getSaveItemMethod(data);
+        let url = this.getSaveItemUrl(data);
         Backend.request(url,data,method,null,null, function(error, response) {
             if (!response || response.status !== 200 || error) {
                 callback(null,{'errors':{'general': t("Системная ошибка")}});
@@ -168,7 +169,42 @@ class Entity {
     }
 
     /**
+     * Method returns API call URL for "saveItem" method based on data, which need to save to the server
+     * @param data: Item data to send
+     * @returns {string} URL for request
+     */
+    getSaveItemUrl(data) {
+        let url = '/'+this.itemName;
+        if (data['uid']) {
+            url += "/"+data['uid'].toString().replace(/#/g,"").replace(/:/g,"_");
+        }
+        return url
+    }
+
+    /**
+     * Method returns API call Request method for "saveItem" method based on data, which need to save to the server
+     * @param data: Item data to send
+     * @returns {string} Request method (GET, PUT, POST etc)
+     */
+    getSaveItemMethod(data) {
+        return data["uid"] ? 'PUT' : 'POST'
+    }
+
+    /**
+     * Method returns data for "saveItem" method, which will be sent to the server. Can be used to adjust data
+     * @param data: Item data to send
+     * @returns {*} Object to send to the server
+     */
+    getSaveItemData(data) {
+        if (!data) return null;
+        if (data['uid'])
+            delete data["uid"];
+        return data
+    }
+
+    /**
      * Function used to validate item before save to database
+     * @param item: Item data to validate
      * @returns Array of found errors or null if nothing found
      */
     validate(item) {
@@ -176,6 +212,8 @@ class Entity {
         let has_errors = false;
         for (const field_name in item) {
             if (!item.hasOwnProperty(field_name) || field_name === 'uid')
+                continue;
+            if (this.fieldsToValidate.length && this.fieldsToValidate.indexOf(field_name) === -1)
                 continue;
             const error = this.validateItemField(field_name,item[field_name]);
             if (error) {

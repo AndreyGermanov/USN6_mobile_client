@@ -17,6 +17,8 @@ class Button extends ScreenComponent {
         buttonStyle: PropTypes.object,
         // Style of button text
         buttonTextStyle: PropTypes.object,
+        // Style of button container
+        buttonContainerStyle: PropTypes.object,
         // Button click handler
         onPress: PropTypes.func
     };
@@ -37,7 +39,7 @@ class Button extends ScreenComponent {
     render() {
         const props = this.getProps();
         return (
-            <TouchableOpacity onPress={() => props.onPress()}>
+            <TouchableOpacity onPress={() => props.onPress()} style={props.buttonContainerStyle}>
                 <View style={props.buttonStyle}>
                     <Text style={props.buttonTextStyle}>{props.text}</Text>
                 </View>
@@ -56,7 +58,10 @@ class Button extends ScreenComponent {
         result.buttonStyle = [Styles.button];
         if (props.buttonStyle)
             result.buttonStyle.push(props.buttonStyle);
-        result.buttonTextStyle = Styles.buttonText;
+        result.buttonContainerStyle = [Styles.buttonContainer];
+        if (props.buttonContainerStyle)
+            result.buttonContainerStyle.push(props.buttonContainerStyle);
+        result.buttonTextStyle = [Styles.buttonText];
         if (props.buttonTextStyle)
             result.buttonTextStyle.push(props.buttonTextStyle);
         result.onPress = props.onPress ? props.onPress : () => null;
@@ -80,7 +85,8 @@ const Styles = StyleSheet.create({
     },
     buttonText: {
         color:'white'
-    }
+    },
+    buttonContainer: {}
 });
 
 export default Button;

@@ -9,7 +9,7 @@ class EntityContainer {
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
      * @param state: Link to application state
-     * @returns Array of properties
+     * @returns Object of properties
      */
     mapStateToProps(state) {
         return {
@@ -32,7 +32,7 @@ class EntityContainer {
 
     /**
      * Method returns array of properties, the same array that available in this component
-     * @returns Array of properties
+     * @returns Object of properties
      */
     getProps() {
         const state = Store.getState();

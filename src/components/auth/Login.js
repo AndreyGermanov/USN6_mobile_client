@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import t from "../utils/translate/translate";
-import { FormValidationMessage,Button,FormLabel } from 'react-native-elements';
-import {Form,Input} from './ui/Form';
+import t from "../../utils/translate/translate";
+import {Form,Input,Button} from '../ui/Form';
 import {View,Text,StyleSheet} from 'react-native';
+import NavigationService from '../../utils/NavigationService';
+import Entity from '../items/Entity';
 
 /**
  * Component used to display user login screen
  */
-class Login extends Component {
+class Login extends Entity {
 
     // Navigation bar specific options
     static navigationOptions = () => {
@@ -27,18 +28,22 @@ class Login extends Component {
                     <View style={Styles.logoContainerStyle}>
                         <Text style={Styles.logoTextStyle}>{t("УСН 6%")}</Text>
                     </View>
-                    <FormValidationMessage>{this.props.errors["general"]}</FormValidationMessage>
+                    {this.renderStatusMessages()}
                     <Input name="login" value={item["login"]} label={t("Имя")}/>
                     <Input name="password" value={item["password"]} label={t("Пароль")} password={true}/>
-                    <FormLabel>{}</FormLabel>
-                    <Button title={t("Войти")} onPress={() => this.props.doLogin()}
-                            backgroundColor="#ff6600" color="white"
-                            icon={{name: 'sign-in', type:'font-awesome', color:"white"}}
-                    />
+                    <Button text={t("Забыл пароль")+" ?"} buttonStyle={Styles.resetPasswordButtonStyle}
+                            onPress={() => NavigationService.navigate("RequestResetPassword")}
+                            buttonTextStyle={Styles.resetPasswordButtonTextStyle}
+                            />
+                    <Button text={t("Войти")} onPress={() => this.props.doLogin()}
+                            buttonContainerStyle={Styles.loginButtonStyle}/>
+                    <Button text={t("Регистрация")} onPress={()=>NavigationService.navigate("Register")}/>
                 </Form>
             </View>
         )
     }
+
+    componentDidMount() {}
 
     /**
      * Method initializes all properties of item
@@ -78,6 +83,18 @@ const Styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 64,
         color: '#ff6600'
+    },
+    loginButtonStyle: {
+        marginBottom:10
+    },
+    resetPasswordButtonStyle: {
+        backgroundColor: 'white',
+        borderWidth:0,
+        marginBottom:10
+    },
+    resetPasswordButtonTextStyle: {
+        color: '#ff6600',
+        fontSize: 12
     }
 });
 

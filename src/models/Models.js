@@ -5,6 +5,7 @@ import CompanyModel from './Company';
 import IncomeModel from './Income';
 import ReportModel from './Report';
 import SpendingModel from './Spending';
+import UserModel from './User';
 
 export default class Models {
     static Account = AccountModel;
@@ -14,6 +15,7 @@ export default class Models {
     static Spending = SpendingModel;
     static Entity = EntityModel;
     static Document = DocumentModel;
+    static User = UserModel;
 
     // Initialized instances pool
     static instances = {};
@@ -31,6 +33,7 @@ export default class Models {
             case "spending": return SpendingModel;
             case "report": return ReportModel;
             case "document" : return DocumentModel;
+            case "user": return UserModel;
             default: return EntityModel;
         }
     }

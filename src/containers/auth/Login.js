@@ -1,16 +1,16 @@
 import {connect} from "react-redux";
-import LoginComponent from '../components/Login';
-import Backend from '../backend/Backend';
-import actions from '../actions/Actions';
-import Store from '../store/Store';
-import t from '../utils/translate/translate';
+import LoginComponent from '../../components/auth/Login';
+import Backend from '../../backend/Backend';
+import actions from '../../actions/Actions';
+import Store from '../../store/Store';
+import t from '../../utils/translate/translate';
 import _ from 'lodash';
-import NavigationService from '../utils/NavigationService';
+import NavigationService from '../../utils/NavigationService';
 
 /**
  * Controller used to manager Login form component
  */
-class LoginContainer {
+export default class LoginContainer {
 
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
@@ -72,7 +72,8 @@ class LoginContainer {
         Store.store.dispatch(actions.changeProperty('item',item));
     }
 
+    static getComponent() {
+        const login = new LoginContainer();
+        return connect(login.mapStateToProps.bind(login),login.mapDispatchToProps.bind(login))(LoginComponent);
+    }
 }
-
-const login = new LoginContainer();
-export const Login = connect(login.mapStateToProps.bind(login),login.mapDispatchToProps.bind(login))(LoginComponent);

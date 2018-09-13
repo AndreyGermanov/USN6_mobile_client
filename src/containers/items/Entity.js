@@ -15,7 +15,7 @@ export default class EntityItemContainer extends EntityContainer {
     /**
      * Method defines set of properties, which are available inside controlled component inside "this.props"
      * @param state: Link to application state
-     * @returns Array of properties
+     * @returns Object of properties
      */
     mapStateToProps(state) {
         return Object.assign(super.mapStateToProps(state),{
@@ -106,39 +106,94 @@ export default class EntityItemContainer extends EntityContainer {
     saveToBackend(callback) {
         const self = this;
         if (!callback) callback = () => null;
-        const item = this.getProps().item;
-        Store.store.dispatch(actions.changeProperty("errors",{}));
-        const errors = this.model.validate(item);
-        if (errors !== null) {
-            Store.store.dispatch(actions.changeProperty("errors",errors));
+        if (!this.validateItem()) {
             callback();
             return;
         }
-        const stateItem = Store.getState().item;
         Store.store.dispatch(actions.changeProperty('isUpdating',true));
-        this.model.saveItem(item, function(err,result) {
-            Store.store.dispatch(actions.changeProperty('isUpdating',false));
-            if (err || !result || result["errors"]) {
-                if (!result || !result["errors"])
-                    result = {'errors':{'general':t("Системная ошибка")}};
-                Store.store.dispatch(actions.changeProperty('errors',result['errors']));
-                callback();
-                return;
-            }
-            if (!item["uid"]) {
-                stateItem[self.model.itemName] = result["result"];
-                Store.store.dispatch(actions.changeProperties({uid: result["uid"], item: stateItem}));
-            }
-            self.displaySuccessText();
-            callback();
+        this.model.saveItem(this.getDataToSave(), function(err,result) {
+            self.processSaveToBackendResponse(err,result,callback)
         })
     }
 
     /**
-     * Method displays text about successful save to backend
+     * Method used to validate current item before save to backend
+     * @returns {boolean} True if validated successfully and false otherwise
      */
-    displaySuccessText() {
-        Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",t("Операция успешно завершена")));
+    validateItem() {
+        const item = this.getDataToSave();
+        Store.store.dispatch(actions.changeProperty("errors",{}));
+        const errors = this.model.validate(item);
+        if (errors !== null) {
+            Store.store.dispatch(actions.changeProperty("errors",errors));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Method prepares item data to save to backend.
+     * @returns {*} Item to save
+     */
+    getDataToSave() {
+        return this.getProps().item;
+    }
+
+    /**
+     * Utility method used to process response from server after "saveToBackend" operation
+     * @param err: Error, returned by seriver (if any)
+     * @param result: Result from server
+     * @param callback: Function which called after complete
+     */
+    processSaveToBackendResponse(err,result,callback) {
+        Store.store.dispatch(actions.changeProperty('isUpdating',false));
+        if (this.processSaveToBackendErrorResponse(err,result)) {
+            callback();
+            return
+        }
+        this.processSaveToBackendSuccessResponse(err,result,callback);
+    }
+
+    /**
+     * Utility function used to check and process response from server in case of errors
+     * @param err: Error, returned by seriver (if any)
+     * @param result: Result from server
+     * @returns Boolean: True if error response returned or false otherwise
+     */
+    processSaveToBackendErrorResponse(err,result) {
+        if (err || !result || result["errors"]) {
+            if (!result || !result["errors"])
+                result = {'errors':{'general':t("Системная ошибка")}};
+            Store.store.dispatch(actions.changeProperty('errors',result['errors']));
+            return true
+        }
+        return false
+    }
+
+    /**
+     * Utility function used to check and process response from server in case of success
+     * @param err: Error, returned by seriver (if any)
+     * @param result: Result from server
+     * @param callback: Function which called after complete
+     */
+    processSaveToBackendSuccessResponse(err,result,callback) {
+        if (!callback) callback = () => null;
+        const item = this.getProps().item;
+        const stateItem = Store.getState().item;
+        if (!item["uid"]) {
+            stateItem[this.model.itemName] = result["result"];
+            Store.store.dispatch(actions.changeProperties({uid: result["uid"], item: stateItem}));
+        }
+        this.displaySuccessText("Операция успешно завершена");
+        callback();
+    }
+
+    /**
+     * Method displays text about successful save to backend
+     * @param text: Text to display
+     */
+    displaySuccessText(text) {
+        Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",t(text)));
         setTimeout(function() {
             Store.store.dispatch(actions.changeProperty("itemSaveSuccessText",""));
         },3000);

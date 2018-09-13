@@ -1,8 +1,7 @@
 import React from "react";
 import { createSwitchNavigator, createStackNavigator,createDrawerNavigator } from "react-navigation";
-import {Item, List} from "../containers/Containers";
+import {Item, List, Auth} from "../containers/Containers";
 import LoadingScreen from "./Loading";
-import {Login} from "../containers/Login";
 import NavigationService from '../utils/NavigationService';
 import MainMenu from "./MainMenu";
 import t from '../utils/translate/translate';
@@ -27,7 +26,11 @@ const RootNavigator = createSwitchNavigator(
 function getNavigationStacks() {
     return {
         AuthLoading: LoadingScreen,
-        Auth: createStackNavigator({Login: Login}),
+        Auth: createStackNavigator({
+            Login: Auth.getComponentOf("login"),
+            Register: Auth.getComponentOf("register"),
+            RequestResetPassword: Auth.getComponentOf("request_reset_password")
+        }),
         App: createDrawerNavigator(getMainMenuStack(),{
             initialRouteName: 'Companies',
             contentOptions: {
