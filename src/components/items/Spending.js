@@ -1,7 +1,6 @@
 import React from 'react';
 import Document from './Document';
 import t from '../../utils/translate/translate';
-import moment from 'moment-timezone'
 import {Input,Select,DateTime} from '../ui/Form';
 
 /**

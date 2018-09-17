@@ -45,5 +45,4 @@ export class Items {
             case "report": return ReportContainer.getComponent();
         }
     }
-
 }

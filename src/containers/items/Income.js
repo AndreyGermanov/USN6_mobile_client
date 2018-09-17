@@ -49,5 +49,3 @@ export default class IncomeItemContainer extends DocumentItemContainer {
         return connect(income.mapStateToProps.bind(income),income.mapDispatchToProps.bind(income))(Item.Income);
     }
 }
-
-

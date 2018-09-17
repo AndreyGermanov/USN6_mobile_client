@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import t from "../../utils/translate/translate";
 import {Form,Input,Button} from '../ui/Form';
 import {View,Text,StyleSheet} from 'react-native';
