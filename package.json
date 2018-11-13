@@ -12,6 +12,7 @@
     "babel-core": "^7.0.0-beta",
     "babel-preset-react-native": "5.0.2",
     "base-64": "^0.1.0",
+    "merge": "^1.2.1",
     "moment-timezone": "^0.5.21",
     "prop-types": "^15.6.2",
     "react": "16.4.1",
